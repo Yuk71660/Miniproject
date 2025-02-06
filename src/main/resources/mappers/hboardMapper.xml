@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.miniproject.mapper.hboardmapper">
-	<select id="getEntireHBoard" resultType="com.miniproject.model.Hboard">
+	<select id="getEntireHBoard" resultType="com.miniproject.model.HBoard">
 	SELECT * FROM hboard order by boardNo desc
 	</select>
 </mapper>
