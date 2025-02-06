@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.miniproject.model.Hboard;
+import com.miniproject.model.HBoard;
 import com.miniproject.service.board.HBoardService;
 
 @Controller
@@ -30,7 +30,7 @@ public class HBoardController {
 	public String listAll(Model model) {
 		logger.info("게시글 전체 목록 가져오기");
 
-		List<Hboard> list;
+		List<HBoard> list;
 		try {
 			list = service.getEntireHBoard();
 			model.addAttribute("hboardList", list);

@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class Hboard {
+public class HBoard {
 	private int boardNo;
 	private String title;
 	private String content;

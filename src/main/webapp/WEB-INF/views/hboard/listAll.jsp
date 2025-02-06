@@ -51,6 +51,10 @@
             </c:forEach>
          </tbody>
       </table>
+      
+      <div style="float : right; margin-right : 10px;">
+      	<button type="button" class="btn btn-secondary">글 작성</button>
+      </div>
 
    </div>
 

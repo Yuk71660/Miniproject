@@ -2,8 +2,8 @@ package com.miniproject.service.board;
 
 import java.util.List;
 
-import com.miniproject.model.Hboard;
+import com.miniproject.model.HBoard;
 
 public interface HBoardService {
-	List<Hboard> getEntireHBoard() throws Exception;
+	List<HBoard> getEntireHBoard() throws Exception;
 }

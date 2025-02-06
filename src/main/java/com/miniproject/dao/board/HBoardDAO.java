@@ -2,10 +2,10 @@ package com.miniproject.dao.board;
 
 import java.util.List;
 
-import com.miniproject.model.Hboard;
+import com.miniproject.model.HBoard;
 
 public interface HBoardDAO {
 	
-	List<Hboard> selectAllHBoard() throws Exception;
+	List<HBoard> selectAllHBoard() throws Exception;
 
 }

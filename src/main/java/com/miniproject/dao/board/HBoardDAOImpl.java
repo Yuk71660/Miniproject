@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.miniproject.model.Hboard;
+import com.miniproject.model.HBoard;
 
 @Repository
 public class HBoardDAOImpl implements HBoardDAO {
@@ -21,7 +21,7 @@ public class HBoardDAOImpl implements HBoardDAO {
 	private static final String NS = "com.miniproject.mapper.hboardmapper";
 
 	@Override
-	public List<Hboard> selectAllHBoard() throws Exception {
+	public List<HBoard> selectAllHBoard() throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("게시글 DAO Test");
 		return ses.selectList(NS + ".getEntireHBoard");

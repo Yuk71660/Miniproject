@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.miniproject.dao.board.HBoardDAO;
-import com.miniproject.model.Hboard;
+import com.miniproject.model.HBoard;
 
 //서비스에서 해야 할 일
 // 서비스 비즈니스 로직 처리
@@ -24,12 +24,12 @@ public class HBoardServiceImpl implements HBoardService {
 	private HBoardDAO dao;
 	
 	@Override
-	public List<Hboard> getEntireHBoard() throws Exception {
+	public List<HBoard> getEntireHBoard() throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("게시글 전체 리스트 가져오기");
 		
-		List<Hboard> list = dao.selectAllHBoard();
-		for (Hboard h: list) {
+		List<HBoard> list = dao.selectAllHBoard();
+		for (HBoard h: list) {
 			System.out.println(h.toString());
 		}
 		
