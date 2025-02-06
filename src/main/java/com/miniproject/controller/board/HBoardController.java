@@ -10,9 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.miniproject.model.HBoard;
+import com.miniproject.model.HBoardDTO;
 import com.miniproject.service.board.HBoardService;
 
 @Controller
@@ -41,6 +43,12 @@ public class HBoardController {
 
 
 		return "hboard/listAll";
+	}
+	
+	@GetMapping("/write")
+	public String showBoardWriteForm(@ModelAttribute HBoardDTO newBoard) {
+	      logger.info("게시글을 저장하자.. : " + newBoard.toString());
+		return "hboard/write";
 	}
 
 }
