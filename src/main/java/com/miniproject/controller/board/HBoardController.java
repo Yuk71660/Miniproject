@@ -43,9 +43,15 @@ public class HBoardController {
 
 		return "hboard/listAll";
 	}
-
+	
 	@GetMapping("/write")
-	public String showBoardWriteForm(@ModelAttribute HBoardDTO newBoard) {
+	public String showBoardWriteForm() {
+		
+		return "hboard/write";
+	}
+
+	@GetMapping("./write")
+	public String writeNewBoard(@ModelAttribute HBoardDTO newBoard) {
 		logger.info("게시글을 저장하자.. : " + newBoard.toString());
 		String returnPage = "redirect:./listAll";
 		try {
