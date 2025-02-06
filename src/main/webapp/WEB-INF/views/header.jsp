@@ -22,18 +22,16 @@
 			</button>
 			<div class="collapse navbar-collapse" id="collapsibleNavbar">
 				<ul class="navbar-nav">
-					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
-					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" role="button"
-						data-bs-toggle="dropdown"> Dropdown </a>
+						data-bs-toggle="dropdown"> 게시판 </a>
 						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="#">Link</a></li>
-							<li><a class="dropdown-item" href="#">Another link</a></li>
-							<li><a class="dropdown-item" href="#">A third link</a></li>
-						</ul>
-					</li>
+							<li><a class="dropdown-item" href="#/hboard/listAll">계층형게시판</a></li>
+							<li><a class="dropdown-item" href="#">댓글형게시판</a></li>
+						</ul></li>
+					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
+					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
 				</ul>
 			</div>
 		</div>
