@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -15,6 +17,7 @@ import com.miniproject.service.board.HBoardService;
 
 @Controller
 @RequestMapping("/hboard")
+@ControllerAdvice
 public class HBoardController {
 
 	private static Logger logger = LoggerFactory.getLogger(HBoardController.class);
@@ -23,14 +26,21 @@ public class HBoardController {
 	private HBoardService service;
 
 	@GetMapping("/listAll")
+	@ExceptionHandler(Exception.class)
 	public String listAll(Model model) {
 		logger.info("게시글 전체 목록 가져오기");
 
-		List<Hboard> list = service.getEntireHBoard();
+		List<Hboard> list;
+		try {
+			list = service.getEntireHBoard();
+			model.addAttribute("hboardList", list);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		model.addAttribute("hboardList", list);
 
-		return "/hboard/listAll";
+		return "hboard/listAll";
 	}
 
 }
