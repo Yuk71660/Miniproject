@@ -35,3 +35,10 @@ ADD CONSTRAINT `hboard_member_fk`
   REFERENCES `webmoonya`.`member` (`userId`)
   ON DELETE SET NULL
   ON UPDATE NO ACTION;
+  
+INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES ('게시판', 'sdf', 'admin');
+
+SELECT * FROM hboard order by boardNo desc;
+  
+  
+  
