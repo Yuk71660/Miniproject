@@ -26,6 +26,4 @@ public class Hboard {
 	private int ref;
 	private int step;
 	private int refOrder;
-	
-
 }
