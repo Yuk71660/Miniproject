@@ -21,7 +21,7 @@ public class HBoardDAOImpl implements HBoardDAO {
 	private static final String NS = "com.miniproject.mapper.hboardmapper";
 
 	@Override
-	public List<Hboard> selectAllHBoard() {
+	public List<Hboard> selectAllHBoard() throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("게시글 DAO Test");
 		return ses.selectList(NS + ".getEntireHBoard");

@@ -6,6 +6,6 @@ import com.miniproject.model.Hboard;
 
 public interface HBoardDAO {
 	
-	List<Hboard> selectAllHBoard();
+	List<Hboard> selectAllHBoard() throws Exception;
 
 }

@@ -5,5 +5,5 @@ import java.util.List;
 import com.miniproject.model.Hboard;
 
 public interface HBoardService {
-	List<Hboard> getEntireHBoard();
+	List<Hboard> getEntireHBoard() throws Exception;
 }

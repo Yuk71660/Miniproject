@@ -24,7 +24,7 @@ public class HBoardServiceImpl implements HBoardService {
 	private HBoardDAO dao;
 	
 	@Override
-	public List<Hboard> getEntireHBoard() {
+	public List<Hboard> getEntireHBoard() throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("게시글 전체 리스트 가져오기");
 		
