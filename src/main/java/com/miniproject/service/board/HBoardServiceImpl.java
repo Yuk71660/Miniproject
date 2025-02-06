@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.miniproject.dao.board.HBoardDAO;
 import com.miniproject.model.HBoard;
+import com.miniproject.model.HBoardDTO;
 
 //서비스에서 해야 할 일
 // 서비스 비즈니스 로직 처리
@@ -36,6 +37,16 @@ public class HBoardServiceImpl implements HBoardService {
 		return list;
 		
 //		return dao.selectAllHBoard();
+	}
+
+	@Override
+	public boolean saveBoard(HBoardDTO newBoard) throws Exception {
+		boolean result = false;
+		if (dao.insertHBoard(newBoard) == 1) {
+			result = true;
+		}
+		;
+		return result;
 	}
 
 }

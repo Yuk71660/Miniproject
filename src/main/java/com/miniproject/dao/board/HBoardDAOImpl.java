@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.miniproject.model.HBoard;
+import com.miniproject.model.HBoardDTO;
 
 @Repository
 public class HBoardDAOImpl implements HBoardDAO {
@@ -25,6 +26,12 @@ public class HBoardDAOImpl implements HBoardDAO {
 		// TODO Auto-generated method stub
 		logger.info("게시글 DAO Test");
 		return ses.selectList(NS + ".getEntireHBoard");
+	}
+
+	@Override
+	public int insertHBoard(HBoardDTO newBoard) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.insert(NS+".saveHBoard", newBoard);
 	}
 
 }

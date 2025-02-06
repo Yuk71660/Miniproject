@@ -41,14 +41,23 @@ public class HBoardController {
 			e.printStackTrace();
 		}
 
-
 		return "hboard/listAll";
 	}
-	
+
 	@GetMapping("/write")
 	public String showBoardWriteForm(@ModelAttribute HBoardDTO newBoard) {
-	      logger.info("게시글을 저장하자.. : " + newBoard.toString());
-		return "hboard/write";
+		logger.info("게시글을 저장하자.. : " + newBoard.toString());
+		String returnPage = "redirect:./listAll";
+		try {
+			if (service.saveBoard(newBoard)) {
+				returnPage += "?status=success";
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returnPage += "?status=fail";
+		}
+		return returnPage;
 	}
 
 }
