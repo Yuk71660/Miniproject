@@ -60,4 +60,7 @@
 		class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
 		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
 	</bean>
+	
+	<context:component-scan base-package="com.miniproject.service"></context:component-scan>
+	<context:component-scan base-package="com.miniproject.dao"></context:component-scan>
 </beans>
