@@ -12,6 +12,10 @@ CREATE TABLE `member` (
   PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='회원 테이블';
 
+ALTER TABLE `webmoonya`.`member` 
+ADD COLUMN `userpoint` INT NULL DEFAULT 0 AFTER `userImg`;
+
+
 -- 게시글 테이블 생성
 CREATE TABLE `webmoonya`.`hboard` (
   `boardNo` INT NOT NULL AUTO_INCREMENT,
