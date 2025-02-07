@@ -82,8 +82,11 @@ ADD CONSTRAINT `pointlog_pointwhy_fk`
   ON DELETE CASCADE
   ON UPDATE CASCADE;
   
-INSERT INTO `webmoonya`.`pointlog` (`pointLogNo`, `pointwhen`, `pointwho`, `pointwhy`, `pointscore`) VALUES ('2', '2025-02-05 14:25:44', 'subAdmin', '회원가입', '100');
+INSERT INTO pointlog (`pointwho`, `pointwhy`, `pointscore`) VALUES ('subAdmin', '회원가입', (
+select `pointscore` from pointinfo where pointcontent = '회원가입'
+));
 
+UPDATE member SET `userpoint` = `userpoint` + ? WHERE (`userId` = 'admin');
 
   
   
