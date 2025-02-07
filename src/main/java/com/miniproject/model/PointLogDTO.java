@@ -14,8 +14,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class HBoardDTO {
-   private String title;
-   private String content;
-   private String writer;
+public class PointLogDTO {
+	private String pointwho, pointwhy;
 }

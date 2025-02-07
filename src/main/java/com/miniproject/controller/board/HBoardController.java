@@ -52,8 +52,6 @@ public class HBoardController {
 
 	@PostMapping("/write")
 	public String saveHBoard(@ModelAttribute HBoardDTO newBoard) {
-		System.out.println("저장?");
-		logger.info("게시글을 저장하자.. : " + newBoard.toString());
 		String returnPage = "redirect:./listAll";
 		try {
 			if (service.saveBoard(newBoard)) {
