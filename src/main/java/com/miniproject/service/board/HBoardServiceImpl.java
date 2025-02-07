@@ -6,10 +6,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.miniproject.dao.board.HBoardDAO;
+import com.miniproject.dao.member.MemberDAO;
+import com.miniproject.dao.pointlog.PointLogDAO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.PointLogDTO;
+
+import lombok.RequiredArgsConstructor;
 
 //서비스에서 해야 할 일
 // 서비스 비즈니스 로직 처리
@@ -17,19 +25,21 @@ import com.miniproject.model.HBoardDTO;
 // DAO단으로 넘겨주기
 
 @Service
+@RequiredArgsConstructor
 public class HBoardServiceImpl implements HBoardService {
 
 	private static Logger logger = LoggerFactory.getLogger(HBoardServiceImpl.class);
 	
-	@Autowired
-	private HBoardDAO dao;
+	private final HBoardDAO hdao;
+	private final PointLogDAO pdao;
+	private final MemberDAO mdao;
 	
 	@Override
 	public List<HBoard> getEntireHBoard() throws Exception {
 		// TODO Auto-generated method stub
 		logger.info("게시글 전체 리스트 가져오기");
 		
-		List<HBoard> list = dao.selectAllHBoard();
+		List<HBoard> list = hdao.selectAllHBoard();
 		for (HBoard h: list) {
 			System.out.println(h.toString());
 		}
@@ -40,12 +50,27 @@ public class HBoardServiceImpl implements HBoardService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveBoard(HBoardDTO newBoard) throws Exception {
 		boolean result = false;
-		if (dao.insertHBoard(newBoard) == 1) {
-			result = true;
+		// 게시글을 저장하는 트랜잭션
+		// 트랜잭션의 기본 원칙 : All commit or Nothing => 전부 성공할 때 all commit, 하나라도 실패하면 rollback
+		if (hdao.insertHBoard(newBoard) == 1) { // hBoard테이블에 insert 
+			
+			// 글 작성자에게 포인트 지급 (pointlog테이블 insert)
+			PointLogDTO dto = PointLogDTO.builder()
+					.pointwho(newBoard.getWriter())
+					.pointwhy("게시글작성")
+					.build();
+							
+			if (pdao.insertPointLog(dto) == 1) {
+				// 글 작성자 포인트 업데이트(member테이블에 userpoint update)
+				if (mdao.updateUserPoint(newBoard.getWriter(), "게시글작성") == 1) {
+					result = true;
+				}
+			}
+			
 		}
-		System.out.println("저장?" + result);
 		return result;
 	}
 
