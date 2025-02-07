@@ -14,7 +14,15 @@ prefix="c"%>
          } else {
             timeDiffPostDate();
          }
+         
+         let status = "${param.status}";
+         if (status == "fail") {
+           $(".modal-body").html(
+             "게시글 저장에 실패했습니다. 잠시 후 다시 이용해보세요. 문제가 지속되면 관리자에게 연락하세요"
+           );
 
+           $("#myModal").show(500);
+         }
 
          $('.modalClose').click(function(){
             $('#myModal').hide();
