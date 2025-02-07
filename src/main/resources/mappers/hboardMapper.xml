@@ -10,6 +10,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<insert id="saveHBoard">
-		INSERT INTO hboard (`title`, `content`, `writer`) VALUES (${title}, ${content}, ${writer});
+		INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES (#{title}, #{content}, #{writer});
 	</insert>
 </mapper>

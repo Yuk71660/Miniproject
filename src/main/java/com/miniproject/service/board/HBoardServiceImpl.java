@@ -45,7 +45,7 @@ public class HBoardServiceImpl implements HBoardService {
 		if (dao.insertHBoard(newBoard) == 1) {
 			result = true;
 		}
-		;
+		System.out.println("저장?" + result);
 		return result;
 	}
 

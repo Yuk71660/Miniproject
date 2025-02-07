@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.miniproject.model.HBoard;
@@ -46,12 +47,12 @@ public class HBoardController {
 	
 	@GetMapping("/write")
 	public String showBoardWriteForm() {
-		
 		return "hboard/write";
 	}
 
-	@GetMapping("./write")
-	public String writeNewBoard(@ModelAttribute HBoardDTO newBoard) {
+	@PostMapping("/write")
+	public String saveHBoard(@ModelAttribute HBoardDTO newBoard) {
+		System.out.println("저장?");
 		logger.info("게시글을 저장하자.. : " + newBoard.toString());
 		String returnPage = "redirect:./listAll";
 		try {
