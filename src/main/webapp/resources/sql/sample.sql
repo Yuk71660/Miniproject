@@ -88,5 +88,30 @@ select `pointscore` from pointinfo where pointcontent = '회원가입'
 
 UPDATE member SET `userpoint` = `userpoint` + ? WHERE (`userId` = 'admin');
 
-  
+-- 게시판 파일 업로드용 테이블
+CREATE TABLE `webmoonya`.`boardupfiles` (
+  `boardUpfileNo` INT NOT NULL AUTO_INCREMENT,
+  `originalFileName` VARCHAR(50) NOT NULL,
+  `newFileName` VARCHAR(100) NOT NULL,
+  `ext` VARCHAR(4) NULL,
+  `size` INT NULL,
+  `base64Image` LONGTEXT NULL,
+  `boardNo` INT NOT NULL,
+  PRIMARY KEY (`boardUpfileNo`))
+COMMENT = '게시글에 업로드되는 파일';
+-- hboard 참조
+ALTER TABLE `webmoonya`.`boardupfiles` 
+ADD INDEX `boardupFiles_boardNo_fk_idx` (`boardNo` ASC) VISIBLE;
+;
+ALTER TABLE `webmoonya`.`boardupfiles` 
+ADD CONSTRAINT `boardupFiles_boardNo_fk`
+  FOREIGN KEY (`boardNo`)
+  REFERENCES `webmoonya`.`hboard` (`boardNo`)
+  ON DELETE CASCADE
+  ON UPDATE NO ACTION;
+ALTER TABLE `webmoonya`.`boardupfiles` 
+ADD COLUMN `thumbFileName` VARCHAR(100) NULL AFTER `newFileName`,
+CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
+
+
   
