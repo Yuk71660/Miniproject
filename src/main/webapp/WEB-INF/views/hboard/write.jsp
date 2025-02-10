@@ -7,6 +7,8 @@ pageEncoding="UTF-8"%>
     <title>Insert title here</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+      let upfiles = new Array();
+
       function isValid() {
         let result = false;
         let title = $("#title").val();
@@ -16,11 +18,53 @@ pageEncoding="UTF-8"%>
         } else {
           result = true;
         }
-
         return result;
       }
 
+      // 넘겨준 file이 이미지 파일이면 미리보기 하여 출력
+      function showPreview(file) {
+        let imageType = ["image/png", "image/jpeg", "image/gif"];
+        let fileType = file.type.toLowerCase();
+        if (imageType.indexOf(fileType) != -1) {
+          alert("이미지 파일이다!");
+        } else {
+          let output = `<div><img src='/resources/images/noimage.png' /><span>\${file.name}</span>`;
+          output += `<span><img src='/resources/images/remove.png' onclick='remFile(this);'/></span></div>`;
+          $(".preview").append(output);
+        }
+      }
+
+      // 업로드된 파일을 삭제하는 함수
+      function remFile(obj) {
+        // 배열에서 파일 삭제, 화면에서 삭제
+        let removedFileName = $(obj).parent().prev().html();
+        for (let i = 0; i < upfiles.length; i++) {
+          if (upfiles[i].name == removedFileName) {
+            // 배열에서 삭제
+            upfiles.splice(i, 1);
+            console.log(upfiles);
+            // 화면에서 삭제
+          }
+        }
+        $(obj).parent().parent().remove();
+      }
+
       $(function () {
+        // 업로드 파일 영역에 drag&drop과 관련된 이벤트(파일이 웹 브라우저에 드래그 드랍되었을 때 그 파일을 웹브라우저가 실행시킴)을 방지 해야 한다.
+        $(".fileUploadArea").on("dragenter dragover", function (evt) {
+          evt.preventDefault();
+        });
+
+        $(".fileUploadArea").on("drop", function (evt) {
+          evt.preventDefault();
+          console.log(evt.originalEvent.dataTransfer.files);
+          for (let file of evt.originalEvent.dataTransfer.files) {
+            upfiles.push(file);
+            // 이미지 파일이면 미리보기
+            showPreview(file);
+          }
+        });
+
         $(".modalClose").click(function () {
           $("#myModal").hide();
         });
@@ -62,6 +106,8 @@ pageEncoding="UTF-8"%>
             name="content"
           ></textarea>
         </div>
+
+        <div class="preview"></div>
 
         <div class="fileUploadArea">
           <p>업로드 파일 여기 드래그 드랍</p>
