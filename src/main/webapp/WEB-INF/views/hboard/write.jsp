@@ -23,15 +23,26 @@ pageEncoding="UTF-8"%>
 
       // 넘겨준 file이 이미지 파일이면 미리보기 하여 출력
       function showPreview(file) {
-        let imageType = ["image/png", "image/jpeg", "image/gif"];
-        let fileType = file.type.toLowerCase();
-        if (imageType.indexOf(fileType) != -1) {
-          alert("이미지 파일이다!");
+        // let fileType = file.type.toLowerCase();
+        let fileTypeSpl = file.type.toLowerCase().split("/");
+        if (fileTypeSpl[0] == "image") {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(file); // 파일을 읽음
+          fileReader.onload = function () {
+            // 파일을 모두 읽으면
+            let imageBase64data = fileReader.result; // base64로 인코딩된 파일
+            outputPreview(imageBase64data, file);
+          };
         } else {
-          let output = `<div><img src='/resources/images/noimage.png' /><span>\${file.name}</span>`;
-          output += `<span><img src='/resources/images/remove.png' onclick='remFile(this);'/></span></div>`;
-          $(".preview").append(output);
+          let image = "'/resources/images/noimage.png'";
+          outputPreview(image, file);
         }
+      }
+
+      function outputPreview(image, file) {
+        let output = `<div><img  src=\${image} width='60px' /><span>\${file.name}</span>`;
+        output += `<span><img src='/resources/images/remove.png' onclick='remFile(this);'/></span></div>`;
+        $(".preview").append(output);
       }
 
       // 업로드된 파일을 삭제하는 함수
@@ -59,9 +70,14 @@ pageEncoding="UTF-8"%>
           evt.preventDefault();
           console.log(evt.originalEvent.dataTransfer.files);
           for (let file of evt.originalEvent.dataTransfer.files) {
-            upfiles.push(file);
-            // 이미지 파일이면 미리보기
-            showPreview(file);
+            if (file.size > 10485760) {
+              $(".modal-body").html("파일 사이즈가 너무 큽니다!");
+              $("#myModal").show(500);
+            } else {
+              upfiles.push(file);
+              // 이미지 파일이면 미리보기
+              showPreview(file);
+            }
           }
         });
 
