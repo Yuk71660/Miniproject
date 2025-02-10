@@ -26,6 +26,15 @@ pageEncoding="UTF-8"%>
         });
       });
     </script>
+    <style>
+      .fileUploadArea {
+        width: 100%;
+        height: 300px;
+        background-color: lightgray;
+        text-align: center;
+        line-height: 300px;
+      }
+    </style>
   </head>
   <body>
     <jsp:include page="./../header.jsp"></jsp:include>
@@ -53,6 +62,11 @@ pageEncoding="UTF-8"%>
             name="content"
           ></textarea>
         </div>
+
+        <div class="fileUploadArea">
+          <p>업로드 파일 여기 드래그 드랍</p>
+        </div>
+        <br />
 
         <button
           type="button"
