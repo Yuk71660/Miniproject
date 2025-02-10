@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
@@ -64,5 +66,14 @@ public class HBoardController {
 		}
 		return returnPage;
 	}
+	
+	// MultipartFile : front에서 전송된 이진 데이터 파일을 저장하는 객체
+		@PostMapping("/upfiles")
+		public void saveUploadFile(@RequestParam("file") MultipartFile file) {
+			logger.info("업로드된 파일의 이름 : " + file.getOriginalFilename());
+			logger.info("업로드된 파일의 타입 : " + file.getContentType());
+			logger.info("업로드된 파일의 사이즈 : " + file.getSize());
+			
+		}
 
 }
