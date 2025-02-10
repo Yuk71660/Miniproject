@@ -9,16 +9,51 @@ pageEncoding="UTF-8"%>
     <script>
       let upfiles = new Array();
 
-      function isValid() {
-        let result = false;
-        let title = $("#title").val();
-        if (title.length < 1 || title == null) {
-          $(".modal-body").html("제목은 비어있으면 안됩니다!");
-          $("#myModal").show(500);
-        } else {
-          result = true;
-        }
-        return result;
+      $(function () {
+        // 업로드 파일 영역에 drag&drop과 관련된 이벤트(파일이 웹 브라우저에 드래그 드랍되었을 때 그 파일을 웹브라우저가 실행시킴)을 방지 해야 한다.
+        $(".fileUploadArea").on("dragenter dragover", function (evt) {
+          evt.preventDefault();
+        });
+
+        $(".fileUploadArea").on("drop", function (evt) {
+          evt.preventDefault();
+          console.log(evt.originalEvent.dataTransfer.files);
+          for (let file of evt.originalEvent.dataTransfer.files) {
+            if (file.size > 10485760) {
+              $(".modal-body").html("파일 사이즈가 너무 큽니다!");
+              $("#myModal").show(500);
+            } else {
+              upfiles.push(file);
+              fileUpload(file);
+              // 이미지 파일이면 미리보기
+              showPreview(file);
+            }
+          }
+        });
+
+        $(".modalClose").click(function () {
+          $("#myModal").hide();
+        });
+      });
+
+      // 실제 파일을 업로드 하는 함수
+      function fileUpload(file) {
+        const fd = new FormData(); // FormData : form태그와 같은 역활을 하는 자바스크립트 객체
+        fd.append("file", file);
+
+        $.ajax({
+          url: "/hboard/upfiles",
+          type: "post", // 이진 데이터를 보낼 때는 post
+          dataType: "json", // 수신받을 데이터 타입
+          data: fd, // 송신할 데이터
+          // processData : false -> 데이터를 쿼리스트링 형태로 보내지 않는다
+          // contentType : false -> 인코딩 방식을 "application/x-www-form-urlencoded(default)"로 하지 않는다.
+          processData: false,
+          contentType: false, // 인코딩 방식을 "multipart/form-data"로 한다.
+          success: function (data) {
+            console.log(data);
+          },
+        });
       }
 
       // 넘겨준 file이 이미지 파일이면 미리보기 하여 출력
@@ -60,31 +95,17 @@ pageEncoding="UTF-8"%>
         $(obj).parent().parent().remove();
       }
 
-      $(function () {
-        // 업로드 파일 영역에 drag&drop과 관련된 이벤트(파일이 웹 브라우저에 드래그 드랍되었을 때 그 파일을 웹브라우저가 실행시킴)을 방지 해야 한다.
-        $(".fileUploadArea").on("dragenter dragover", function (evt) {
-          evt.preventDefault();
-        });
-
-        $(".fileUploadArea").on("drop", function (evt) {
-          evt.preventDefault();
-          console.log(evt.originalEvent.dataTransfer.files);
-          for (let file of evt.originalEvent.dataTransfer.files) {
-            if (file.size > 10485760) {
-              $(".modal-body").html("파일 사이즈가 너무 큽니다!");
-              $("#myModal").show(500);
-            } else {
-              upfiles.push(file);
-              // 이미지 파일이면 미리보기
-              showPreview(file);
-            }
-          }
-        });
-
-        $(".modalClose").click(function () {
-          $("#myModal").hide();
-        });
-      });
+      function isValid() {
+        let result = false;
+        let title = $("#title").val();
+        if (title.length < 1 || title == null) {
+          $(".modal-body").html("제목은 비어있으면 안됩니다!");
+          $("#myModal").show(500);
+        } else {
+          result = true;
+        }
+        return result;
+      }
     </script>
     <style>
       .fileUploadArea {
