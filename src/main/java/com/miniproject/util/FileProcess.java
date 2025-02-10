@@ -26,6 +26,7 @@ import com.miniproject.model.BoardUpFilesVODTO;
 public class FileProcess {
 
 	private String realPath;
+	private String saveFilePath;
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -41,15 +42,25 @@ public class FileProcess {
 	public BoardUpFilesVODTO saveFileToRealPath(MultipartFile file, HttpServletRequest request) {
 		BoardUpFilesVODTO result = null;
 
+		String originalFileName = file.getOriginalFilename();
+		String fileType = file.getContentType();
+		String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+		long size = file.getSize();
+
 		this.realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
 		logger.info("파일이 저장될 웹 서버의 실제 경로 : " + this.realPath);
 
 		String[] ymd = makeCalendarPath();
 		makeDirectory(ymd);
-		
+		this.saveFilePath = realPath + ymd[ymd.length - 1]; // realPath + "\2025\02\10\"
+
+		if (size > 0) {
+
+		}
+
 		return null;
 	}
-	
+
 	/**
 	 * @author Administrator
 	 * @data 2025. 2. 10.
@@ -69,25 +80,25 @@ public class FileProcess {
 			}
 		}
 	}
-	
+
 	/**
 	 * @author Administrator
 	 * @data 2025. 2. 10.
 	 * @enclosing_method makeCalendarPath
 	 * @todo 현재 년월일을 얻어와 realPath하위에 "년/월/일" 폴더로 만들기 위해 디렉토리 구조를 먼저 만듦
-	 * @param 
+	 * @param
 	 * @returnType void
 	 */
 	private String[] makeCalendarPath() {
 		Calendar cal = Calendar.getInstance();
-		String year = File.separator + cal.get(Calendar.YEAR) + "";  // "\2025"
+		String year = File.separator + cal.get(Calendar.YEAR) + ""; // "\2025"
 		String month = year + File.separator + new DecimalFormat("00").format(cal.get(Calendar.MONTH) + 1); // "\2025\02"
 		String date = month + File.separator + new DecimalFormat("00").format(cal.get(Calendar.DATE)); // "\2025\02\10"
-		
+
 		logger.info("파일이 저장될 현재 날짜 기반의 폴더 : " + year + ", " + month + ", " + date);
-		String[] ymd = { year, month, date};
+		String[] ymd = { year, month, date };
 		return ymd;
-		
+
 	}
 
 }

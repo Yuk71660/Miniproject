@@ -2,9 +2,10 @@ package com.miniproject.controller.board;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,16 +20,22 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.service.board.HBoardService;
+import com.miniproject.util.FileProcess;
+
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/hboard")
 @ControllerAdvice
+@RequiredArgsConstructor
 public class HBoardController {
 
 	private static Logger logger = LoggerFactory.getLogger(HBoardController.class);
+	
+	private final HBoardService service;
+	
+	private final FileProcess fp;
 
-	@Autowired
-	private HBoardService service;
 
 	@GetMapping("/listAll")
 	@ExceptionHandler(Exception.class)
@@ -69,11 +76,12 @@ public class HBoardController {
 	
 	// MultipartFile : front에서 전송된 이진 데이터 파일을 저장하는 객체
 		@PostMapping("/upfiles")
-		public void saveUploadFile(@RequestParam("file") MultipartFile file) {
+		public void saveUploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 			logger.info("업로드된 파일의 이름 : " + file.getOriginalFilename());
 			logger.info("업로드된 파일의 타입 : " + file.getContentType());
 			logger.info("업로드된 파일의 사이즈 : " + file.getSize());
 			
+			fp.saveFileToRealPath(file, request);
 		}
 
 }

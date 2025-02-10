@@ -19,8 +19,9 @@ public class BoardUpFilesVODTO {
 	private String originalFileName;
 	private String newFileName;
 	private String thumbFileName;
+	private String fileType;
 	private String ext;
-	private int size;
+	private long size;
 	private String base64Image;
 	private int boardNo;
 
