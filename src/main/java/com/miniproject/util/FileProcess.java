@@ -86,7 +86,6 @@ public class FileProcess {
             base64Image = makeBase64Encoding(thumbFileName);
 //            logger.info("base64 문자열" + base64Image);
             // 과제(?) : base64 문자열로 디코딩하여 파일로 저장해보기
-            System.out.println(base64Image);
             
          }
          
@@ -118,7 +117,6 @@ public class FileProcess {
     * @returnType String : base64로 인코딩된 문자열
     */
    private String makeBase64Encoding(String thumbFileName) throws IOException {
-	   System.out.println(thumbFileName);
       // Base64인코딩 : 이진 데이터를 text로 만드는 인코딩의 한가지
       // 특징 : 별도 파일을 저장할 공간이 필요하지 않다.(장점), 실제 파일을 저장하는 것보다 더 크기가 클 수 있다(단점)
       // 특징 : 인코딩에 따른 부하가 있다.
