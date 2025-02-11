@@ -1,5 +1,6 @@
 package com.miniproject.controller.board;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +82,12 @@ public class HBoardController {
 			logger.info("업로드된 파일의 타입 : " + file.getContentType());
 			logger.info("업로드된 파일의 사이즈 : " + file.getSize());
 			
-			fp.saveFileToRealPath(file, request);
+			try {
+				fp.saveFileToRealPath(file, request);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 }
