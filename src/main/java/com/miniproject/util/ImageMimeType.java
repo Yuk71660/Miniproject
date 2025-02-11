@@ -21,7 +21,7 @@ public class ImageMimeType {
 	
 	// 확장자를 받아 확장자 문자열이 map에 있는지 없는지.. 있다면 image 
 	public static boolean isImage(String ext) {
-		return imageMimeType.containsKey(ext);
+		return imageMimeType.containsKey(ext.toLowerCase());
 	}
 	
 }
