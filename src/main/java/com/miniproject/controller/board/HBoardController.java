@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,12 +18,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.service.board.HBoardService;
 import com.miniproject.util.FileProcess;
 
@@ -79,22 +83,33 @@ public class HBoardController {
 	}
 	
 	// MultipartFile : front에서 전송된 이진 데이터 파일을 저장하는 객체
-	   @PostMapping("/upfiles")
-	   public void saveUploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+	   // ResponseEntity : 통신상태를 파악할 수 있는 HttpStatus(enum)값과 내가 전송할 객체를 함께 응답할 수 있는 객체
+	   @RequestMapping(value="/upfiles", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+	   public ResponseEntity<MyResponseWithoutData> saveUploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 	      logger.info("업로드된 파일의 이름 : " + file.getOriginalFilename());
 	      logger.info("업로드된 파일의 타입 : " + file.getContentType());
 	      logger.info("업로드된 파일의 사이즈 : " + file.getSize());
+	      
+	      ResponseEntity<MyResponseWithoutData> result = null;
 	      
 	      // file을 웹 서버의 하드디스크에 저장
 	      try {
 	         BoardUpFilesVODTO upFile =  fp.saveFileToRealPath(file, request);
 	         this.fileList.add(upFile);   
+	         
+	         result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
+	         
 	      } catch (IOException e) {
 	         // TODO Auto-generated catch block
 	         e.printStackTrace();
+	         
+	         result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.failureResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
 	      }
 	      
 	      outputFileList();
+	      
+	      
+	      return result;
 	      
 	   }
 
