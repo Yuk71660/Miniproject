@@ -23,6 +23,7 @@
 	<tx:annotation-driven/>
 
 	<!-- DB와 연결하는 데이터소스 얻어오기
+ 	-->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
@@ -34,8 +35,7 @@
 		<property name="username" value="root"></property>
 		<property name="password" value="1234"></property>
 	</bean>
- 	-->
- 	<!-- log4jdbc를 통해 넘어오면서 추적하도록 -->
+ 	<!-- log4jdbc를 통해 넘어오면서 추적하도록
  	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
@@ -46,7 +46,7 @@
 		</property>
 		<property name="username" value="root"></property>
 		<property name="password" value="1234"></property>
-	</bean>
+	</bean> -->
  	
 	<!-- SQLSessionFactory 객체 설정 -->
 	<bean id="sqlSessionFactory"
