@@ -43,7 +43,15 @@ public class FileProcess {
 
    }
 
-   public void removeFile(BoardUpFilesVODTO removeFile) {
+   /**
+ * @author Administrator
+ * @data 2025. 2. 12.
+ * @enclosing_method removeFile
+ * @todo 업로드된 파일 객체를 받아 웹 서버에서 삭제
+ * @param BoardUpFilesVODTO removeFile
+ * @returnType void
+ */
+public void removeFile(BoardUpFilesVODTO removeFile) {
       String tmpNewFileName = null;
       String tmpThubFileName = null;
 

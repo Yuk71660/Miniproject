@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 
@@ -41,6 +42,12 @@ public class HBoardDAOImpl implements HBoardDAO {
 		// TODO Auto-generated method stub
 		ses.insert(NS+".saveHBoard", newBoard);
 		return newBoard.getBoardNo();
+	}
+
+	@Override
+	public int insertHBoardUpfile(BoardUpFilesVODTO upFile) throws Exception {
+		
+		return ses.insert(NS + ".saveUpFile", upFile);
 	}
 
 }

@@ -12,4 +12,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="saveHBoard" useGeneratedKeys="true" keyProperty="boardNo">
 		INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES (#{title}, #{content}, #{writer})
 	</insert>
+	
+	<insert id="saveUpFile">
+		INSERT INTO boardupfiles (`originalFileName`, `newFileName`, `thumbFileName`, `fileType`, `ext`, `size`, `base64Image`, `boardNo`)
+		VALUES (#{originalFileName}, #{newFileName}, #{thumbFileName}, #{fileType}, #{ext}, #{size}, #{base64Image}, #{boardNo})
+	</insert>
 </mapper>

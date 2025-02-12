@@ -1,5 +1,6 @@
 package com.miniproject.service.board;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miniproject.dao.board.HBoardDAO;
 import com.miniproject.dao.member.MemberDAO;
 import com.miniproject.dao.pointlog.PointLogDAO;
+import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PointLogDTO;
@@ -51,11 +53,19 @@ public class HBoardServiceImpl implements HBoardService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
-	public boolean saveBoard(HBoardDTO newBoard) throws Exception {
+	public boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception {
 		boolean result = false;
 		// 게시글을 저장하는 트랜잭션
 		// 트랜잭션의 기본 원칙 : All commit or Nothing => 전부 성공할 때 all commit, 하나라도 실패하면 rollback
 		if (hdao.insertHBoard(newBoard) == 1) { // hBoard테이블에 insert 
+			
+			if (fileList.size() > 0) {
+				int newBoardNo = newBoard.getBoardNo();
+				for (BoardUpFilesVODTO file : fileList) {
+					file.setBoardNo(newBoardNo);
+					hdao.insertHBoardUpfile(file);
+				}
+			}
 			
 			// 글 작성자에게 포인트 지급 (pointlog테이블 insert)
 			PointLogDTO dto = PointLogDTO.builder()
