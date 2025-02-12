@@ -26,7 +26,7 @@ import com.miniproject.model.BoardUpFilesVODTO;
  * @date 2025. 2. 10.
  * @packagename com.miniproject.util
  * @typeName FileProcess
- * @todo 업로드된 파일을 웹 서버의 특정 경로에 저장
+ * @todo 업로드된 파일을 웹 서버의 특정 경로에 저장, 업로드 된 파일의 삭제
  * 
  */
 @Component // 스프링의 빈으로 등록 되도록 하는 어노테이션
@@ -34,8 +34,39 @@ public class FileProcess {
 
    private String realPath;
    private String saveFilePath;
+   private String os;
 
    private Logger logger = LoggerFactory.getLogger(getClass());
+
+   public FileProcess() {
+      this.os = System.getProperty("os.name").toLowerCase();
+
+   }
+
+   public void removeFile(BoardUpFilesVODTO removeFile) {
+      String tmpNewFileName = null;
+      String tmpThubFileName = null;
+
+      // 현재 시스템의 os가 windows냐 linux냐에 따라...
+      if (this.os.contains("windows")) {
+         tmpNewFileName = removeFile.getNewFileName().replace("/", "\\");
+         tmpThubFileName = removeFile.getThumbFileName().replace("/", "\\");
+      } else if (this.os.contains("linux")) {
+         tmpNewFileName = removeFile.getNewFileName();
+         tmpThubFileName = removeFile.getThumbFileName();
+      }
+      
+      // 이미지파일 -> newFileName 경로의 파일 삭제 + thumbFileName 경로의 파일삭제
+
+      File tmp = new File(this.realPath + tmpNewFileName);
+      tmp.delete();
+
+      if (ImageMimeType.isImage(removeFile.getExt())) {
+         File tmpThumb = new File(this.realPath + tmpThubFileName);
+         tmpThumb.delete();
+
+      }
+   }
 
    /**
     * @author Administrator
@@ -44,7 +75,7 @@ public class FileProcess {
     * @todo : 업로드된 파일을 실제 물리경로(realPath)에 저장
     * @param : MultipartFile file - 유저가 업로드 한 파일
     * @param : HttpServletRequest request
-    * @throws IOException 
+    * @throws IOException
     * @returnType BoardUpFilesVODTO
     */
    public BoardUpFilesVODTO saveFileToRealPath(MultipartFile file, HttpServletRequest request) throws IOException {
@@ -56,9 +87,9 @@ public class FileProcess {
       long size = file.getSize();
       String thumbFileName = null;
       String base64Image = null;
-      
+
 //      System.out.println(Arrays.toString(file.getBytes()));
-      
+
       String newFileName = null;
 
       this.realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
@@ -71,37 +102,31 @@ public class FileProcess {
       if (size > 0) {
 
          newFileName = renameUniqueFileName(originalFileName); // UUID를 이용해 중복되지 않을 값으로 처리
-         
+
          File saveFile = new File(saveFilePath + File.separator + newFileName);
-         
-         FileUtils.writeByteArrayToFile(saveFile, file.getBytes());  // 실제 파일 저장
-         
+
+         FileUtils.writeByteArrayToFile(saveFile, file.getBytes()); // 실제 파일 저장
+
          // 이미지 파일이냐?
-         if(ImageMimeType.isImage(ext)) {
+         if (ImageMimeType.isImage(ext)) {
             // -> 썸네일 이미지를 만들어 저장
             thumbFileName = makeThumbnailImage(newFileName);
 //            logger.info("썸네일 이미지 파일 이름 : " + thumbFileName);
-            
+
             // base64문자열 만들어 저장
             base64Image = makeBase64Encoding(thumbFileName);
 //            logger.info("base64 문자열" + base64Image);
             // 과제(?) : base64 문자열로 디코딩하여 파일로 저장해보기
-            
+
          }
-         
-         result = BoardUpFilesVODTO.builder()
-               .originalFileName(originalFileName)
+
+         result = BoardUpFilesVODTO.builder().originalFileName(originalFileName)
                .newFileName(ymd[ymd.length - 1].replace("\\", "/") + "/" + newFileName)
-               .thumbFileName(ymd[ymd.length - 1].replace("\\", "/") + "/" + thumbFileName)
-               .fileType(fileType)
-               .ext(ext)
-               .size(size)
-               .base64Image(base64Image)
-               .build();
-         
-         
+               .thumbFileName(ymd[ymd.length - 1].replace("\\", "/") + "/" + thumbFileName).fileType(fileType)
+               .ext(ext).size(size).base64Image(base64Image).build();
+
          logger.info("업로드 된 파일의 정보 : " + result);
-         
+
       }
 
       return result;
@@ -112,19 +137,20 @@ public class FileProcess {
     * @data 2025. 2. 11.
     * @enclosing_method makeBase64Encoding
     * @todo 주어진 썸네일 이미지 파일을 대상으로 Base64인코딩 문자열을 만들어 반환
-    * @param 
-    * @throws IOException 
+    * @param
+    * @throws IOException
     * @returnType String : base64로 인코딩된 문자열
     */
    private String makeBase64Encoding(String thumbFileName) throws IOException {
       // Base64인코딩 : 이진 데이터를 text로 만드는 인코딩의 한가지
       // 특징 : 별도 파일을 저장할 공간이 필요하지 않다.(장점), 실제 파일을 저장하는 것보다 더 크기가 클 수 있다(단점)
       // 특징 : 인코딩에 따른 부하가 있다.
-      
+
       String result = null;
       File thumb = new File(this.saveFilePath + File.separator + thumbFileName);
-      
+
       byte[] thumbFile = FileUtils.readFileToByteArray(thumb);
+
       return Base64.getEncoder().encodeToString(thumbFile);
    }
 
@@ -133,25 +159,24 @@ public class FileProcess {
     * @data 2025. 2. 11.
     * @enclosing_method makeThumbnailImage
     * @todo imgscalr라이브러리를 이용해 newFileName의 이미지를 읽어와, 사이즈를 줄이고 새로운 파일이름으로 저장
-    * @param 
-    * @throws IOException 
+    * @param
+    * @throws IOException
     * @returnType thumbNailImageFileName : 저장된 썸네일 파일 이름
     */
    private String makeThumbnailImage(String newFileName) throws IOException {
       System.out.println(newFileName);
       BufferedImage originalImage = ImageIO.read(new File(this.saveFilePath + File.separator + newFileName));
       BufferedImage thumbnail = Scalr.resize(originalImage, Mode.FIT_TO_WIDTH, 50);
-      
+
       String thumbNailImageFileName = "thumb_" + newFileName; // 새롭게 저장될 썸네일 이미지 파일이름
-      
+
       File saveThumbImg = new File(this.saveFilePath + File.separator + thumbNailImageFileName);
       String ext = newFileName.substring(newFileName.lastIndexOf(".") + 1);
-      
+
       ImageIO.write(thumbnail, ext, saveThumbImg); // 파일저장
-      
+
       return thumbNailImageFileName;
-      
-      
+
    }
 
    /**
@@ -166,7 +191,7 @@ public class FileProcess {
       UUID uuid = UUID.randomUUID();
       String uniqueFileName = uuid.toString() + "_" + originalFileName;
       logger.info("우주적으로 유니크한 새 파일 이름 : " + uniqueFileName);
-      
+
       return uuid.toString() + "_" + originalFileName;
    }
 
