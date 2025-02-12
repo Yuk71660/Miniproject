@@ -28,10 +28,19 @@ public class HBoardDAOImpl implements HBoardDAO {
 		return ses.selectList(NS + ".getEntireHBoard");
 	}
 
+	/**
+	 * @author Administrator
+	 * @data 2025. 2. 12.
+	 * @enclosing_method insertHBoard
+	 * @todo 새로운 게시글 insert
+	 * @param
+	 * @returnType pk값을 반환 
+	 */
 	@Override
 	public int insertHBoard(HBoardDTO newBoard) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.insert(NS+".saveHBoard", newBoard);
+		ses.insert(NS+".saveHBoard", newBoard);
+		return newBoard.getBoardNo();
 	}
 
 }
