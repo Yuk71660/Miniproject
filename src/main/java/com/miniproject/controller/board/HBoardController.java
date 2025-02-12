@@ -174,6 +174,11 @@ public class HBoardController {
       result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
       return result;
    }
+   
+   @GetMapping(value = "/viewBoard")
+   public void viewBoard(@RequestParam("boardNo") int boardNo) {
+	   System.out.println("조회" + boardNo);
+   }
 
    private void outputFileList() {
       System.out.println("====================================================================================");

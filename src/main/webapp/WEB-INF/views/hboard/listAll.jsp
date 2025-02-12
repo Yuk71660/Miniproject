@@ -65,7 +65,7 @@ prefix="c"%>
         </thead>
         <tbody>
           <c:forEach var="board" items="${hboardList }">
-            <tr>
+            <tr onclick="location.href='./viewBoard?boardNo=${board.boardNo }';">
               <td>${board.boardNo }</td>
               <td>${board.title }</td>
               <td>${board.writer }</td>
