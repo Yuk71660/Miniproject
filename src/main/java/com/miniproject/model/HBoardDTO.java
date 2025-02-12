@@ -15,6 +15,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class HBoardDTO {
+	private int boardNo;
    private String title;
    private String content;
    private String writer;
