@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		SELECT * FROM hboard order by boardNo desc
 	</select>
 	
-	<insert id="saveHBoard">
-		INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES (#{title}, #{content}, #{writer});
+	<insert id="saveHBoard" useGeneratedKeys="true" keyProperty="boardNo">
+		INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES (#{title}, #{content}, #{writer})
 	</insert>
 </mapper>
