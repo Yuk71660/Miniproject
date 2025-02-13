@@ -154,7 +154,6 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
       // 특징 : 별도 파일을 저장할 공간이 필요하지 않다.(장점), 실제 파일을 저장하는 것보다 더 크기가 클 수 있다(단점)
       // 특징 : 인코딩에 따른 부하가 있다.
 
-      String result = null;
       File thumb = new File(this.saveFilePath + File.separator + thumbFileName);
 
       byte[] thumbFile = FileUtils.readFileToByteArray(thumb);

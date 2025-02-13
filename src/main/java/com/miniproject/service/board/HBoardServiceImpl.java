@@ -1,11 +1,9 @@
 package com.miniproject.service.board;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -79,18 +77,14 @@ public class HBoardServiceImpl implements HBoardService {
 					result = true;
 				}
 			}
-			
 		}
 		return result;
 	}
 
 	@Override
 	public BoardDetailInfo getBoardDetailInfo(int boardNo) throws Exception {
-		// TODO Auto-generated method stub
 		BoardDetailInfo db = hdao.selectBoardDetailInfo(boardNo);
 		return db;
 	}
 	
-	
-
 }
