@@ -111,7 +111,7 @@ ADD CONSTRAINT `boardupFiles_boardNo_fk`
   ON UPDATE NO ACTION;
 ALTER TABLE `webmoonya`.`boardupfiles` 
 ADD COLUMN `thumbFileName` VARCHAR(100) NULL AFTER `newFileName`,
-CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
+CHANGE COLUMN `ext` `ext` VARCHAR(50) NULL DEFAULT NULL ;
 
 INSERT INTO boardupfiles (`originalFileName`, `newFileName`, `thumbFileName`, `fileType`, `ext`, `size`, `base64Image`, `boardNo`)
 VALUES ('2', '3', '4', '5', '6', '7', '8', '9');
