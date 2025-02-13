@@ -17,4 +17,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO boardupfiles (`originalFileName`, `newFileName`, `thumbFileName`, `fileType`, `ext`, `size`, `base64Image`, `boardNo`)
 		VALUES (#{originalFileName}, #{newFileName}, #{thumbFileName}, #{fileType}, #{ext}, #{size}, #{base64Image}, #{boardNo})
 	</insert>
+	<!--  resultType="com.miniproject.model.BoardDetailInfo" -->
+	<select id="getBoardDetailInfoByBoardNo" resultMap="boardDetailInfoMap">
+		SELECT
+		 h.*, f.*,
+		 m.userId, m.userName, m.email, m.userImg
+		FROM hboard h left outer join boardupfiles f 
+		on h.boardNo = f.boardNo inner join member m on h.writer = m.userId 
+		where (h.boardNo = #{boardNo});
+	</select>
+	
+	<resultMap type="com.miniproject.model.BoardDetailInfo" id="boardDetailInfoMap">
+		<result column="boardNo" property="boardNo" javaType="int" />
+		<result column="title" property="title" javaType="String" />
+		<result column="content" property="content" javaType="String" />
+		<result column="writer" property="writer" javaType="String" />
+		<result column="postDate" property="postDate" javaType="java.sql.Timestamp" />
+		<result column="readCount" property="readCount" javaType="int" />
+		<result column="ref" property="ref" javaType="int" />
+		<result column="step" property="step" javaType="int" />
+		<result column="refOrder" property="refOrder" javaType="int" />
+		
+		<collection property="fileList" ofType="com.miniproject.model.BoardUpFilesVODTO" javaType="java.util.ArrayList">
+			<result column="boardUpfileNo" property="boardUpfileNo" javaType="int" />
+			<result column="originalFileName" property="originalFileName" javaType="String" />
+			<result column="newFileName" property="newFileName" javaType="String" />
+			<result column="thumbFileName" property="thumbFileName" javaType="String" />
+			<result column="fileType" property="fileType" javaType="String" />
+			<result column="ext" property="ext" javaType="String" />
+			<result column="size" property="size" javaType="long" />
+			<result column="base64Image" property="base64Image" javaType="String" />
+			<result column="boardNo" property="boardNo" javaType="int" />
+		</collection>
+		
+		<result column="userId" property="userId" javaType="String" />
+		<result column="userName" property="userName" javaType="String" />
+		<result column="email" property="email" javaType="String" />
+		<result column="userImg" property="userImg" javaType="String" />
+	</resultMap>
 </mapper>
