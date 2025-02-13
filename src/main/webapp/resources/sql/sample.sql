@@ -146,3 +146,11 @@ FROM `webmoonya`.`boardreadlog`
 WHERE `readWho` = '127'
   AND `readboardNo` = 1 
   AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff;
+  
+select timestampdiff(hour,  (select readWhen
+from boardreadlog
+where readWho = '127' and readBoardNo = 1), now()) as timediff;
+
+update hboard
+set readCount = readCount + 1
+where boardNo = ?;

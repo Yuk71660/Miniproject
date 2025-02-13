@@ -1,6 +1,8 @@
 package com.miniproject.dao.board;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -57,6 +59,15 @@ public class HBoardDAOImpl implements HBoardDAO {
 	public BoardDetailInfo selectBoardDetailInfo(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
 		return ses.selectOne(NS+".getBoardDetailInfoByBoardNo", boardNo);
+	}
+
+	@Override
+	public int checkHourReadLogByBoardNo(String readWho, int boardNo) throws Exception {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("readWho", readWho);
+		paramMap.put("boardNo", boardNo);
+		
+		return ses.selectOne(NS + ".checkHourReadLogByBoardNo", paramMap);
 	}
 
 }

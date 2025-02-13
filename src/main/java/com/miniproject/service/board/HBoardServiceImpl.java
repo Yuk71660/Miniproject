@@ -83,9 +83,21 @@ public class HBoardServiceImpl implements HBoardService {
 	}
 
 	@Override
-	public BoardDetailInfo getBoardDetailInfo(int boardNo) throws Exception {
-		BoardDetailInfo db = hdao.selectBoardDetailInfo(boardNo);
-		return db;
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = true)
+	public BoardDetailInfo getBoardDetailInfo(int boardNo, String ipAddr) throws Exception {
+		
+		int timediff = hdao.checkHourReadLogByBoardNo(ipAddr, boardNo);
+		logger.info("조회 시간 차 : " + timediff);
+		if (timediff == -1) {  // 이전 조회기록이 없거나, 24시간 이상 지났을 경우
+			// 조회수 증가
+			// 조회 기록 insert
+			
+		} 
+		
+		BoardDetailInfo bi = hdao.selectBoardDetailInfo(boardNo);
+		System.out.println(bi.toString());
+		
+		return bi;
 	}
 	
 }
