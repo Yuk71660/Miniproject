@@ -126,3 +126,23 @@ SELECT
 		FROM hboard h left outer join boardupfiles f 
 		on h.boardNo = f.boardNo inner join member m on h.writer = m.userId 
 		where (h.boardNo = 13);
+        
+-- 조회수 증가용 읽은 기록 테이블 작성
+CREATE TABLE `webmoonya`.`boardreadlog` (
+  `boardReadNo` INT NOT NULL AUTO_INCREMENT,
+  `readWho` VARCHAR(50) NULL,
+  `readWhen` DATETIME NULL DEFAULT now(),
+  `readboardNo` INT NULL,
+  PRIMARY KEY (`boardReadNo`),
+  INDEX `readlog_boardNo_fk_idx` (`readboardNo` ASC) VISIBLE,
+  CONSTRAINT `readlog_boardNo_fk`
+    FOREIGN KEY (`readboardNo`)
+    REFERENCES `webmoonya`.`hboard` (`boardNo`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+    
+select ifnull( (SELECT`readboardNo` 
+FROM `webmoonya`.`boardreadlog`
+WHERE `readWho` = '127'
+  AND `readboardNo` = 1 
+  AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff;
