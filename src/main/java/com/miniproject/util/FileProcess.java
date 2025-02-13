@@ -210,25 +210,25 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
     * @param
     * @returnType String
     */
-   private String renameFileName(String originalFileName, String ext) {
-      String tmpNewFileName = originalFileName;
-      int cnt = 1;
-      while (checkFileExist(tmpNewFileName)) {
-
-         String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-         int startIndex = tmpNewFileName.indexOf("(");
-         if (startIndex != -1) {
-            String preStartIndex = tmpNewFileName.substring(0, startIndex);
-            tmpNewFileName = preStartIndex + "(" + cnt + ")" + "." + ext;
-         } else {
-            tmpNewFileName = fileNameWithoutExt + "(" + cnt + ")" + "." + ext;
-         }
-         cnt++;
-      }
-
-      logger.info("새로운 파일 이름 : " + tmpNewFileName);
-      return tmpNewFileName;
-   }
+//   private String renameFileName(String originalFileName, String ext) {
+//      String tmpNewFileName = originalFileName;
+//      int cnt = 1;
+//      while (checkFileExist(tmpNewFileName)) {
+//
+//         String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+//         int startIndex = tmpNewFileName.indexOf("(");
+//         if (startIndex != -1) {
+//            String preStartIndex = tmpNewFileName.substring(0, startIndex);
+//            tmpNewFileName = preStartIndex + "(" + cnt + ")" + "." + ext;
+//         } else {
+//            tmpNewFileName = fileNameWithoutExt + "(" + cnt + ")" + "." + ext;
+//         }
+//         cnt++;
+//      }
+//
+//      logger.info("새로운 파일 이름 : " + tmpNewFileName);
+//      return tmpNewFileName;
+//   }
 
    /**
     * @author Administrator
