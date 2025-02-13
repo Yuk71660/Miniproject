@@ -119,3 +119,10 @@ VALUES ('2', '3', '4', '5', '6', '7', '8', '9');
 SELECT * FROM hboard where (`boardNo` = 11);
 
 select * from member where userid = (select writer from hboard where boardNo = 15);
+
+SELECT
+		 h.*, f.*,
+		 m.userId, m.userName, m.email, m.userImg
+		FROM hboard h left outer join boardupfiles f 
+		on h.boardNo = f.boardNo inner join member m on h.writer = m.userId 
+		where (h.boardNo = 13);
