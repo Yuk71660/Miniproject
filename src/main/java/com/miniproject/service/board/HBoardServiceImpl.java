@@ -55,6 +55,7 @@ public class HBoardServiceImpl implements HBoardService {
 	public boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception {
 		boolean result = false;
 		// 게시글을 저장하는 트랜잭션
+		newBoard.setContent(newBoard.getContent().replace("\n", "<br />").replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"));
 		// 트랜잭션의 기본 원칙 : All commit or Nothing => 전부 성공할 때 all commit, 하나라도 실패하면 rollback
 		if (hdao.insertHBoard(newBoard) > 0) { // hBoard테이블에 insert 
 			if (fileList.size() > 0) {
