@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
@@ -176,15 +178,18 @@ public class HBoardController {
    }
    
    @GetMapping(value = "/viewBoard")
-   public void viewBoard(@RequestParam("boardNo") int boardNo) {
+   public String viewBoard(@RequestParam("boardNo") int boardNo, Model model) {
 	   System.out.println("조회" + boardNo);
 	   
 	   try {
-		service.getBoardDetailInfo(boardNo);
+		BoardDetailInfo bi = service.getBoardDetailInfo(boardNo);
+		model.addAttribute("boardDetailInfo", bi);
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	   
+	   return "hboard/viewBoard";
    }
 
    private void outputFileList() {

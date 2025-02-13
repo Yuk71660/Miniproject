@@ -26,8 +26,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		on h.boardNo = f.boardNo inner join member m on h.writer = m.userId 
 		where (h.boardNo = #{boardNo});
 	</select>
-	
+	<!-- id*,result*,association*,collection* -->
 	<resultMap type="com.miniproject.model.BoardDetailInfo" id="boardDetailInfoMap">
+	
 		<result column="boardNo" property="boardNo" javaType="int" />
 		<result column="title" property="title" javaType="String" />
 		<result column="content" property="content" javaType="String" />
@@ -37,6 +38,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="ref" property="ref" javaType="int" />
 		<result column="step" property="step" javaType="int" />
 		<result column="refOrder" property="refOrder" javaType="int" />
+		
+		<result column="userId" property="userId" javaType="String" />
+		<result column="userName" property="userName" javaType="String" />
+		<result column="email" property="email" javaType="String" />
+		<result column="userImg" property="userImg" javaType="String" />
 		
 		<collection property="fileList" ofType="com.miniproject.model.BoardUpFilesVODTO" javaType="java.util.ArrayList">
 			<result column="boardUpfileNo" property="boardUpfileNo" javaType="int" />
@@ -49,10 +55,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<result column="base64Image" property="base64Image" javaType="String" />
 			<result column="boardNo" property="boardNo" javaType="int" />
 		</collection>
-		
-		<result column="userId" property="userId" javaType="String" />
-		<result column="userName" property="userName" javaType="String" />
-		<result column="email" property="email" javaType="String" />
-		<result column="userImg" property="userImg" javaType="String" />
 	</resultMap>
 </mapper>

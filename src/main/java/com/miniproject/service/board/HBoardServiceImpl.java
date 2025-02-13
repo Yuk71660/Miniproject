@@ -87,7 +87,8 @@ public class HBoardServiceImpl implements HBoardService {
 	@Override
 	public BoardDetailInfo getBoardDetailInfo(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		BoardDetailInfo db = hdao.selectBoardDetailInfo(boardNo);
+		return db;
 	}
 	
 	

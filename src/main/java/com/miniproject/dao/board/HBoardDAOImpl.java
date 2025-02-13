@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
@@ -50,6 +51,12 @@ public class HBoardDAOImpl implements HBoardDAO {
 		System.out.println(upFile.toString());
 		
 		return ses.insert(NS + ".saveUpFile", upFile);
+	}
+
+	@Override
+	public BoardDetailInfo selectBoardDetailInfo(int boardNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.selectOne(NS+".getBoardDetailInfoByBoardNo", boardNo);
 	}
 
 }
