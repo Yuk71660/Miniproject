@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.miniproject.dao.board.HBoardDAO;
 import com.miniproject.dao.member.MemberDAO;
 import com.miniproject.dao.pointlog.PointLogDAO;
+import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
@@ -82,5 +83,13 @@ public class HBoardServiceImpl implements HBoardService {
 		}
 		return result;
 	}
+
+	@Override
+	public BoardDetailInfo getBoardDetailInfo(int boardNo) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	
 
 }

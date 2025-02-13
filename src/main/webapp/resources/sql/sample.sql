@@ -1,5 +1,5 @@
 -- 스키마 사용
-use webmoonya;
+use webmoonya;-- 
 -- 회원 테이블 생성
 CREATE TABLE `member` (
   `userId` varchar(8) NOT NULL,
@@ -113,5 +113,9 @@ ALTER TABLE `webmoonya`.`boardupfiles`
 ADD COLUMN `thumbFileName` VARCHAR(100) NULL AFTER `newFileName`,
 CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
 
+INSERT INTO boardupfiles (`originalFileName`, `newFileName`, `thumbFileName`, `fileType`, `ext`, `size`, `base64Image`, `boardNo`)
+VALUES ('2', '3', '4', '5', '6', '7', '8', '9');
 
-  
+SELECT * FROM hboard where (`boardNo` = 11);
+
+select * from member where userid = (select writer from hboard where boardNo = 15);

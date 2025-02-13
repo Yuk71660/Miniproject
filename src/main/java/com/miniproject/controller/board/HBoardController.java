@@ -178,6 +178,13 @@ public class HBoardController {
    @GetMapping(value = "/viewBoard")
    public void viewBoard(@RequestParam("boardNo") int boardNo) {
 	   System.out.println("조회" + boardNo);
+	   
+	   try {
+		service.getBoardDetailInfo(boardNo);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
    }
 
    private void outputFileList() {
