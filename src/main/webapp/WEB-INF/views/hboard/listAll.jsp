@@ -40,7 +40,7 @@ prefix="c"%>
 
              let tmpTitle = $(e).prev().prev().html();
              if (diff < 2) {
-               let output = `<span><img src='/resources/images/new.png' /></span>\${tmpTitle}`;
+               let output = `\${tmpTitle}<span><img src='/resources/images/new.png' /></span>`;
                $(e).prev().prev().html(output);
              }
            });
@@ -67,7 +67,11 @@ prefix="c"%>
           <c:forEach var="board" items="${hboardList }">
             <tr onclick="location.href='./viewBoard?boardNo=${board.boardNo }';">
               <td>${board.boardNo }</td>
-              <td>${board.title }</td>
+              <td>
+              	<c:forEach var="i" begin="1" end="${board.step }" step="1">
+              		<img src="/resources/images/reply.png"  width="16px" />
+              	</c:forEach>
+              	${board.title }</td>
               <td>${board.writer }</td>
               <td class="postDate">${board.postDate }</td>
               <td>${board.readCount }</td>

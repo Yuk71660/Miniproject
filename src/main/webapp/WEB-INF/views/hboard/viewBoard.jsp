@@ -95,7 +95,7 @@
 
 		<div class="btns">
 			<button type="button" class="btn btn-primary"
-				onclick="location.href='/hboard/showReplyForm?boardNo=${boardDetailInfo.boardNo}&ref=${boardDetailInfo.ref}&step=${boardDetailInfo.step}&refOrder=${boardDetailInfo.refOrder }';">
+				onclick="location.href='/hboard/showReplyForm?boardNo=${boardDetailInfo.boardNo}&ref=${boardDetailInfo.ref}&step=${boardDetailInfo.step}&refOrder=${boardDetailInfo.refOrder}';">
 				답글달기</button>
 			<button type="button" class="btn btn-secondary">글 수정</button>
 			<button type="button" class="btn btn-success">글 삭제</button>
