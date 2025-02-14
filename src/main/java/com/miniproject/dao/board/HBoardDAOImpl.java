@@ -96,5 +96,14 @@ public class HBoardDAOImpl implements HBoardDAO {
 		newReply.setRefOrder(newReply.getRefOrder() + 1);
 		return ses.insert(NS + ".insertReply", newReply);
 	}
+	
+	@Override
+	public void updateRefOrder(int ref, int refOrder) throws Exception {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("ref", ref);
+		paramMap.put("refOrder", refOrder);
+		
+		ses.update(NS + ".updateRefThatWrittenReply", paramMap);
+	}
 
 }

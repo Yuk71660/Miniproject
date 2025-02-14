@@ -83,10 +83,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<select id="checkHourReadLogByBoardNo" resultType="int">
-		select ifnull(timestampdiff(hour, (select
+		select
+		ifnull(timestampdiff(hour, (select
 		max(readWhen)
 		from boardreadlog
-		where readWho = #{readWho} and readBoardNo = #{boardNo}), now()),-1) as timediff;
+		where
+		readWho = #{readWho} and readBoardNo = #{boardNo}), now()),-1) as
+		timediff;
 	</select>
 
 	<update id="updateReadCount">
@@ -100,10 +103,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO boardreadlog (`readWho`, `readboardNo`)
 		VALUES (#{readWho}, #{boardNo})
 	</insert>
-	
-	<!--  답글을 저장하는  -->
+
+	<!-- 답글을 저장하는 -->
 	<insert id="insertReply">
-		insert into hboard(title, content, writer, ref, step, refOrder)
-		values (#{title}, #{content}, #{writer}, #{ref}, #{step}, #{refOrder})
+		insert into hboard(title, content, writer, ref, step,
+		refOrder)
+		values (#{title}, #{content}, #{writer}, #{ref}, #{step},
+		#{refOrder})
 	</insert>
+
+	<update id="updateRefThatWrittenReply">
+		UPDATE hboard
+		SET refOrder = refOrder + 1
+		WHERE ref = #{ref} AND refOrder > #{refOrder};
+	</update>
 </mapper>

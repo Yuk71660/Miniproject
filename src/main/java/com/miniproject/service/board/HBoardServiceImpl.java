@@ -105,9 +105,11 @@ public class HBoardServiceImpl implements HBoardService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
 	public boolean saveReply(HBoardDTO newReply) throws Exception {
 		// newReply를 저장할 때, ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의
 		// refOrder + 1로 저장
+		hdao.updateRefOrder(newReply.getRef(), newReply.getRefOrder());
 		hdao.insertReply(newReply);
 		return false;
 	}

@@ -1,5 +1,5 @@
 -- 스키마 사용
-use webmoonya;-- 
+use webmoonya; 
 -- 회원 테이블 생성
 CREATE TABLE `member` (
   `userId` varchar(8) NOT NULL,
@@ -175,4 +175,10 @@ where boardNo = ?;
 -- 2) 답글을 저장할 때,  ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의 refOrder + 1로 저장
 insert into hboard(title, writer, content, ref, step, refOrder)
 values (?, ?, ?, ?, ? + 1, ? + 1);
+
+select refOrder from hboard where ref = 3 and refOrder >= 2 ;
+
+UPDATE hboard 
+SET refOrder = refOrder + 1 
+WHERE ref = 3 AND refOrder > 2;
 	

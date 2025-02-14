@@ -27,4 +27,6 @@ public interface HBoardDAO {
 	// 답글 저장
 	int insertReply(HBoardDTO newReply) throws Exception;
 
+	void updateRefOrder(int ref, int refOrder) throws Exception;
+
 }
