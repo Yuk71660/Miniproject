@@ -23,4 +23,6 @@ public interface HBoardDAO {
 
 	int insertBoardReadLog(String readWho, int boardNo) throws Exception;
 
+	int updateRefByBoardNo(int boardNo) throws Exception;
+
 }

@@ -46,6 +46,12 @@ public class HBoardDAOImpl implements HBoardDAO {
 		ses.insert(NS+".saveHBoard", newBoard);
 		return newBoard.getBoardNo();
 	}
+	
+	@Override
+	public int updateRefByBoardNo(int boardNo) throws Exception {
+		// TODO Auto-generated method stub
+		return ses.update(NS+".updateRefByBoardNo", boardNo);
+	}
 
 	@Override
 	public int insertHBoardUpfile(BoardUpFilesVODTO upFile) throws Exception {
