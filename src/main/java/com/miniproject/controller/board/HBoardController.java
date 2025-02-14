@@ -211,9 +211,8 @@ public class HBoardController {
 		String returnPage = "redirect:./listAll";
 		logger.info(newReply.toString() + "를 저장하자!");
 		try {
-			if (service.saveReply(newReply)) {
-				returnPage += "?status=success";
-			}
+			service.saveReply(newReply);
+			returnPage += "?status=success";
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

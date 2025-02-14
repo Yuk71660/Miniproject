@@ -147,7 +147,7 @@ WHERE `readWho` = '127'
   AND `readboardNo` = 1 
   AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff;
   
-select ifnull( timestampdiff(hour,  (select max(readWhen)
+select ifnull(timestampdiff(hour,  (select max(readWhen)
 from boardreadlog
 where readWho = '127' and readBoardNo = 1), now()),-1) as timediff;
 
@@ -159,4 +159,20 @@ set readCount = readCount + 1
 where boardNo = ?;
 
 INSERT INTO boardreadlog (`readWho`, `readboardNo`) VALUES ('127', '2');
+
+------------------------------------------------------------------------------------------------------
+-- 답글 기능 구현 + 계층형 게시판 구현
+-- 0) 게시판의 정렬기준을 아래의 정렬기준으로 바꾼다 (ref : 부모글의 글번호
+select * from hboard order by ref desc, refOrder asc;
+
+
+-- 1) ref : 기존 게시글의 ref 컬럼 값을 boardNo값으로 update(ref : 부모글의 글번호, refOrder : 부모글과 답글이 보여지는 순서)
+--  게시글이 insert된후 useGeneratedKeys속성에 의해 얻어진 boardNo를 ref 컬럼에 update
+update hboard
+set ref = ?
+where boardNo = ?;
+
+-- 2) 답글을 저장할 때,  ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의 refOrder + 1로 저장
+insert into hboard(title, writer, content, ref, step, refOrder)
+values (?, ?, ?, ?, ? + 1, ? + 1);
 	
