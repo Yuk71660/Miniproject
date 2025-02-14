@@ -18,5 +18,9 @@ public interface HBoardDAO {
 	BoardDetailInfo selectBoardDetailInfo(int boardNo) throws Exception;
 	
 	int checkHourReadLogByBoardNo(String readWho, int boardNo) throws Exception;
+	
+	int updateReadCount(int boardNo) throws Exception;
+
+	int insertBoardReadLog(String readWho, int boardNo) throws Exception;
 
 }

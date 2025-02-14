@@ -78,10 +78,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<select id="checkHourReadLogByBoardNo" resultType="int">
-		select ifnull( (SELECT`readboardNo` 
-FROM `webmoonya`.`boardreadlog`
-WHERE `readWho` = #{readWho}
-  AND `readboardNo` = #{boardNo} 
-  AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff
+		select ifnull(
+		(SELECT`readboardNo`
+		FROM `webmoonya`.`boardreadlog`
+		WHERE `readWho` =
+		#{readWho}
+		AND `readboardNo` = #{boardNo}
+		AND `readWhen` >= NOW() -
+		INTERVAL 1 DAY), -1) as timediff
 	</select>
+
+	<update id="updateReadCount">
+		update hboard
+		set readCount = readCount + 1
+		where boardNo = #{boardNo};
+	</update>
+	
+	<insert id="insertBoardReadLog">
+		INSERT INTO boardreadlog (`readWho`, `readboardNo`) VALUES (#{readWho}, #{boardNo})
+	</insert>
 </mapper>

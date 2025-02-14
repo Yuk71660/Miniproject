@@ -69,5 +69,19 @@ public class HBoardDAOImpl implements HBoardDAO {
 		
 		return ses.selectOne(NS + ".checkHourReadLogByBoardNo", paramMap);
 	}
+	
+	@Override
+	public int updateReadCount(int boardNo) throws Exception  {
+		return ses.update(NS + ".updateReadCount", boardNo);
+	}
+	
+	@Override
+	public int insertBoardReadLog(String readWho, int boardNo) throws Exception {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("readWho", readWho);
+		paramMap.put("boardNo", boardNo);
+		
+		return ses.insert(NS + ".insertBoardReadLog", paramMap);
+	}
 
 }
