@@ -13,4 +13,6 @@ public interface HBoardService {
 	boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception;
 	
 	BoardDetailInfo getBoardDetailInfo(int boardNo, String ip) throws Exception;
+
+	boolean saveReply(HBoardDTO newReply) throws Exception;
 }

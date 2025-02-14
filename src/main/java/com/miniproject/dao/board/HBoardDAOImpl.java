@@ -90,4 +90,11 @@ public class HBoardDAOImpl implements HBoardDAO {
 		return ses.insert(NS + ".insertBoardReadLog", paramMap);
 	}
 
+	@Override
+	public int insertReply(HBoardDTO newReply) throws Exception {
+		newReply.setStep(newReply.getStep() + 1);
+		newReply.setRefOrder(newReply.getRefOrder() + 1);
+		return ses.insert(NS + ".insertReply", newReply);
+	}
+
 }

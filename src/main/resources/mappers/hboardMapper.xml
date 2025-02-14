@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.miniproject.mapper.hboardmapper">
 	<select id="getEntireHBoard"
 		resultType="com.miniproject.model.HBoard">
-		SELECT * FROM hboard order by boardNo desc
+		SELECT * FROM hboard order by ref desc, refOrder asc
 	</select>
 
 	<insert id="saveHBoard" useGeneratedKeys="true"
@@ -99,5 +99,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="insertBoardReadLog">
 		INSERT INTO boardreadlog (`readWho`, `readboardNo`)
 		VALUES (#{readWho}, #{boardNo})
+	</insert>
+	
+	<!--  답글을 저장하는  -->
+	<insert id="insertReply">
+		insert into hboard(title, content, writer, ref, step, refOrder)
+		values (#{title}, #{content}, #{writer}, #{ref}, #{step}, #{refOrder})
 	</insert>
 </mapper>

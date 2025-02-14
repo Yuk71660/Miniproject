@@ -206,7 +206,20 @@ public class HBoardController {
 	}
 
 	@PostMapping(value = "/saveReply")
-	public void saveReply(HBoardDTO newReply) {
+	public String saveReply(HBoardDTO newReply) {
+		// HBoardDTO(boardNo=0, title=gsdaf, content=test, writer=admin, ref=17, step=0, refOrder=0)
+		String returnPage = "redirect:./listAll";
 		logger.info(newReply.toString() + "를 저장하자!");
+		try {
+			if (service.saveReply(newReply)) {
+				returnPage += "?status=success";
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returnPage += "?status=fail";
+		}
+		return returnPage;
+		
 	}
 }
