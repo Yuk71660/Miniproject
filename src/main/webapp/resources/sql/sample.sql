@@ -151,6 +151,11 @@ select timestampdiff(hour,  (select readWhen
 from boardreadlog
 where readWho = '127' and readBoardNo = 1), now()) as timediff;
 
+select ifnull(timestampdiff(hour, 
+(select readWhen from boardreadlog where readWho = 'readWho' and readBoardNo = 'boardNo'), now()), -1) as timediff
+
 update hboard
 set readCount = readCount + 1
 where boardNo = ?;
+
+	
