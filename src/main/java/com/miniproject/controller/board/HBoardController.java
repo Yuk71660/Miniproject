@@ -179,7 +179,7 @@ public class HBoardController {
 
 	@GetMapping(value = "/viewBoard")
 	public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest req) {
-		
+
 		try {
 			BoardDetailInfo bi = service.getBoardDetailInfo(boardNo, GetClientIPAddr.getClientIp(req));
 			model.addAttribute("boardDetailInfo", bi);
@@ -199,9 +199,14 @@ public class HBoardController {
 			System.out.println(f.toString());
 		}
 	}
-	
-	@GetMapping(value="/showReplyForm")
+
+	@GetMapping(value = "/showReplyForm")
 	public String showReplyForm() {
 		return "hboard/showReplyForm";
+	}
+
+	@PostMapping(value = "/saveReply")
+	public void saveReply(HBoardDTO newReply) {
+		logger.info(newReply.toString() + "를 저장하자!");
 	}
 }

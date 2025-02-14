@@ -15,8 +15,13 @@ import lombok.ToString;
 @Setter
 @ToString
 public class HBoardDTO {
-	private int boardNo;
-	private String title;
-	private String content;
-	private String writer;
+   private int boardNo;
+   private String title;
+   private String content;
+   private String writer;
+   
+   // 답글 저장을 위해
+   private int ref;
+   private int step;
+   private int refOrder;
 }

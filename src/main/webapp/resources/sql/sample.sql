@@ -147,9 +147,9 @@ WHERE `readWho` = '127'
   AND `readboardNo` = 1 
   AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff;
   
-select timestampdiff(hour,  (select readWhen
+select ifnull( timestampdiff(hour,  (select max(readWhen)
 from boardreadlog
-where readWho = '127' and readBoardNo = 1), now()) as timediff;
+where readWho = '127' and readBoardNo = 1), now()),-1) as timediff;
 
 select ifnull(timestampdiff(hour, 
 (select readWhen from boardreadlog where readWho = 'readWho' and readBoardNo = 'boardNo'), now()), -1) as timediff;
