@@ -199,4 +199,9 @@ public class HBoardController {
 			System.out.println(f.toString());
 		}
 	}
+	
+	@GetMapping(value="/showReplyForm")
+	public String showReplyForm() {
+		return "hboard/showReplyForm";
+	}
 }
