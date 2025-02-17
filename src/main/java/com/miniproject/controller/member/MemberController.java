@@ -1,5 +1,10 @@
 package com.miniproject.controller.member;
 
+import java.io.IOException;
+import java.util.UUID;
+
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miniproject.model.MemberDTO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.service.member.MemberService;
+import com.miniproject.util.SendMailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,8 +69,19 @@ public class MemberController {
 	}
 	
 	@PostMapping("/sendAuthCode")
-	public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr) {
-		logger.info(emailAddr + "로 인증코드 보내자");
-		return null;
-	}
+	   public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr, HttpSession session) {
+	      String authCode = UUID.randomUUID().toString();
+	      session.setAttribute("authCode", authCode); // 인증 코드를 세션 객체에 바인딩
+	      
+	      logger.info(emailAddr + "로 인증코드 보내자 : " + authCode);
+	      
+	      try {
+	         new SendMailService(emailAddr, authCode).send();
+	      } catch (IOException e) {
+	         // TODO Auto-generated catch block
+	         e.printStackTrace();
+	      }
+	      
+	      return null;
+	   }
 }
