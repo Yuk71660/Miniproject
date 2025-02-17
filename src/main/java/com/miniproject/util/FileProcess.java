@@ -238,20 +238,20 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
     * @param
     * @returnType 파일이 중복되면 true, 중복되지 않으면 false 반환
     */
-   private boolean checkFileExist(String originalFileName) {
-      File tmp = new File(this.saveFilePath);
-      boolean isFind = false;
-
-      for (String f : tmp.list()) {
-         if (f.equals(originalFileName)) {
-            isFind = true;
-            System.out.println("파일이름이 중복됨!!!!!!!!!!");
-            break;
-         }
-      }
-
-      return isFind;
-   }
+//   private boolean checkFileExist(String originalFileName) {
+//      File tmp = new File(this.saveFilePath);
+//      boolean isFind = false;
+//
+//      for (String f : tmp.list()) {
+//         if (f.equals(originalFileName)) {
+//            isFind = true;
+//            System.out.println("파일이름이 중복됨!!!!!!!!!!");
+//            break;
+//         }
+//      }
+//
+//      return isFind;
+//   }
 
    /**
     * @author Administrator
