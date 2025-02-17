@@ -7,13 +7,98 @@
 <title>Insert title here</title>
 <script
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+   $(function() {
+      $('#userId').blur(function() {
+         idIsValid();
+      });
+   });
+
+   function idIsValid() {
+      let result = false;
+      let obj = $('#userId');
+
+      let idRegExt = /^[a-z]+[a-z0-9]{4,8}$/g;
+      
+      if (!idRegExt.test(obj.val())) {
+         showErrorMsg("아이디는 영문자숫자 포함 4~8자로 입력해 주세요!", obj);
+      } else {
+         userIdDuplicate(obj);
+         if ($('#idDuplicate').val() == 'true') {
+            result = true;
+            clearErrorMsg(obj);
+         }
+      }
+
+      return result;
+   }
+
+   function userIdDuplicate(obj) {
+      let result = false;
+      $.ajax({
+            url : '/member/duplicateId',
+            type : 'post', // 이진 데이터를 보낼 때는 post
+            dataType : 'json', // 수신받을 데이터 타입
+            data : {
+               "userId" : obj.val()
+            }, // 송신할 데이터
+            success : function(data) {
+               console.log(data);
+               if (data.message == 'Duplicate') {
+                  showErrorMsg('아이디를 사용할 수 없습니다', obj);
+               } else if(data.message == 'Available') {
+                  clearErrorMsg(obj);
+                  $('#idDuplicate').val('true'); // 히든 태그 이용
+               }
+            },
+            error : function(err) {
+               // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+               console.log(err.responseJSON);
+            },
+         });
+   }
+
+   function clearErrorMsg(obj) {
+      let id = $(obj).attr('id') + 'Msg';
+      $(`#\${id}`).remove(); // 기존의 에러 메시지
+   }
+
+   function showErrorMsg(msg, obj) {
+      let id = $(obj).attr('id') + 'Msg';
+      $(`#\${id}`).remove(); // 기존의 에러 메시지
+
+      let errorMsg = `<div class='errorMsg' id='\${id}'>\${msg}</div>`;
+      $(errorMsg).insertAfter(obj);
+      $(obj).focus();
+   }
+
+   function isValid() {
+      let result = false;
+
+      if (idIsValid()) {
+         result = true;
+      }
+
+      return result;
+   }
+</script>
+<style>
+.errorMsg {
+   font-weight: bold;
+   font-size: 0.8em;
+   color: red;
+   padding: 8px;
+}
+</style>
 </head>
 <body>
    <jsp:include page="./../header.jsp" />
    <div class="container">
       <h1>회원 가입 페이지</h1>
 
-      <form action="" method="post" enctype="multipart/form-data">
+      <form action="./saveMember" method="post"
+         enctype="multipart/form-data">
          <div class="mb-3 mt-3">
             <label for="userId" class="form-label">아이디:</label> <input
                type="text" class="form-control" id="userId" name="userId">
@@ -53,13 +138,14 @@
             </div>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderM"
-                  name="gender" value="M" checked> <label
+                  name="gender" value="M"> <label
                   class="form-check-label" for="genderM">남성</label>
             </div>
          </div>
 
          <div class="mb-3 mt-3">
-            <label for="email" class="form-label">직업:</label> <select
+            <label for="job" class="form-label">직업:</label> 
+            <select name="job" id="job"
                class="form-select">
                <option value="-1">-- 직업을 선택하세요 --</option>
                <option value="student">학생</option>
@@ -83,13 +169,17 @@
          </div>
 
          <div class="mb-3 mt-3">
+            <input type="text" class="form-control" id="postZip"
+               name="postZip">
             <input type="text" class="form-control" id="tmpAddr"
-               placeholder="주소 검색...">
+               placeholder="주소 검색..." name="addr">
          </div>
 
          <div class="mb-3 mt-3">
-            <input type="file" class="form-control" id="userImg" name="userImg">
+            <input type="file" class="form-control" id="userProfile" name="userProfile">
          </div>
+
+         <input type="hidden" id="idDuplicate" />
 
          <div class="mb-3 mt-3">
             <input class="form-check-input" type="checkbox" id="checkAgree">
@@ -98,7 +188,8 @@
 
          <div class="mb-3 mt-3">
             <button type="reset" class="btn btn-danger">취소</button>
-            <button type="submit" class="btn btn-dark">가입</button>
+            <button type="submit" class="btn btn-dark"
+               onclick="return isValid();">가입</button>
          </div>
       </form>
    </div>

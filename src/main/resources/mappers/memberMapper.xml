@@ -10,4 +10,8 @@
 		)
 		where userId = #{userId}
 	</update>
+	
+	<select id="isUserIdDuplicate" resultType="String">
+	select userId from member where userId = #{userId};
+	</select>
 </mapper>

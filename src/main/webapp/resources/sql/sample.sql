@@ -182,3 +182,13 @@ UPDATE hboard
 SET refOrder = refOrder + 1 
 WHERE ref = 3 AND refOrder > 2;
 	
+    
+    
+DELETE FROM hboard WHERE (`boardNo` = '8');
+
+select boardNo from hboard where boardNo = boardNo and writer = userId;
+
+select userId from member where userId = userId;
+
+-- 스키마 사용
+use webmoonya; 
