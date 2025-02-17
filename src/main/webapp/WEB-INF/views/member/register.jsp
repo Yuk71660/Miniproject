@@ -19,47 +19,58 @@
       });
 
       $('#userName').blur(function(){
-			userNameIsValid();
-		});
+         userNameIsValid();
+      });
+
+      $('#mobile').blur(function(){
+         mobileIsValid();
+      });
    });
 
+   function mobileIsValid() {
+      let result = true;
+      let mobile = $('#mobile');
+
+      if (mobile.val().length > 0) {
+         let mobileRegExp = /^\d{3}-\d{3,4}-\d{4}$/;
+         if (!mobileRegExp.test(mobile.val())) {
+            showErrorMsg("핸드폰번호 형식이 아닙니다!", mobile);
+         } else {
+            clearErrorMsg(mobile);
+         }
+      } else {
+         clearErrorMsg(mobile);
+      }
+
+      return result;
+   }
+
    function userNameIsValid() {
-		let result = true;
-		let userName = $('#userName');
+      let result = true;
+      let userName = $('#userName');
 
-		if (userName.val().length > 0) {
-			if (userName.val().length > 4) {
-				showErrorMsg("이름은 4자 이내로 입력해 주세요!", userName);
-				result = false;
-			} else {
-				clearErrorMsg(userName);
-			}
-		} else {
-			clearErrorMsg(userName);
-		}
+      if (userName.val().length > 0) {
+         if (userName.val().length > 4) {
+            showErrorMsg("이름은 4자 이내로 입력해 주세요!", userName);
+            result = false;
+         } else {
+            clearErrorMsg(userName);
+         }
+      } else {
+         clearErrorMsg(userName);
+      }
 
-		return result;
-	}
+      return result;
+   }
 
    function pwdIsValid() {
       let result = false;
       let pwd = $('#userPwd');
       let pwdConfirm = $('#userPwdConfirm');
-      let pwdRegExt = /^[a-z0-9]{4,10}$/g;
+      //let pwdRegExt = /^[a-z0-9]+[a-z0-9]{4,10}$/g; 
 
-      if (!pwdRegExt.test(pwd.val())) {
-         showErrorMsg("패스워드는 영문자+숫자 포함 4~10자로 입력해 주세요!", pwd);
-      } else {
-         if (pwd.val() != pwdConfirm.val()) {
-            showErrorMsg("패스워드가 일치 하지 않습니다", pwd);
-         } else {
-            result = true;
-            clearErrorMsg(pwd);
-         }
-      }
-
-      // if (pwd.val().length < 4 || pwd.val().length > 10) {
-      //    showErrorMsg("패스워드는 4~10자 입니다", pwd);
+      // if (!pwdRegExt.test(pwd.val())) {
+      //    showErrorMsg("패스워드는 영문자+숫자 포함 4~10자로 입력해 주세요!", pwd);
       // } else {
       //    if (pwd.val() != pwdConfirm.val()) {
       //       showErrorMsg("패스워드가 일치 하지 않습니다", pwd);
@@ -68,6 +79,17 @@
       //       clearErrorMsg(pwd);
       //    }
       // }
+
+      if (pwd.val().length < 4 || pwd.val().length > 10) {
+         showErrorMsg("패스워드는 4~10자 입니다", pwd);
+      } else {
+         if (pwd.val() != pwdConfirm.val()) {
+            showErrorMsg("패스워드가 일치 하지 않습니다", pwd);
+         } else {
+            result = true;
+            clearErrorMsg(pwd);
+         }
+      }
       
       return result;
    }
@@ -133,13 +155,12 @@
    function isValid() {
       let result = false;
 
-      if (idIsValid() && pwdIsValid() && userNameIsValid()) {
-			result = true;
-		}
+      if (idIsValid() && pwdIsValid() && userNameIsValid() && mobileIsValid()) {
+         result = true;
+      }
 
       return result;
    }
-
 </script>
 <style>
 .errorMsg {
@@ -196,14 +217,14 @@
             </div>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderM"
-                  name="gender" value="M" checked> <label
+                  name="gender" value="M"> <label
                   class="form-check-label" for="genderM">남성</label>
             </div>
          </div>
 
          <div class="mb-3 mt-3">
-            <label for="job" class="form-label">직업:</label>
-            <select name="job" id="job" class="form-select">
+            <label for="job" class="form-label">직업:</label> <select name="job"
+               id="job" class="form-select">
                <option value="-1">-- 직업을 선택하세요 --</option>
                <option value="student">학생</option>
                <option value="owner">자영업</option>
@@ -211,7 +232,7 @@
             </select>
          </div>
 
-         <div class="mb-3 mt-3">취미 : 
+         <div class="mb-3 mt-3">
             <input class="form-check-input" type="checkbox" id="check1"
                name="hobby" value="운동"> <label class="form-check-label"
                for="check1">운동</label> <input class="form-check-input"
