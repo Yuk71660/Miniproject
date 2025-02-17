@@ -13,16 +13,73 @@
       $('#userId').blur(function() {
          idIsValid();
       });
+
+      $('#userPwdConfirm').blur(function() {
+         pwdIsValid();
+      });
+
+      $('#userName').blur(function(){
+			userNameIsValid();
+		});
    });
+
+   function userNameIsValid() {
+		let result = true;
+		let userName = $('#userName');
+
+		if (userName.val().length > 0) {
+			if (userName.val().length > 4) {
+				showErrorMsg("이름은 4자 이내로 입력해 주세요!", userName);
+				result = false;
+			} else {
+				clearErrorMsg(userName);
+			}
+		} else {
+			clearErrorMsg(userName);
+		}
+
+		return result;
+	}
+
+   function pwdIsValid() {
+      let result = false;
+      let pwd = $('#userPwd');
+      let pwdConfirm = $('#userPwdConfirm');
+      let pwdRegExt = /^[a-z0-9]{4,10}$/g;
+
+      if (!pwdRegExt.test(pwd.val())) {
+         showErrorMsg("패스워드는 영문자+숫자 포함 4~10자로 입력해 주세요!", pwd);
+      } else {
+         if (pwd.val() != pwdConfirm.val()) {
+            showErrorMsg("패스워드가 일치 하지 않습니다", pwd);
+         } else {
+            result = true;
+            clearErrorMsg(pwd);
+         }
+      }
+
+      // if (pwd.val().length < 4 || pwd.val().length > 10) {
+      //    showErrorMsg("패스워드는 4~10자 입니다", pwd);
+      // } else {
+      //    if (pwd.val() != pwdConfirm.val()) {
+      //       showErrorMsg("패스워드가 일치 하지 않습니다", pwd);
+      //    } else {
+      //       result = true;
+      //       clearErrorMsg(pwd);
+      //    }
+      // }
+      
+      return result;
+   }
 
    function idIsValid() {
       let result = false;
       let obj = $('#userId');
 
       let idRegExt = /^[a-z]+[a-z0-9]{4,8}$/g;
-      
+
       if (!idRegExt.test(obj.val())) {
-         showErrorMsg("아이디는 영문자숫자 포함 4~8자로 입력해 주세요!", obj);
+         showErrorMsg("아이디는 영문자(소문자)숫자 포함 4~8자로 입력해 주세요!", obj);
       } else {
          userIdDuplicate(obj);
          if ($('#idDuplicate').val() == 'true') {
@@ -37,26 +94,26 @@
    function userIdDuplicate(obj) {
       let result = false;
       $.ajax({
-            url : '/member/duplicateId',
-            type : 'post', // 이진 데이터를 보낼 때는 post
-            dataType : 'json', // 수신받을 데이터 타입
-            data : {
-               "userId" : obj.val()
-            }, // 송신할 데이터
-            success : function(data) {
-               console.log(data);
-               if (data.message == 'Duplicate') {
-                  showErrorMsg('아이디를 사용할 수 없습니다', obj);
-               } else if(data.message == 'Available') {
-                  clearErrorMsg(obj);
-                  $('#idDuplicate').val('true'); // 히든 태그 이용
-               }
-            },
-            error : function(err) {
-               // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
-               console.log(err.responseJSON);
-            },
-         });
+         url : '/member/duplicateId',
+         type : 'post', // 이진 데이터를 보낼 때는 post
+         dataType : 'json', // 수신받을 데이터 타입
+         data : {
+            "userId" : obj.val()
+         }, // 송신할 데이터
+         success : function(data) {
+            console.log(data);
+            if (data.message == 'Duplicate') {
+               showErrorMsg('아이디를 사용할 수 없습니다', obj);
+            } else if (data.message == 'Available') {
+               clearErrorMsg(obj);
+               $('#idDuplicate').val('true'); // 히든 태그 이용
+            }
+         },
+         error : function(err) {
+            // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+            console.log(err.responseJSON);
+         },
+      });
    }
 
    function clearErrorMsg(obj) {
@@ -76,12 +133,13 @@
    function isValid() {
       let result = false;
 
-      if (idIsValid()) {
-         result = true;
-      }
+      if (idIsValid() && pwdIsValid() && userNameIsValid()) {
+			result = true;
+		}
 
       return result;
    }
+
 </script>
 <style>
 .errorMsg {
@@ -138,15 +196,14 @@
             </div>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderM"
-                  name="gender" value="M"> <label
+                  name="gender" value="M" checked> <label
                   class="form-check-label" for="genderM">남성</label>
             </div>
          </div>
 
          <div class="mb-3 mt-3">
-            <label for="job" class="form-label">직업:</label> 
-            <select name="job" id="job"
-               class="form-select">
+            <label for="job" class="form-label">직업:</label>
+            <select name="job" id="job" class="form-select">
                <option value="-1">-- 직업을 선택하세요 --</option>
                <option value="student">학생</option>
                <option value="owner">자영업</option>
@@ -154,7 +211,7 @@
             </select>
          </div>
 
-         <div class="mb-3 mt-3">
+         <div class="mb-3 mt-3">취미 : 
             <input class="form-check-input" type="checkbox" id="check1"
                name="hobby" value="운동"> <label class="form-check-label"
                for="check1">운동</label> <input class="form-check-input"
@@ -169,14 +226,14 @@
          </div>
 
          <div class="mb-3 mt-3">
-            <input type="text" class="form-control" id="postZip"
-               name="postZip">
+            <input type="text" class="form-control" id="postZip" name="postZip">
             <input type="text" class="form-control" id="tmpAddr"
                placeholder="주소 검색..." name="addr">
          </div>
 
          <div class="mb-3 mt-3">
-            <input type="file" class="form-control" id="userProfile" name="userProfile">
+            <input type="file" class="form-control" id="userProfile"
+               name="userProfile">
          </div>
 
          <input type="hidden" id="idDuplicate" />
