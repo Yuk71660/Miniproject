@@ -10,6 +10,10 @@
 
 <script>
    $(function() {
+      $('.modalClose').click(function() {
+         $('#myModal').hide();
+      });
+
       $('#userId').blur(function() {
          idIsValid();
       });
@@ -18,14 +22,61 @@
          pwdIsValid();
       });
 
-      $('#userName').blur(function(){
+      $('#userName').blur(function() {
          userNameIsValid();
       });
 
-      $('#mobile').blur(function(){
+      $('#mobile').blur(function() {
          mobileIsValid();
       });
+
+      $('#email').blur(function() {
+         emailIsValid();
+      });
    });
+
+   function emailIsValid() {
+      let result = false;
+      let email = $('#email');
+      const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+
+      if (!regEmail.test(email.val())) {
+         showErrorMsg('이메일 형식에 따라 정확히 입력해주세요', email);
+         return;
+      } else {
+         sendMailAuthCode(email.val());
+
+      }
+
+      return result;
+   }
+
+   function sendMailAuthCode(email) {
+      $.ajax({
+         url : '/member/sendAuthCode',
+         type : 'post', // 이진 데이터를 보낼 때는 post
+         dataType : 'json', // 수신받을 데이터 타입
+         data : {
+            "emailAddr" : email
+         }, // 송신할 데이터
+         success : function(data) {
+            console.log(data);
+            showAuthArea();
+         },
+         error : function(err) {
+            // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+            console.log(err.responseJSON);
+         },
+      });
+   }
+
+   function showAuthArea() {
+      $('.modal-body').html(
+            '입력하신 이메일 주소로 인증코드를 전송했습니다. 메일을 확인하시고 인증코드를 입력후 인증 버튼을 누르세요');
+      $('#myModal').show();
+      let output = `<div><input type='text' id='confirmCodeInput' /><button type="button" class="btn btn-info ">인증</button> </div>`;
+      $(output).insertAfter(email);
+   }
 
    function mobileIsValid() {
       let result = true;
@@ -90,7 +141,7 @@
             clearErrorMsg(pwd);
          }
       }
-      
+
       return result;
    }
 
@@ -217,7 +268,7 @@
             </div>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderM"
-                  name="gender" value="M"> <label
+                  name="gender" value="M" checked> <label
                   class="form-check-label" for="genderM">남성</label>
             </div>
          </div>
@@ -270,6 +321,30 @@
                onclick="return isValid();">가입</button>
          </div>
       </form>
+   </div>
+
+
+   <!-- The Modal -->
+   <div class="modal" id="myModal">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+               <h4 class="modal-title">Miniproject.com</h4>
+               <button type="button" class="btn-close modalClose"
+                  data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">일시적인 장애가 발생하였습니다. 잠시 후 다시 이용해 주세요.</div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+               <button type="button" class="btn btn-danger modalClose"
+                  data-bs-dismiss="modal">Close</button>
+            </div>
+         </div>
+      </div>
    </div>
 
 </body>

@@ -61,4 +61,10 @@ public class MemberController {
 		return result;
 
 	}
+	
+	@PostMapping("/sendAuthCode")
+	public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr) {
+		logger.info(emailAddr + "로 인증코드 보내자");
+		return null;
+	}
 }
