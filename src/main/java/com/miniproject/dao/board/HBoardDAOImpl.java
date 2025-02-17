@@ -18,6 +18,7 @@ import com.miniproject.model.HBoardDTO;
 @Repository
 public class HBoardDAOImpl implements HBoardDAO {
 	
+	
 	private static Logger logger = LoggerFactory.getLogger(HBoardDAOImpl.class);
 	
 	@Autowired
