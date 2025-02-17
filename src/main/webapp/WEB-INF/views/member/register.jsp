@@ -118,7 +118,7 @@
       let result = false;
       let pwd = $('#userPwd');
       let pwdConfirm = $('#userPwdConfirm');
-      //let pwdRegExt = /^[a-z0-9]+[a-z0-9]{4,10}$/g; 
+      //let pwdRegExt = /^[a-z0-9]+[a-z0-9]{3,9}$/g; 
 
       // if (!pwdRegExt.test(pwd.val())) {
       //    showErrorMsg("패스워드는 영문자+숫자 포함 4~10자로 입력해 주세요!", pwd);
@@ -149,7 +149,7 @@
       let result = false;
       let obj = $('#userId');
 
-      let idRegExt = /^[a-z]+[a-z0-9]{4,8}$/g;
+      let idRegExt = /^[a-z]+[a-z0-9]{3,7}$/g;
 
       if (!idRegExt.test(obj.val())) {
          showErrorMsg("아이디는 영문자(소문자)숫자 포함 4~8자로 입력해 주세요!", obj);
