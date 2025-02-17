@@ -17,7 +17,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Member {
-	private String userId, userPwd, userName, mobile, email,  userImg;
+	private String userId, userPwd, userName, mobile, email, gender, job, hobbies, addr, userImg;
 	private Timestamp registerDate;
 	private int userpoint;
 }
