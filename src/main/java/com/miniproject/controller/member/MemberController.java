@@ -66,21 +66,46 @@ public class MemberController {
 		return result;
 
 	}
-	
+
 	@PostMapping("/sendAuthCode")
-	   public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr, HttpSession session) {
-	      String authCode = UUID.randomUUID().toString();
-	      session.setAttribute("authCode", authCode); // 인증 코드를 세션 객체에 바인딩
-	      
-	      logger.info(emailAddr + "로 인증코드 보내자 : " + authCode);
-	      
-	      try {
-	         new SendMailService(emailAddr, authCode).send();
-	      } catch (IOException e) {
-	         // TODO Auto-generated catch block
-	         e.printStackTrace();
-	      }
-	      
-	      return null;
-	   }
+	public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr,
+			HttpSession session) {
+
+		ResponseEntity<MyResponseWithoutData> result = null;
+
+		String authCode = UUID.randomUUID().toString();
+		session.setAttribute("authCode", authCode); // 인증 코드를 세션 객체에 바인딩
+
+		logger.info(emailAddr + "로 인증코드 보내자 : " + authCode);
+
+		try {
+//			new SendMailService(emailAddr, authCode).send();
+
+			result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.failureResponse(), HttpStatus.OK);
+		}
+
+		return result;
+	}
+
+	@PostMapping("/confirmAuthCode")
+	public ResponseEntity<MyResponseWithoutData> confirmAuthCode(
+			@RequestParam("confirmCodeInput") String confirmCodeInput, HttpSession ses) {
+		ResponseEntity<MyResponseWithoutData> result = null;
+
+		// confirmCodeInput와 세션에 바인딩한 authCode 값을 비교
+		String authCode = (String) ses.getAttribute("authCode");
+
+		if (confirmCodeInput.equals(authCode)) {
+			result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
+		} else {
+			result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.failureResponse(), HttpStatus.OK);
+		}
+
+		return result;
+
+	}
 }

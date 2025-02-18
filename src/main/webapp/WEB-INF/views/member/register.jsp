@@ -10,6 +10,10 @@
 
 <script>
    $(function() {
+      $('.inputTag').change(function(){
+         clearErrorMsg($(this));
+      });
+
       $('.modalClose').click(function() {
          $('#myModal').hide();
       });
@@ -61,7 +65,12 @@
          }, // 송신할 데이터
          success : function(data) {
             console.log(data);
-            showAuthArea();
+            if (data.code == '200') {
+               showAuthArea();
+            } else if (data.code == '500') {
+               $('.modal-body').html('이메일 전송에 실패했습니다. 이메일 주소를 확인해 주세요');
+               $('#myModal').show();
+            }
          },
          error : function(err) {
             // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
@@ -74,8 +83,41 @@
       $('.modal-body').html(
             '입력하신 이메일 주소로 인증코드를 전송했습니다. 메일을 확인하시고 인증코드를 입력후 인증 버튼을 누르세요');
       $('#myModal').show();
-      let output = `<div><input type='text' id='confirmCodeInput' /><button type="button" class="btn btn-info ">인증</button> </div>`;
-      $(output).insertAfter(email);
+      let output = `<div><input type='text' id='confirmCodeInput' /><button type="button" class="btn btn-info" onclick="confirmAuthCode();">인증</button> </div>`;
+      $('.authArea').html(output);
+   }
+
+   function confirmAuthCode() {
+      let confirmCodeInput = $('#confirmCodeInput').val();
+
+      $.ajax({
+         url : '/member/confirmAuthCode',
+         type : 'post', // 이진 데이터를 보낼 때는 post
+         dataType : 'json', // 수신받을 데이터 타입
+         data : {
+            "confirmCodeInput" : confirmCodeInput
+         }, // 송신할 데이터
+         success : function(data) {
+            console.log(data);
+            if (data.code == '200') {
+               $('#emailAuth').val('true');
+               $('.authArea').empty();
+            } else if (data.code == '500') {
+               $('#email').val('');
+               clearErrorMsg($('#email'));
+               $('.authArea').empty();
+               $('.modal-body').html(
+                  '이메일 인증 코드가 틀립니다. 인증을 다시 해주세요');
+               $('#myModal').show();
+               $('#email').focus();
+
+            }
+         },
+         error : function(err) {
+            // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+            console.log(err.responseJSON);
+         },
+      });
    }
 
    function mobileIsValid() {
@@ -231,33 +273,34 @@
          enctype="multipart/form-data">
          <div class="mb-3 mt-3">
             <label for="userId" class="form-label">아이디:</label> <input
-               type="text" class="form-control" id="userId" name="userId">
+               type="text" class="form-control inputTag" id="userId" name="userId">
          </div>
 
          <div class="mb-3 mt-3">
             <label for="userPwd" class="form-label">비밀번호:</label> <input
-               type="password" class="form-control" id="userPwd" name="userPwd">
+               type="password" class="form-control inputTag" id="userPwd" name="userPwd">
          </div>
 
          <div class="mb-3 mt-3">
             <label for="userPwdConfirm" class="form-label">비밀번호확인:</label> <input
-               type="password" class="form-control" id="userPwdConfirm">
+               type="password" class="form-control inputTag" id="userPwdConfirm">
          </div>
 
          <div class="mb-3 mt-3">
             <label for="userName" class="form-label">이름:</label> <input
-               type="text" class="form-control" id="userName" name="userName">
+               type="text" class="form-control inputTag" id="userName" name="userName">
          </div>
 
          <div class="mb-3 mt-3">
             <label for="mobile" class="form-label">mobile:</label> <input
-               type="text" class="form-control" id="mobile" name="mobile">
+               type="text" class="form-control inputTag" id="mobile" name="mobile">
          </div>
 
          <div class="mb-3 mt-3">
             <label for="email" class="form-label">email:</label> <input
-               type="text" class="form-control" id="email" name="email">
+               type="text" class="form-control inputTag" id="email" name="email">
          </div>
+         <div class="authArea"></div>
 
          <div class="mb-3 mt-3">
             <div class="form-check">
@@ -298,8 +341,8 @@
          </div>
 
          <div class="mb-3 mt-3">
-            <input type="text" class="form-control" id="postZip" name="postZip">
-            <input type="text" class="form-control" id="tmpAddr"
+            <input type="text" class="form-control inputTag" id="postZip" name="postZip">
+            <input type="text" class="form-control inputTag" id="tmpAddr"
                placeholder="주소 검색..." name="addr">
          </div>
 
@@ -309,6 +352,7 @@
          </div>
 
          <input type="hidden" id="idDuplicate" />
+         <input type="hidden" id="emailAuth" />
 
          <div class="mb-3 mt-3">
             <input class="form-check-input" type="checkbox" id="checkAgree">
