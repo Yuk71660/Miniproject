@@ -1,6 +1,7 @@
 package com.miniproject.controller.member;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -38,8 +39,22 @@ public class MemberController {
 	}
 
 	@PostMapping("/saveMember")
-	public void saveMember(MemberDTO newMember, @RequestParam("userProfile") MultipartFile userImg) {
+	public String saveMember(MemberDTO newMember,  @RequestParam(value = "hobby", required = false) List<String> hobbyList) {
+		String returnPage = "redirect:/";
+		
+		// 테스트때는 사진 안올릴거라 멀티파트를 지운게 문제인지 취미가 배열로 안들어와서 우선 임시로 리스트로 받아서 넣기
 		logger.info(newMember.toString() + "을 회원 가입 시키자");
+		try { //if 문은 나중에 빼도 상관없음
+			if (service.saveNewMember(newMember, hobbyList)) {
+				logger.info(newMember.toString() + "의 회원 가입 성공");
+				returnPage += "?status=registerOK";
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			returnPage += "member/register?status=fail";
+		}
+		return returnPage;
 	}
 
 	@PostMapping(value = "/duplicateId", produces = "application/json; charset=utf-8")
@@ -67,20 +82,4 @@ public class MemberController {
 
 	}
 	
-	@PostMapping("/sendAuthCode")
-	   public ResponseEntity<MyResponseWithoutData> sendAuthCode(@RequestParam("emailAddr") String emailAddr, HttpSession session) {
-	      String authCode = UUID.randomUUID().toString();
-	      session.setAttribute("authCode", authCode); // 인증 코드를 세션 객체에 바인딩
-	      
-	      logger.info(emailAddr + "로 인증코드 보내자 : " + authCode);
-	      
-	      try {
-	         new SendMailService(emailAddr, authCode).send();
-	      } catch (IOException e) {
-	         // TODO Auto-generated catch block
-	         e.printStackTrace();
-	      }
-	      
-	      return null;
-	   }
 }

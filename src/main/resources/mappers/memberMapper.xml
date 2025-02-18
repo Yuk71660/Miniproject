@@ -6,12 +6,21 @@
 	<update id="updateUserPoint">
 		update member
 		set userpoint = userpoint + (
-		select `pointscore` from pointinfo where pointcontent = #{pointwhy}
+		select
+		`pointscore` from pointinfo where pointcontent = #{pointwhy}
 		)
-		where userId = #{userId}
+		where
+		userId = #{userId}
 	</update>
-	
+
 	<select id="isUserIdDuplicate" resultType="String">
-	select userId from member where userId = #{userId};
+		select userId from member where userId = #{userId};
 	</select>
+
+	<insert id="saveUser">
+		INSERT INTO member (`userId`,
+		`userPwd`, `userName`, `mobile`, `email`, `gender`, `job`, `hobbys`,
+		`postZip`, `addr`) VALUES (#{userId}, SHA2(#{userPwd}, 256), #{userName},
+		#{mobile}, #{email}, #{gender}, #{job}, #{hobbys}, #{postZip}, #{addr});
+	</insert>
 </mapper>
