@@ -12,6 +12,8 @@
    $(function() {
       $('.inputTag').change(function(){
          clearErrorMsg($(this));
+
+         
       });
 
       $('.modalClose').click(function() {
@@ -35,7 +37,14 @@
       });
 
       $('#email').blur(function() {
-         emailIsValid();
+         if ($('#emailAuth').val() != 'true') {  // 이메일 인증을 받지 않았을때만...
+            emailIsValid();
+         }
+         
+      });
+
+      $('#email').change(function() {  // 이메일 인증 후 다시 이메일을 변경 하고자 한다면...
+         $('#emailAuth').val('');
       });
    });
 
@@ -48,7 +57,11 @@
          showErrorMsg('이메일 형식에 따라 정확히 입력해주세요', email);
          return;
       } else {
-         sendMailAuthCode(email.val());
+         sendMailAuthCode(email.val()); // 메일주소로 인증코드 보내고 인증코드 확인
+
+         if ($('#emailAuth').val() == 'true') {
+            result = true;
+         }
 
       }
 
@@ -63,6 +76,7 @@
          data : {
             "emailAddr" : email
          }, // 송신할 데이터
+         async: false,
          success : function(data) {
             console.log(data);
             if (data.code == '200') {
@@ -97,6 +111,7 @@
          data : {
             "confirmCodeInput" : confirmCodeInput
          }, // 송신할 데이터
+         async: false,
          success : function(data) {
             console.log(data);
             if (data.code == '200') {
@@ -248,7 +263,7 @@
    function isValid() {
       let result = false;
 
-      if (idIsValid() && pwdIsValid() && userNameIsValid() && mobileIsValid()) {
+      if (idIsValid() && pwdIsValid() && userNameIsValid() && mobileIsValid() && emailIsValid()) {
          result = true;
       }
 
