@@ -8,12 +8,11 @@
 <script
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+<script src="/resources/js/timer.js"></script>
 <script>
    $(function() {
       $('.inputTag').change(function(){
          clearErrorMsg($(this));
-
-         
       });
 
       $('.modalClose').click(function() {
@@ -81,6 +80,7 @@
             console.log(data);
             if (data.code == '200') {
                showAuthArea();
+               startTimer(); // 타이머 가동
             } else if (data.code == '500') {
                $('.modal-body').html('이메일 전송에 실패했습니다. 이메일 주소를 확인해 주세요');
                $('#myModal').show();
@@ -97,7 +97,7 @@
       $('.modal-body').html(
             '입력하신 이메일 주소로 인증코드를 전송했습니다. 메일을 확인하시고 인증코드를 입력후 인증 버튼을 누르세요');
       $('#myModal').show();
-      let output = `<div><input type='text' id='confirmCodeInput' /><button type="button" class="btn btn-info" onclick="confirmAuthCode();">인증</button> </div>`;
+      let output = `<div><input type='text' id='confirmCodeInput' /><button type="button" class="btn btn-info" onclick="confirmAuthCode();">인증</button><span class='timer'></span> </div>`;
       $('.authArea').html(output);
    }
 
@@ -271,12 +271,13 @@
    }
 </script>
 <style>
-.errorMsg {
+.errorMsg, .timer {
    font-weight: bold;
    font-size: 0.8em;
    color: red;
    padding: 8px;
 }
+
 </style>
 </head>
 <body>
