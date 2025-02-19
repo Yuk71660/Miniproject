@@ -1,6 +1,5 @@
 package com.miniproject.controller.member;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -19,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miniproject.model.MemberDTO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.service.member.MemberService;
-import com.miniproject.util.SendMailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -105,6 +103,19 @@ public class MemberController {
 			result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.failureResponse(), HttpStatus.OK);
 		}
 
+		return result;
+
+	}
+
+	@PostMapping("/invalidAuthCode")
+	public ResponseEntity<MyResponseWithoutData> removeAuthCode(HttpSession ses) {
+		ResponseEntity<MyResponseWithoutData> result = null;
+
+		if (ses.getAttribute("authCode") != null) {
+			ses.removeAttribute("authCode");
+		}
+
+		result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
 		return result;
 
 	}
