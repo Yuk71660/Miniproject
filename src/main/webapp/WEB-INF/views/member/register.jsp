@@ -108,6 +108,7 @@
    }
 
    function showAuthArea() {
+      
       $('.modal-body').html(
             '입력하신 이메일 주소로 인증코드를 전송했습니다. 메일을 확인하시고 인증코드를 입력후 인증 버튼을 누르세요');
       $('#myModal').show();
@@ -132,12 +133,14 @@
                $('#emailAuth').val('true');
                $('.authArea').empty();
             } else if (data.code == '500') {
+               
                $('#email').val('');
                clearErrorMsg($('#email'));
                $('.authArea').empty();
                $('.modal-body').html('이메일 인증 코드가 틀립니다. 인증을 다시 해주세요');
                $('#myModal').show();
                $('#email').focus();
+               
 
             }
          },
@@ -279,13 +282,15 @@
 
       if (document.getElementById('checkAgree').checked == true) {
          if (idIsValid() && pwdIsValid() && userNameIsValid()
-               && mobileIsValid() && emailIsValid()) {
+               && mobileIsValid() && emailIsValid() && isFileImage($('#userProfile').val())) {
             result = true;
          }
       }
 
+
       return result;
    }
+   
 
    async function search() {
       let searchWord = $('#searchAddr').val();
@@ -319,7 +324,25 @@
       $('#myModal').hide();
       $('#postZip').val(zipNo);
       $('#streetAddr').val(streetAddr);
+      $('#postZip').prop('readonly', 'true');
+      $('#streetAddr').prop('readonly', 'true');
       $('#detailArea').focus();
+   }
+   
+   function isFileImage(fileName) {
+      let imageType = ['png', 'jpeg', 'jpg', 'gif'];
+        let ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        console.log(fileName, ext);
+      if (fileName == '' || fileName == null) {
+         return true;
+      } else if (imageType.indexOf(ext) == -1) {
+         $('#userProfile').val('');
+         $('.modal-body').html('이미지 파일만 업로드 할 수 있습니다');
+         $('#myModal').show();
+         
+         return false;
+      } 
+      
    }
 </script>
 <style>
@@ -418,11 +441,11 @@
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="postZip"
-                  name="postZip" readonly>
+                  name="postZip">
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="streetAddr"
-                  name="streetAddr" readonly>
+                  name="streetAddr">
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="detailArea"
@@ -432,7 +455,7 @@
 
          <div class="mb-3 mt-3">
             <input type="file" class="form-control" id="userProfile"
-               name="userProfile">
+               name="userProfile" onchange="isFileImage(this.value);">
          </div>
 
          <input type="hidden" id="idDuplicate" /> <input type="hidden"

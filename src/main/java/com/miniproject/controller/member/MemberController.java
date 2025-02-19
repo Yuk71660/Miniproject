@@ -30,8 +30,9 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private static Logger logger = LoggerFactory.getLogger(MemberController.class);
-	private static FileProcess fp;
 
+	private final FileProcess fp;
+	   
 	private final MemberService service;
 
 	@GetMapping("/register")
@@ -44,6 +45,7 @@ public class MemberController {
 			HttpServletRequest req) {
 		logger.info(newMember.toString() + "을 회원 가입 시키자");
 
+		System.out.println(fp.hashCode());
 		if (userImg.getSize() > 0) { // 유저 이미지가 있다면...
 			try {
 				String userImgName = fp.saveUserProfile(newMember.getUserId(), userImg, req); // userId.확장자로 파일 저장
