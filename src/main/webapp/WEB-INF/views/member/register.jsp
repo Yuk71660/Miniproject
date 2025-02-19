@@ -418,11 +418,11 @@
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="postZip"
-                  name="postZip">
+                  name="postZip" readonly>
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="streetAddr"
-                  name="streetAddr">
+                  name="streetAddr" readonly>
             </div>
             <div>
                <input type="text" class="form-control inputTag" id="detailArea"

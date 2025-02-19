@@ -1,7 +1,9 @@
 package com.miniproject.controller.member;
 
+import java.io.IOException;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.miniproject.model.MemberDTO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.service.member.MemberService;
+import com.miniproject.util.FileProcess;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 
 	private static Logger logger = LoggerFactory.getLogger(MemberController.class);
+	private static FileProcess fp;
 
 	private final MemberService service;
 
@@ -36,7 +40,22 @@ public class MemberController {
 	}
 
 	@PostMapping("/saveMember")
-	public void saveMember(MemberDTO newMember, @RequestParam("userProfile") MultipartFile userImg) {
+	public void saveMember(MemberDTO newMember, @RequestParam("userProfile") MultipartFile userImg,
+			HttpServletRequest req) {
+		logger.info(newMember.toString() + "을 회원 가입 시키자");
+
+		if (userImg.getSize() > 0) { // 유저 이미지가 있다면...
+			try {
+				String userImgName = fp.saveUserProfile(newMember.getUserId(), userImg, req); // userId.확장자로 파일 저장
+				newMember.setUserImg("memberImg/" + userImgName);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				newMember.setUserImg(null); // 유저가 올린 이미지를 저장 실패 했을 경우.. default이미지가 저장되도록...
+
+			}
+		}
+
 		logger.info(newMember.toString() + "을 회원 가입 시키자");
 	}
 

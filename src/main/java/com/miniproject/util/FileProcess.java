@@ -40,18 +40,17 @@ public class FileProcess {
 
    public FileProcess() {
       this.os = System.getProperty("os.name").toLowerCase();
-
    }
 
    /**
- * @author Administrator
- * @data 2025. 2. 12.
- * @enclosing_method removeFile
- * @todo 업로드된 파일 객체를 받아 웹 서버에서 삭제
- * @param BoardUpFilesVODTO removeFile
- * @returnType void
- */
-public void removeFile(BoardUpFilesVODTO removeFile) {
+    * @author Administrator
+    * @data 2025. 2. 12.
+    * @enclosing_method removeFile
+    * @todo 업로드된 파일 객체를 받아 웹서버에서 삭제한다.
+    * @param BoardUpFilesVODTO removeFile : 삭제할 파일 객체
+    * @returnType void
+    */
+   public void removeFile(BoardUpFilesVODTO removeFile) {
       String tmpNewFileName = null;
       String tmpThubFileName = null;
 
@@ -63,7 +62,7 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
          tmpNewFileName = removeFile.getNewFileName();
          tmpThubFileName = removeFile.getThumbFileName();
       }
-      
+
       // 이미지파일 -> newFileName 경로의 파일 삭제 + thumbFileName 경로의 파일삭제
 
       File tmp = new File(this.realPath + tmpNewFileName);
@@ -76,6 +75,20 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
       }
    }
 
+   public String saveUserProfile(String userId, MultipartFile userImg, HttpServletRequest req) throws IOException {
+      String originalFileName = userImg.getOriginalFilename();
+      String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+      
+      this.realPath = req.getSession().getServletContext().getRealPath("/resources/memberImg");
+      logger.info("파일이 저장될 웹 서버의 실제 경로 : " + this.realPath);
+      
+      String fileName = userId + "." + ext;
+      File saveUserImgFile = new File(realPath + File.separator + fileName);
+      FileUtils.writeByteArrayToFile(saveUserImgFile, userImg.getBytes());
+      
+      return fileName;
+   }
+
    /**
     * @author Administrator
     * @data 2025. 2. 10.
@@ -83,10 +96,12 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
     * @todo : 업로드된 파일을 실제 물리경로(realPath)에 저장
     * @param : MultipartFile file - 유저가 업로드 한 파일
     * @param : HttpServletRequest request
+    * @param : String saveFileDir - 업로드한 파일이 저장되는 sub경로
     * @throws IOException
     * @returnType BoardUpFilesVODTO
     */
-   public BoardUpFilesVODTO saveFileToRealPath(MultipartFile file, HttpServletRequest request) throws IOException {
+   public BoardUpFilesVODTO saveFileToRealPath(MultipartFile file, HttpServletRequest request, String saveFileDir)
+         throws IOException {
       BoardUpFilesVODTO result = null;
 
       String originalFileName = file.getOriginalFilename();
@@ -100,7 +115,7 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
 
       String newFileName = null;
 
-      this.realPath = request.getSession().getServletContext().getRealPath("/resources/boardUpFiles");
+      this.realPath = request.getSession().getServletContext().getRealPath(saveFileDir);
       logger.info("파일이 저장될 웹 서버의 실제 경로 : " + this.realPath);
 
       String[] ymd = makeCalendarPath();
@@ -154,6 +169,7 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
       // 특징 : 별도 파일을 저장할 공간이 필요하지 않다.(장점), 실제 파일을 저장하는 것보다 더 크기가 클 수 있다(단점)
       // 특징 : 인코딩에 따른 부하가 있다.
 
+      String result = null;
       File thumb = new File(this.saveFilePath + File.separator + thumbFileName);
 
       byte[] thumbFile = FileUtils.readFileToByteArray(thumb);
@@ -210,25 +226,25 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
     * @param
     * @returnType String
     */
-//   private String renameFileName(String originalFileName, String ext) {
-//      String tmpNewFileName = originalFileName;
-//      int cnt = 1;
-//      while (checkFileExist(tmpNewFileName)) {
-//
-//         String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-//         int startIndex = tmpNewFileName.indexOf("(");
-//         if (startIndex != -1) {
-//            String preStartIndex = tmpNewFileName.substring(0, startIndex);
-//            tmpNewFileName = preStartIndex + "(" + cnt + ")" + "." + ext;
-//         } else {
-//            tmpNewFileName = fileNameWithoutExt + "(" + cnt + ")" + "." + ext;
-//         }
-//         cnt++;
-//      }
-//
-//      logger.info("새로운 파일 이름 : " + tmpNewFileName);
-//      return tmpNewFileName;
-//   }
+   private String renameFileName(String originalFileName, String ext) {
+      String tmpNewFileName = originalFileName;
+      int cnt = 1;
+      while (checkFileExist(tmpNewFileName)) {
+
+         String fileNameWithoutExt = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+         int startIndex = tmpNewFileName.indexOf("(");
+         if (startIndex != -1) {
+            String preStartIndex = tmpNewFileName.substring(0, startIndex);
+            tmpNewFileName = preStartIndex + "(" + cnt + ")" + "." + ext;
+         } else {
+            tmpNewFileName = fileNameWithoutExt + "(" + cnt + ")" + "." + ext;
+         }
+         cnt++;
+      }
+
+      logger.info("새로운 파일 이름 : " + tmpNewFileName);
+      return tmpNewFileName;
+   }
 
    /**
     * @author Administrator
@@ -238,20 +254,20 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
     * @param
     * @returnType 파일이 중복되면 true, 중복되지 않으면 false 반환
     */
-//   private boolean checkFileExist(String originalFileName) {
-//      File tmp = new File(this.saveFilePath);
-//      boolean isFind = false;
-//
-//      for (String f : tmp.list()) {
-//         if (f.equals(originalFileName)) {
-//            isFind = true;
-//            System.out.println("파일이름이 중복됨!!!!!!!!!!");
-//            break;
-//         }
-//      }
-//
-//      return isFind;
-//   }
+   private boolean checkFileExist(String originalFileName) {
+      File tmp = new File(this.saveFilePath);
+      boolean isFind = false;
+
+      for (String f : tmp.list()) {
+         if (f.equals(originalFileName)) {
+            isFind = true;
+            System.out.println("파일이름이 중복됨!!!!!!!!!!");
+            break;
+         }
+      }
+
+      return isFind;
+   }
 
    /**
     * @author Administrator
@@ -293,4 +309,5 @@ public void removeFile(BoardUpFilesVODTO removeFile) {
 
       return ymd;
    }
+
 }
