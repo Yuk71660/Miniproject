@@ -10,8 +10,16 @@
 
 <script src="/resources/js/timer.js"></script>
 <script>
+   // 도로명주소 api : devU01TX0FVVEgyMDI1MDIxOTEwNDc1MjExNTQ4MzE=
+   let confmKey = `devU01TX0FVVEgyMDI1MDIxOTEwNDc1MjExNTQ4MzE=`;
    $(function() {
-      $('.inputTag').change(function(){
+      $('.inputTag').keydown(function(event) {
+         if (event.key === "Enter") {
+            event.preventDefault();  // 엔터 키 입력 시 폼 제출 방지
+         }
+         });
+
+      $('.inputTag').change(function() {
          clearErrorMsg($(this));
       });
 
@@ -36,38 +44,44 @@
       });
 
       $('#email').blur(function() {
-         if ($('#emailAuth').val() != 'true') {  // 이메일 인증을 받지 않았을때만...
+         if ($('#emailAuth').val() != 'true') { // 이메일 인증을 받지 않았을때만...
             emailIsValid();
          }
-         
+
       });
 
-      $('#email').change(function() {  // 이메일 인증 후 다시 이메일을 변경 하고자 한다면...
+      $('#email').change(function() { // 이메일 인증 후 다시 이메일을 변경 하고자 한다면...
          $('#emailAuth').val('');
       });
    });
 
    function emailIsValid() {
       let result = false;
-      let email = $('#email');
-      const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
+      if ($('#emailAuth').val() != 'true') {
+         
+         let email = $('#email');
+         const regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i
 
-      if (!regEmail.test(email.val())) {
-         showErrorMsg('이메일 형식에 따라 정확히 입력해주세요', email);
-         return;
-      } else {
-         sendMailAuthCode(email.val()); // 메일주소로 인증코드 보내고 인증코드 확인
+         if (!regEmail.test(email.val())) {
+            showErrorMsg('이메일 형식에 따라 정확히 입력해주세요', email);
+            return;
+         } else if ($('#emailAuth').val() != 'true' && regEmail.test(email.val())){
+            sendMailAuthCode(email.val()); // 메일주소로 인증코드 보내고 인증코드 확인
 
-         if ($('#emailAuth').val() == 'true') {
-            result = true;
+            if ($('#emailAuth').val() == 'true') {
+               result = true;
+            }
+
          }
-
+         
+      } else if ($('#emailAuth').val() == 'true')  {
+         result = true;
       }
-
       return result;
    }
 
    function sendMailAuthCode(email) {
+      
       $.ajax({
          url : '/member/sendAuthCode',
          type : 'post', // 이진 데이터를 보낼 때는 post
@@ -75,7 +89,7 @@
          data : {
             "emailAddr" : email
          }, // 송신할 데이터
-         async: false,
+         async : false,
          success : function(data) {
             console.log(data);
             if (data.code == '200') {
@@ -111,7 +125,7 @@
          data : {
             "confirmCodeInput" : confirmCodeInput
          }, // 송신할 데이터
-         async: false,
+         async : false,
          success : function(data) {
             console.log(data);
             if (data.code == '200') {
@@ -121,8 +135,7 @@
                $('#email').val('');
                clearErrorMsg($('#email'));
                $('.authArea').empty();
-               $('.modal-body').html(
-                  '이메일 인증 코드가 틀립니다. 인증을 다시 해주세요');
+               $('.modal-body').html('이메일 인증 코드가 틀립니다. 인증을 다시 해주세요');
                $('#myModal').show();
                $('#email').focus();
 
@@ -216,6 +229,7 @@
             result = true;
             clearErrorMsg(obj);
          }
+
       }
 
       return result;
@@ -263,11 +277,49 @@
    function isValid() {
       let result = false;
 
-      if (idIsValid() && pwdIsValid() && userNameIsValid() && mobileIsValid() && emailIsValid()) {
-         result = true;
+      if (document.getElementById('checkAgree').checked == true) {
+         if (idIsValid() && pwdIsValid() && userNameIsValid()
+               && mobileIsValid() && emailIsValid()) {
+            result = true;
+         }
       }
 
       return result;
+   }
+
+   async function search() {
+      let searchWord = $('#searchAddr').val();
+
+      let url = `https://business.juso.go.kr/addrlink/addrLinkApi.do?` + 'confmKey=' + confmKey + '&currentPage=1&countPerPage=10&keyword=' + searchWord + '&resultType=json';
+      // console.log(url);
+
+      const response = await fetch(url);
+      const json = await response.json();
+      console.log(json);
+
+      if (json.results.common.errorCode == '0') {
+         let output = `<h4>\${searchWord} 검색 결과</h4>`;
+
+         output += `<table class="table table-striped"><thead><tr><th>#</th><th>도로명 주소</th><th>우편번호</th><th></th></tr></thead><tbody>`;
+         $.each(json.results.juso, function (i, juso) {
+            output += `<tr><td>\${i + 1}</td><td>\${juso.roadAddr}</td><td>\${juso.zipNo}</td><td><button type="button" class="btn btn-info"
+               onclick="addStreetAddr('\${juso.zipNo}', '\${juso.roadAddr}');">선택</button></td></tr>`
+         });
+
+         output += `</tbody></table>`;
+    
+         $('.modal-body').html(output);
+         $('#myModal').show();
+      }
+
+      
+   }
+
+   function addStreetAddr(zipNo, streetAddr) {
+      $('#myModal').hide();
+      $('#postZip').val(zipNo);
+      $('#streetAddr').val(streetAddr);
+      $('#detailArea').focus();
    }
 </script>
 <style>
@@ -277,7 +329,6 @@
    color: red;
    padding: 8px;
 }
-
 </style>
 </head>
 <body>
@@ -294,7 +345,8 @@
 
          <div class="mb-3 mt-3">
             <label for="userPwd" class="form-label">비밀번호:</label> <input
-               type="password" class="form-control inputTag" id="userPwd" name="userPwd">
+               type="password" class="form-control inputTag" id="userPwd"
+               name="userPwd">
          </div>
 
          <div class="mb-3 mt-3">
@@ -304,7 +356,8 @@
 
          <div class="mb-3 mt-3">
             <label for="userName" class="form-label">이름:</label> <input
-               type="text" class="form-control inputTag" id="userName" name="userName">
+               type="text" class="form-control inputTag" id="userName"
+               name="userName">
          </div>
 
          <div class="mb-3 mt-3">
@@ -319,6 +372,7 @@
          <div class="authArea"></div>
 
          <div class="mb-3 mt-3">
+            <label class="form-label">성별 :</label>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderF"
                   name="gender" value="F" checked> <label
@@ -327,8 +381,8 @@
             </div>
             <div class="form-check">
                <input type="radio" class="form-check-input" id="genderM"
-                  name="gender" value="M" checked> <label
-                  class="form-check-label" for="genderM">남성</label>
+                  name="gender" value="M"> <label class="form-check-label"
+                  for="genderM">남성</label>
             </div>
          </div>
 
@@ -357,9 +411,23 @@
          </div>
 
          <div class="mb-3 mt-3">
-            <input type="text" class="form-control inputTag" id="postZip" name="postZip">
-            <input type="text" class="form-control inputTag" id="tmpAddr"
-               placeholder="주소 검색..." name="addr">
+            <div>
+               <input type="text" class="form-control inputTag" id="searchAddr"
+                  placeholder="검색할 주소를 입력하시고...">
+               <button type="button" class="btn btn-info" onclick="search();">주소검색</button>
+            </div>
+            <div>
+               <input type="text" class="form-control inputTag" id="postZip"
+                  name="postZip">
+            </div>
+            <div>
+               <input type="text" class="form-control inputTag" id="streetAddr"
+                  name="streetAddr">
+            </div>
+            <div>
+               <input type="text" class="form-control inputTag" id="detailArea"
+                  name="detailAddr">
+            </div>
          </div>
 
          <div class="mb-3 mt-3">
@@ -367,8 +435,8 @@
                name="userProfile">
          </div>
 
-         <input type="hidden" id="idDuplicate" />
-         <input type="hidden" id="emailAuth" />
+         <input type="hidden" id="idDuplicate" /> <input type="hidden"
+            id="emailAuth" />
 
          <div class="mb-3 mt-3">
             <input class="form-check-input" type="checkbox" id="checkAgree">
@@ -385,7 +453,7 @@
 
 
    <!-- The Modal -->
-   <div class="modal" id="myModal">
+   <div class="modal modal-lg" id="myModal">
       <div class="modal-dialog">
          <div class="modal-content">
             <!-- Modal Header -->
