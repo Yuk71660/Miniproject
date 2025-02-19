@@ -343,6 +343,7 @@
          return false;
       } 
       
+      return true;
    }
 </script>
 <style>
