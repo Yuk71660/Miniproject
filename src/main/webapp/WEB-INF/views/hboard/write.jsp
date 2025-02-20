@@ -212,7 +212,7 @@
 
         <div class="mb-3 mt-3">
           <label for="writer" class="form-label">writer:</label>
-          <input type="text" class="form-control" id="writer" name="writer" />
+          <input type="text" class="form-control" id="writer" name="writer"  value="${sessionScope.loginMember.userId }" readonly />
         </div>
 
         <div class="mb-3 mt-3">

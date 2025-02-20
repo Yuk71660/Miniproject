@@ -39,7 +39,7 @@
                         <img alt="" src="/resources/${sessionScope.loginMember.userImg}" width="40px">
                         <span style="color : gray">${sessionScope.loginMember.userId }</span>
                      </li>
-                     <li class="nav-item"><a class="nav-link" href="#">로그아웃</a></li>
+                     <li class="nav-item"><a class="nav-link" href="/member/logout">로그아웃</a></li>
                   </c:when>
                </c:choose>
                
