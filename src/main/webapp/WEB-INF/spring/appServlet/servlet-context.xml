@@ -38,11 +38,20 @@
 	<beans:bean id="sampleInterceptor"
 		class="com.miniproject.interceptor.SampleInterceptor">
 	</beans:bean>
+	
+	<beans:bean id="authInterceptor"
+		class="com.miniproject.interceptor.AuthenticationInterceptor">
+	</beans:bean>
 
 	<interceptors>
 		<interceptor>
 			<mapping path="/interceptorA" />
 			<beans:ref bean="sampleInterceptor" />
+		</interceptor>
+		
+		<interceptor>
+			<mapping path="/hboard/write" />
+			<beans:ref bean="authInterceptor" />
 		</interceptor>
 	</interceptors>
 

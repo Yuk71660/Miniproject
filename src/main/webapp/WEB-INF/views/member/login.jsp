@@ -31,7 +31,9 @@
          <button type="reset" class="btn btn-danger" onclick="location.href='../';">취소</button>
          <button type="submit" class="btn btn-primary">로그인</button>
       </form>
+      <a href="/member/register">아직 회원이 아니신게롱~ 회원가입함세</a>
    </div>
+   
    
 
 </body>
