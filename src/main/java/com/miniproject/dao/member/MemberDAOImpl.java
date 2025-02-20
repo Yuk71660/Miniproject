@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.MemberDTO;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -41,6 +43,13 @@ public class MemberDAOImpl implements MemberDAO {
    public String isDuplicate(String userId) throws Exception {
       
       return ses.selectOne(NS + ".isUserIdDuplicate", userId);
+   }
+
+   @Override
+   public int insertMember(MemberDTO newMember) throws Exception {
+      
+      return ses.insert(NS + ".insertNewMember", newMember);
+      
    }
 
 }

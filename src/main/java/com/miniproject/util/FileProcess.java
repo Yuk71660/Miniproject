@@ -74,6 +74,20 @@ public class FileProcess {
 
       }
    }
+   
+   /**
+    * @author Administrator
+    * @data 2025. 2. 20.
+    * @enclosing_method removeMemberImg
+    * @todo 저장된 유저 이미지를 삭제한다
+    * @param String userImgName : 삭제될 유저의 프로필 파일
+    * @returnType void
+    */
+   public void removeMemberImg(String userImgName) {
+      File removeFile = new File(this.realPath + File.separator + userImgName);
+//      System.out.println(this.realPath + File.separator + "memberImg" + File.separator + userImgName);
+      removeFile.delete();
+   }
 
    public String saveUserProfile(String userId, MultipartFile userImg, HttpServletRequest req) throws IOException {
       String originalFileName = userImg.getOriginalFilename();

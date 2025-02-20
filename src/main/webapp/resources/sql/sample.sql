@@ -190,5 +190,8 @@ select boardNo from hboard where boardNo = boardNo and writer = userId;
 
 select userId from member where userId = userId;
 
+INSERT INTO `webmoonya`.`member` (`userId`, `userPwd`, `userName`, `mobile`, `email`, `gender`, `job`, `hobbys`, `postZip`, `addr`)
+VALUES ('dooly',  sha1(md5(?)), '둘리', '010-1234-5678', 'dooly@dooly.com', 'F', 'a', 'a', '14325', 'asdf');
+
 -- 스키마 사용
 use webmoonya; 

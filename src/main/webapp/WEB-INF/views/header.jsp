@@ -29,7 +29,7 @@
 							<li><a class="dropdown-item" href="/hboard/listAll">계층형게시판</a></li>
 							<li><a class="dropdown-item" href="#">댓글형게시판</a></li>
 						</ul></li>
-					<li class="nav-item"><a class="nav-link" href="#">로그인</a></li>
+					<li class="nav-item"><a class="nav-link" href="/member/showLoginForm">로그인</a></li>
 					<li class="nav-item"><a class="nav-link" href="/member/register">회원가입</a></li>
 					<li class="nav-item"><a class="nav-link" href="#">Link</a></li>
 				</ul>

@@ -13,6 +13,11 @@
    // 도로명주소 api : devU01TX0FVVEgyMDI1MDIxOTEwNDc1MjExNTQ4MzE=
    let confmKey = `devU01TX0FVVEgyMDI1MDIxOTEwNDc1MjExNTQ4MzE=`;
    $(function() {
+      if('${param.status}' == 'fail') {
+         $('.modal-body').html('회원가입에 실패했습니다! 다시 시도해 주세요');
+         $('#myModal').show();
+      }
+      
       $('.inputTag').keydown(function(event) {
          if (event.key === "Enter") {
             event.preventDefault();  // 엔터 키 입력 시 폼 제출 방지
@@ -222,7 +227,7 @@
       let result = false;
       let obj = $('#userId');
 
-      let idRegExt = /^[a-z]+[a-z0-9]{3,7}$/g;
+      let idRegExt = /^[a-zA-Z][0-9a-zA-Z]{3,7}$/g;
 
       if (!idRegExt.test(obj.val())) {
          showErrorMsg("아이디는 영문자(소문자)숫자 포함 4~8자로 입력해 주세요!", obj);
@@ -341,9 +346,10 @@
          $('#myModal').show();
          
          return false;
-      } 
+      } else {
+         return true;
+      }
       
-      return true;
    }
 </script>
 <style>

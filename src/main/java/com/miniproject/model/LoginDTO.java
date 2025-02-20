@@ -14,7 +14,8 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class MemberDTO {
-	private String userId, userPwd, userName, mobile, email, gender, job, postZip, streetAddr, detailAddr, userImg, hobbies, addr;
-	private String[] hobby;
+public class LoginDTO {
+	private String userId;
+	private String userPwd;
+	private boolean remember;
 }
