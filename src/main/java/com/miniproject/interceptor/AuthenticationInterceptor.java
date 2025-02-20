@@ -39,19 +39,36 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
       
       boolean goOriginPath = false;
       
-      logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ preHandle() ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
-      logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 했는지 안했는지 검사하자 ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
-      
-      HttpSession session = request.getSession(); // 세션객체 얻어오기
-      Member loginMember = (Member)session.getAttribute("loginMember");
-      if (loginMember == null) {
-         System.out.println("로그인 안했지롱~~~~~~~");
+      if (request.getMethod().toLowerCase().equals("get")) {  // GET방식 요청일 때만 동작 하도록..
+         logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ preHandle() ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
+         logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 했는지 안했는지 검사하자 ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
+         HttpSession session = request.getSession(); // 세션객체 얻어오기
+         Member loginMember = (Member) session.getAttribute("loginMember");
+         if (loginMember == null) {
+            System.out.println("로그인 안했지롱~~~~~~~");
+
+            response.sendRedirect("/member/showLoginForm"); // 로그인 페이지로 강제 이동
+
+         } else {
+            System.out.println("로그인 되어 있지롱~~~~ : " + loginMember);
+            System.out.println(request.getRequestURI());
+            if (request.getRequestURI().contains("admin")) { // 요청 주소가 관리자페이지이면..
+               if (loginMember.getIsAdmin().equals("Y")) {
+                  System.out.println("관리자 양반");
+                  goOriginPath = true;
+                  return true;
+               } else {
+                  response.sendRedirect("/member/showLoginForm");
+                  return false;
+               }
+            } else {
+               // 로그인 되어 있고, 관리자 페이지를 요청하지 않았다면...
+               goOriginPath = true;
+            }
          
-         response.sendRedirect("/member/showLoginForm"); // 로그인 페이지로 강제 이동
-         
+         } 
       } else {
-         System.out.println("로그인 되어 있지롱~~~~ : " + loginMember.getUserId());
-         // 가던길 가야함
+         // 요청 방식이 GET이 아닐
          goOriginPath = true;
       }
       
