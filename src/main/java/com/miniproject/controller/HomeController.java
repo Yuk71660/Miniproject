@@ -18,7 +18,9 @@ public class HomeController {
 	
 	@RequestMapping(value = "/interceptorA")
 	public void interceptorA() {
+		
 		System.out.println("인터셉트해옴!");
+		
 	}
 	
 }
