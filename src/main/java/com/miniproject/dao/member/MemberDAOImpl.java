@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.LoginDTO;
+import com.miniproject.model.Member;
 import com.miniproject.model.MemberDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +52,12 @@ public class MemberDAOImpl implements MemberDAO {
       
       return ses.insert(NS + ".insertNewMember", newMember);
       
+   }
+
+   @Override
+   public Member selectMemberByLoginDTO(LoginDTO loginDTO) throws Exception {
+      
+      return ses.selectOne(NS + ".loginMember", loginDTO);
    }
 
 }

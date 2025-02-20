@@ -33,4 +33,9 @@
          </when>
       </choose>
    </insert>
+   
+   <select id="loginMember" resultType="com.miniproject.model.Member">
+      select * from member where userId=#{userId} and userPwd=sha1(md5(#{userPwd}))
+   
+   </select>
 </mapper>

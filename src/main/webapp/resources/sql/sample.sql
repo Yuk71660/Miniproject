@@ -193,5 +193,14 @@ select userId from member where userId = userId;
 INSERT INTO `webmoonya`.`member` (`userId`, `userPwd`, `userName`, `mobile`, `email`, `gender`, `job`, `hobbys`, `postZip`, `addr`)
 VALUES ('dooly',  sha1(md5(?)), '둘리', '010-1234-5678', 'dooly@dooly.com', 'F', 'a', 'a', '14325', 'asdf');
 
+select * from member where userId = 'aba4114' and userPwd = sha1(md5('1234'));
+
+SELECT * FROM webmoonya.pointlog;
+
+-- 24시간 포인트지급_24시간 이내 기록있으면 지난시간 0~24 int반환 없으면 -1반환
+select ifnull(timestampdiff(hour,  (select max(pointwhen)
+from pointlog
+where pointwho = 'aba4114' and pointwhy = '로그인'), now()),-1) as timediff;
+
 -- 스키마 사용
 use webmoonya; 
