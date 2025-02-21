@@ -99,6 +99,20 @@
 				답글달기</button>
 			<button type="button" class="btn btn-secondary">글 수정</button>
 			<button type="button" class="btn btn-success">글 삭제</button>
+
+			<!--  아래의 방법으로도 로그인했고, 본인글일때만 수정 삭제가 되도록 처리 할 수도 있다
+			<c:choose>
+				<c:when test="${sessionScope.loginMember != null && sessionScope.loginMember.userId == boardDetailInfo.writer }">
+					<button type="button" class="btn btn-secondary">글 수정</button>
+					<button type="button" class="btn btn-success">글 삭제</button>
+				</c:when>
+				<c:otherwise>
+					<button type="button" class="btn btn-secondary" disabled>글 수정</button>
+					<button type="button" class="btn btn-success" disabled>글 삭제</button>
+				</c:otherwise>
+			</c:choose>
+			 -->
+
 			<button type="button" class="btn btn-info"
 				onclick="location.href='./listAll';">리스트페이지</button>
 		</div>

@@ -202,5 +202,33 @@ select ifnull(timestampdiff(hour,  (select max(pointwhen)
 from pointlog
 where pointwho = 'aba4114' and pointwhy = '로그인'), now()),-1) as timediff;
 
+UPDATE hboard SET `boardNo` = '22'
+-- if title != null
+, `title` = '?'
+-- if content != null
+, `content` = '?'
+WHERE (`boardNo` = '22');
+
+-- 게시글 수정 쿼리문 (제목, 내용 수정 가능)
+-- 게시글 제목을 수정한다면..
+update hboard
+set title = ?
+where boardNo = ?;
+
+-- 게시글 내용을 수정한다면..
+update hboard
+set content = ?
+where boardNo = ?;
+
+-- 게시글 내용과 제목을 모두 수정할 때
+update hboard
+set title = ? and content = ?
+where boardNo = ?;
+
+-- 위의 3가지 쿼리문이 필요 할 수 있다...
+-- 동적 쿼리문으로 만들 수 있긴 하지만, 먼저, 수정할 게시글을 출력해 놓는다면... 
+-- 유저가 변경한 부분 + 변경 하지 않은 부분의 값이 그대로 모두 update 될 수 있기 때문에 
+-- "게시글 내용과 제목을 모두 수정할 때"의 쿼리문만 필요하게된다..
+
 -- 스키마 사용
-use webmoonya; 
+use webmoonya;
