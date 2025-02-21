@@ -180,22 +180,29 @@ public class HBoardController {
       return result;
    }
    
-   @GetMapping(value="/viewBoard")
-   public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest req) {
-      logger.info(boardNo + "번 글을 조회하자!");
-      logger.info("유저의 ip주소 : " + GetClientIPAddr.getClientIp(req));
-      
-      try {
-         BoardDetailInfo bi = service.getBoardDetailInfo(boardNo, GetClientIPAddr.getClientIp(req));   
-         model.addAttribute("boardDetailInfo", bi);
-         
-      } catch (Exception e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-      
-      return "hboard/viewBoard";
-   }
+   @GetMapping(value={"/viewBoard", "/modifyBoard"}) // 아래의 메서드는 "/viewBoard", "/modifyBoard" 에 매핑
+	public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest req) {
+		logger.info(boardNo + "번 글을 조회하자!");
+		
+		if (req.getRequestURI().contains("view")) {
+			System.out.println("조회하러 왓다");
+		} else if (req.getRequestURI().contains("modify")) {
+			System.out.println("수정하러 왓다");
+		}
+		
+		logger.info("유저의 ip주소 : " + GetClientIPAddr.getClientIp(req));
+		
+		try {
+			BoardDetailInfo bi = service.getBoardDetailInfo(boardNo, GetClientIPAddr.getClientIp(req));	
+			model.addAttribute("boardDetailInfo", bi);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "hboard/viewBoard";
+	}
    
    @GetMapping(value="/showReplyForm")
    public String showReplyForm() {

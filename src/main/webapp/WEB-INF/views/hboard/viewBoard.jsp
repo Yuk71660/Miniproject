@@ -97,7 +97,7 @@
 			<button type="button" class="btn btn-primary"
 				onclick="location.href='/hboard/showReplyForm?boardNo=${boardDetailInfo.boardNo}&ref=${boardDetailInfo.ref}&step=${boardDetailInfo.step}&refOrder=${boardDetailInfo.refOrder}';">
 				답글달기</button>
-			<button type="button" class="btn btn-secondary">글 수정</button>
+			<button type="button" class="btn btn-secondary" onclick="location.href='/hboard/modifyBoard?boardNo=${boardDetailInfo.boardNo}';">글 수정</button>
 			<button type="button" class="btn btn-success">글 삭제</button>
 
 			<!--  아래의 방법으로도 로그인했고, 본인글일때만 수정 삭제가 되도록 처리 할 수도 있다
