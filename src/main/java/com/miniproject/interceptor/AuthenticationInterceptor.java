@@ -6,10 +6,15 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.miniproject.dao.board.HBoardDAO;
 import com.miniproject.model.Member;
+import com.miniproject.service.board.HBoardService;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author Administrator
@@ -21,9 +26,13 @@ import com.miniproject.model.Member;
  * 로그인 되어 있지 않으면 로그인 페이지로 이동하도록 처리
  * 로그인 되어 있으면 그대로 수행 되도록 처리
  */
+
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
    private static Logger logger = LoggerFactory.getLogger(AuthenticationInterceptor.class);
+   
+   @Autowired
+   private HBoardDAO dao;
    
    /**
     * @author Administrator
@@ -49,20 +58,33 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
             response.sendRedirect("/member/showLoginForm"); // 로그인 페이지로 강제 이동
 
-         } else {
+         } else {  // 로그인 되었다면
             System.out.println("로그인 되어 있지롱~~~~ : " + loginMember);
-            System.out.println(request.getRequestURI());
+            System.out.println("요청 주소 : " + request.getRequestURI());
             if (request.getRequestURI().contains("admin")) { // 요청 주소가 관리자페이지이면..
                if (loginMember.getIsAdmin().equals("Y")) {
                   System.out.println("관리자 양반");
-                  goOriginPath = true;
                   return true;
                } else {
                   response.sendRedirect("/member/showLoginForm");
                   return false;
                }
+            } else if(request.getRequestURI().contains("modify") || request.getRequestURI().contains("remove")) {
+               // 로그인 되어 있고,  글 수정/글삭제 페이지를 요청 했다면... 로그인한유저가 작성한 글인지 확인해봐야 한다..
+//               System.out.println("요청된 쿼리스트링 : " + request.getQueryString());
+               int boardNo = Integer.parseInt(request.getParameter("boardNo"));
+//               System.out.println(dao.toString() + "," + boardNo);
+               
+               String writer = dao.selectWriterByBoardNo(boardNo);
+               if (loginMember.getUserId().equals(writer)) {
+                  goOriginPath = true;
+               } else {
+                  response.sendRedirect("/hboard/viewBoard?boardNo=" + boardNo + "&status=notallowed");
+                  goOriginPath = false;
+               }
+               
             } else {
-               // 로그인 되어 있고, 관리자 페이지를 요청하지 않았다면...
+               // 로그인 되어 있고, 관리자 페이지, 글 수정/글삭제 페이지를 요청하지 않았다면...
                goOriginPath = true;
             }
          
@@ -74,5 +96,5 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
       
       return goOriginPath;
    }
-   
+
 }

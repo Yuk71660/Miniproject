@@ -24,9 +24,13 @@ public interface HBoardDAO {
 	int insertBoardReadLog(String readWho, int boardNo) throws Exception;
 
 	int updateRefByBoardNo(int boardNo) throws Exception;
+
 	// 답글 저장
 	int insertReply(HBoardDTO newReply) throws Exception;
 
 	void updateRefOrder(int ref, int refOrder) throws Exception;
+
+	// 게시글의 작성자를 가져오는
+	String selectWriterByBoardNo(int boardNo) throws Exception;
 
 }

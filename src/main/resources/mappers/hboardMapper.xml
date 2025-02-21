@@ -115,6 +115,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateRefThatWrittenReply">
 		UPDATE hboard
 		SET refOrder = refOrder + 1
-		WHERE ref = #{ref} AND refOrder > #{refOrder};
+		WHERE ref =
+		#{ref} AND refOrder > #{refOrder};
 	</update>
+
+	<select id="getWriterByBoardNo" resultType="string">
+		select writer from hboard where boardNo = ${boardNo}
+	</select>
 </mapper>

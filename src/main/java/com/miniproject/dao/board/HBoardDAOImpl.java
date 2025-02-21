@@ -17,13 +17,12 @@ import com.miniproject.model.HBoardDTO;
 
 @Repository
 public class HBoardDAOImpl implements HBoardDAO {
-	
-	
+
 	private static Logger logger = LoggerFactory.getLogger(HBoardDAOImpl.class);
-	
+
 	@Autowired
 	private SqlSession ses;
-	
+
 	private static final String NS = "com.miniproject.mapper.hboardmapper";
 
 	@Override
@@ -39,33 +38,33 @@ public class HBoardDAOImpl implements HBoardDAO {
 	 * @enclosing_method insertHBoard
 	 * @todo 새로운 게시글 insert
 	 * @param
-	 * @returnType pk값을 반환 
+	 * @returnType pk값을 반환
 	 */
 	@Override
 	public int insertHBoard(HBoardDTO newBoard) throws Exception {
 		// TODO Auto-generated method stub
-		ses.insert(NS+".saveHBoard", newBoard);
+		ses.insert(NS + ".saveHBoard", newBoard);
 		return newBoard.getBoardNo();
 	}
-	
+
 	@Override
 	public int updateRefByBoardNo(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.update(NS+".updateRefByBoardNo", boardNo);
+		return ses.update(NS + ".updateRefByBoardNo", boardNo);
 	}
 
 	@Override
 	public int insertHBoardUpfile(BoardUpFilesVODTO upFile) throws Exception {
 		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		System.out.println(upFile.toString());
-		
+
 		return ses.insert(NS + ".saveUpFile", upFile);
 	}
 
 	@Override
 	public BoardDetailInfo selectBoardDetailInfo(int boardNo) throws Exception {
 		// TODO Auto-generated method stub
-		return ses.selectOne(NS+".getBoardDetailInfoByBoardNo", boardNo);
+		return ses.selectOne(NS + ".getBoardDetailInfoByBoardNo", boardNo);
 	}
 
 	@Override
@@ -73,21 +72,21 @@ public class HBoardDAOImpl implements HBoardDAO {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("readWho", readWho);
 		paramMap.put("boardNo", boardNo);
-		
+
 		return ses.selectOne(NS + ".checkHourReadLogByBoardNo", paramMap);
 	}
-	
+
 	@Override
-	public int updateReadCount(int boardNo) throws Exception  {
+	public int updateReadCount(int boardNo) throws Exception {
 		return ses.update(NS + ".updateReadCount", boardNo);
 	}
-	
+
 	@Override
 	public int insertBoardReadLog(String readWho, int boardNo) throws Exception {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("readWho", readWho);
 		paramMap.put("boardNo", boardNo);
-		
+
 		return ses.insert(NS + ".insertBoardReadLog", paramMap);
 	}
 
@@ -97,14 +96,20 @@ public class HBoardDAOImpl implements HBoardDAO {
 		newReply.setRefOrder(newReply.getRefOrder() + 1);
 		return ses.insert(NS + ".insertReply", newReply);
 	}
-	
+
 	@Override
 	public void updateRefOrder(int ref, int refOrder) throws Exception {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("ref", ref);
 		paramMap.put("refOrder", refOrder);
-		
+
 		ses.update(NS + ".updateRefThatWrittenReply", paramMap);
+	}
+
+	@Override
+	public String selectWriterByBoardNo(int boardNo) throws Exception {
+
+		return ses.selectOne(NS + ".getWriterByBoardNo", boardNo);
 	}
 
 }
