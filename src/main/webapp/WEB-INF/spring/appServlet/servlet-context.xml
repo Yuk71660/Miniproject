@@ -51,6 +51,7 @@
 		
 		<interceptor>
 			<mapping path="/hboard/write" />
+			<mapping path="/hboard/modifyBoard" />
 			<mapping path="/admin/*" />
 			
 			<beans:ref bean="authInterceptor" />
