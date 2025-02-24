@@ -53,7 +53,7 @@ public class HBoardController {
    private List<BoardUpFilesVODTO> fileList = new ArrayList<BoardUpFilesVODTO>();
 
    // 게시글 수정시 업로한 파일 객체들을 임식로 저장
-   private List<BoardUpFilesVODTO> modifyFileList = new ArrayList<BoardUpFilesVODTO>();
+   private List<BoardUpFilesVODTO> modifyFileList;
 
    @GetMapping("/listAll")
    public String listAll(Model model) {
@@ -215,7 +215,7 @@ public class HBoardController {
          for (BoardUpFilesVODTO f : bi.getFileList()) {
             System.out.println(f.toString());
          }
-         this.modifyFileList.addAll(bi.getFileList()); // 게시글 수정시 파일 수정을 위해 담아둠
+         this.modifyFileList = bi.getFileList(); // 게시글 수정시 파일 수정을 위해 담아둠
          model.addAttribute("boardDetailInfo", bi);
 
       } catch (Exception e) {
