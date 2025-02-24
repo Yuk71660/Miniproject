@@ -24,5 +24,5 @@ public class BoardUpFilesVODTO {
 	private long size;
 	private String base64Image;
 	private int boardNo;
-
+	private FileStatus status;
 }

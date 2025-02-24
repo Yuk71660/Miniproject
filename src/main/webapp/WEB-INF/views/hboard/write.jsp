@@ -55,6 +55,7 @@
       function fileUpload(file) {
         const fd = new FormData(); // FormData : form태그와 같은 역활을 하는 자바스크립트 객체
         fd.append('file', file);
+        fd.append('status','write');
 
         $.ajax({
           url: '/hboard/upfiles',

@@ -231,6 +231,24 @@ where boardNo = ?;
 -- "게시글 내용과 제목을 모두 수정할 때"의 쿼리문만 필요하게된다..
 
 select writer from hboard where boardNo = ?;
+select * from member order by registerDate desc;
+
+UPDATE hboard SET `title` = #{}, `content` = #{} WHERE (`boardNo` = #{});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- 스키마 사용
 use webmoonya;
