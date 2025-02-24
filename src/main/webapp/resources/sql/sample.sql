@@ -222,20 +222,18 @@ where boardNo = ?;
 
 -- 게시글 내용과 제목을 모두 수정할 때
 update hboard
-set title = ? and content = ?
+set title = ?, content = ?
 where boardNo = ?;
 
+select * from boardupfiles where boardNo = 16;
 -- 위의 3가지 쿼리문이 필요 할 수 있다...
 -- 동적 쿼리문으로 만들 수 있긴 하지만, 먼저, 수정할 게시글을 출력해 놓는다면... 
 -- 유저가 변경한 부분 + 변경 하지 않은 부분의 값이 그대로 모두 update 될 수 있기 때문에 
 -- "게시글 내용과 제목을 모두 수정할 때"의 쿼리문만 필요하게된다..
 
 select writer from hboard where boardNo = ?;
-select * from member order by registerDate desc;
 
-UPDATE hboard SET `title` = #{}, `content` = #{} WHERE (`boardNo` = #{});
-
-
+DELETE FROM boardupfiles WHERE (boardUpfileNo = ?);
 
 
 

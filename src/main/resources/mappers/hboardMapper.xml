@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<collection property="fileList"
 			ofType="com.miniproject.model.BoardUpFilesVODTO"
 			javaType="java.util.ArrayList">
-			<result column="boardUpfileNo" property="boardUpfileNo"
+			<result column="boardUpFileNo" property="boardUpFileNo"
 				javaType="int" />
 			<result column="originalFileName" property="originalFileName"
 				javaType="String" />

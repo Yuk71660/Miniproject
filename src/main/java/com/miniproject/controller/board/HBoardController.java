@@ -121,11 +121,11 @@ public class HBoardController {
             upFile.setStatus(FileStatus.NEW);
             this.modifyFileList.add(upFile);
             Thread.sleep(1000);
-            outputFileList(this.modifyFileList);
+//            outputFileList(this.modifyFileList);
          } else if (status.equals("write")) { // 게시글 최초 작성시
             this.fileList.add(upFile);
             Thread.sleep(1000);
-            outputFileList(this.fileList);
+//            outputFileList(this.fileList);
          }
 
          result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
@@ -166,7 +166,7 @@ public class HBoardController {
          }
 
          this.fileList.remove(removedIndex);
-         outputFileList(this.fileList);
+//         outputFileList(this.fileList);
       } else if (status.equals("modify")) {
          
          for (int i = 0; i < this.modifyFileList.size(); i++) {
@@ -177,7 +177,7 @@ public class HBoardController {
          }
 
          this.modifyFileList.remove(removedIndex);
-         outputFileList(this.modifyFileList);
+//         outputFileList(this.modifyFileList);
       }
       
       
@@ -198,7 +198,7 @@ public class HBoardController {
 
       this.fileList.clear(); // 파일리스트에서도 비워줘야 한다.
 
-      outputFileList(this.fileList);
+//      outputFileList(this.fileList);
 
       result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
       return result;
@@ -273,9 +273,65 @@ public class HBoardController {
          }
       }
 
-      outputFileList(this.modifyFileList);
+//      outputFileList(this.modifyFileList);
 
       return new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
+   }
+   
+   @PostMapping("/modifyCancel") 
+   public ResponseEntity<MyResponseWithoutData> modifyCancel() {
+      for (BoardUpFilesVODTO f : this.modifyFileList) {
+         if (f.getStatus() == FileStatus.DELETE) {
+            f.setStatus(null);
+         } else if (f.getStatus() == FileStatus.NEW) {
+            // 삭제
+            fp.removeFile(f);
+         }
+      }
+      
+      this.modifyFileList.clear();
+      
+      return new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
+   }
+   
+   @PostMapping("/modifyBoard")
+   public String modifyBoardPost(HBoardDTO modifyBoard) {
+      logger.info(modifyBoard + "를 수정하자");
+      System.out.println("====================================================================================");
+      System.out.println(" 수정전 파일 리스트  : " + this.modifyFileList.size());
+      System.out.println("====================================================================================");
+      for (BoardUpFilesVODTO f : this.modifyFileList) {
+         System.out.println(f.toString());
+      }
+      
+      String returnPage = "redirect:./viewBoard?boardNo=" + modifyBoard.getBoardNo();
+      
+      try {
+         if (service.modifyBoard(modifyBoard, this.modifyFileList)) {
+            returnPage += "&status=modifySuccess";
+         }
+         
+      } catch (Exception e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+         
+         returnPage += "&status=modifyFail";
+      }
+      
+      postFileProcess();
+      
+      return returnPage;
+      
+   }
+
+   private void postFileProcess() {
+      for (BoardUpFilesVODTO f : this.modifyFileList) {
+         if (f.getStatus() == FileStatus.DELETE) {
+            fp.removeFile(f);
+         }
+      }
+      
+      this.modifyFileList.clear();
    }
 
    private void outputFileList(List<BoardUpFilesVODTO> list) {

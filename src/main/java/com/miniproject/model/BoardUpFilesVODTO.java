@@ -15,7 +15,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class BoardUpFilesVODTO {
-	private int boardUpfileNo;
+	private int boardUpFileNo;
 	private String originalFileName;
 	private String newFileName;
 	private String thumbFileName;

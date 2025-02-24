@@ -8,11 +8,17 @@ import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 
 public interface HBoardService {
-	List<HBoard> getEntireHBoard() throws Exception;
+   // 전체 게시글 리스트 얻어오는
+   List<HBoard> getEntireHBoard() throws Exception;
 
-	boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception;
-	
-	BoardDetailInfo getBoardDetailInfo(int boardNo, String ip) throws Exception;
+   // 게시글 저장 
+   boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception;
 
-	boolean saveReply(HBoardDTO newReply) throws Exception;
+   // 게시글 상세조회
+   BoardDetailInfo getBoardDetailInfo(int boardNo, String ipAddr) throws Exception;
+
+   // 답글 저장
+   boolean saveReply(HBoardDTO newReply)  throws Exception;
+
+   boolean modifyBoard(HBoardDTO modifyBoard, List<BoardUpFilesVODTO> modifyFileList) throws Exception;
 }

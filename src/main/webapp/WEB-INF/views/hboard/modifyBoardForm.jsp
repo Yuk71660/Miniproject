@@ -209,6 +209,24 @@
         output += `<td><img src='/resources/images/remove.png' width='25px' onclick='remFile("\${file.name}", this);'/></td></tr>`;
         $('.preview').append(output);
       }
+      
+      function modifyCancel() {
+         $.ajax({
+           url : '/hboard/modifyCancel',
+           type : 'post', // 이진 데이터를 보낼 때는 post
+           dataType : 'json', // 수신받을 데이터 타입
+           success : function(data) {
+              console.log(data);
+              if (data.code == "200") {
+                 location.href='/hboard/listAll';
+              }
+           },
+           error : function(err) {
+              // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+              console.log(err.responseJSON);
+           },
+        });
+      }
 </script>
 <style>
 .removedFile>td {
@@ -224,7 +242,7 @@
    <div class="container">
       <h1>게시판 수정 페이지</h1>
 
-      <form action="" method="post">
+      <form action="./modifyBoard" method="post">
          <div class="board">
             <div class="mb-3 mt-3">
                <label for="boardNo" class="form-label">boardNo:</label> <input
@@ -303,9 +321,7 @@
             </div>
 
             <div style="float: right; margin-right: 5px;">
-               <button type="button" class="btn btn-danger" id="newFile">
-                  add file</button>
-
+               
                <button type="button" class="btn btn-danger" id="fileDeleteBtn">
                   <span></span>files delete
                </button>
@@ -315,9 +331,7 @@
          <div class="btns" style="clear: right;">
             <button type="button" class="btn btn-primary"
                onclick="location.href='/hboard/showReplyForm?boardNo=${boardDetailInfo.boardNo}&ref=${boardDetailInfo.ref}&step=${boardDetailInfo.step}&refOrder=${boardDetailInfo.refOrder }';">답글달기</button>
-            <button type="button" class="btn btn-secondary"
-               onclick="location.href='/hboard/modifyBoard?boardNo=${boardDetailInfo.boardNo}';">글
-               수정</button>
+            <button type="submit" class="btn btn-secondary">수정완료</button>
             <button type="button" class="btn btn-success">글 삭제</button>
 
             <!--  아래의 방법으로도 로그인했고, 본인글일때만 수정 삭제가 되도록 처리 할 수도 있다
@@ -334,7 +348,7 @@
           -->
 
             <button type="button" class="btn btn-info"
-               onclick="location.href='./listAll';">리스트페이지</button>
+               onclick="modifyCancel();">리스트페이지</button>
          </div>
       </form>
    </div>

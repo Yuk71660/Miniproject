@@ -16,6 +16,7 @@ import com.miniproject.dao.member.MemberDAO;
 import com.miniproject.dao.pointlog.PointLogDAO;
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
+import com.miniproject.model.FileStatus;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PointLogDTO;
@@ -114,7 +115,7 @@ public class HBoardServiceImpl implements HBoardService {
       int index = -1;
       List<BoardUpFilesVODTO> lst = bi.getFileList();
       for (int i = 0; i < bi.getFileList().size(); i++) {
-         if (lst.get(i).getBoardUpfileNo() == 0) {
+         if (lst.get(i).getBoardUpFileNo() == 0) {
             index = i;
          }
       }
@@ -138,6 +139,26 @@ public class HBoardServiceImpl implements HBoardService {
       
       // newReply를 저장할 때, ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의 refOrder + 1로 저장
       hdao.insertReply(newReply);
+      
+      return true;
+   }
+
+   @Override
+   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+   public boolean modifyBoard(HBoardDTO modifyBoard, List<BoardUpFilesVODTO> modifyFileList) throws Exception {
+      
+      if (hdao.updateBoard(modifyBoard) == 1) {
+         for (BoardUpFilesVODTO f: modifyFileList) {
+            if (f.getStatus() == FileStatus.NEW) {
+               f.setBoardNo(modifyBoard.getBoardNo());
+               hdao.insertHBoardUpfile(f);
+            }
+            
+            if (f.getStatus() == FileStatus.DELETE) {
+               hdao.deleteBoardUpFile(f.getBoardUpFileNo());
+            }
+         }
+      }
       
       return true;
    }
