@@ -1,125 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miniproject.mapper.hboardmapper">
-	<select id="getEntireHBoard"
-		resultType="com.miniproject.model.HBoard">
-		SELECT * FROM hboard order by ref desc, refOrder asc
-	</select>
+   <!-- 게시글 전체 리스트 -->
+   <select id="getEntireHBoard"
+      resultType="com.miniproject.model.HBoard">
+      select * from hboard order by ref desc, refOrder asc
+   </select>
 
-	<insert id="saveHBoard" useGeneratedKeys="true"
-		keyProperty="boardNo">
-		INSERT INTO `webmoonya`.`hboard` (`title`, `content`,
-		`writer`) VALUES (#{title}, #{content}, #{writer})
-	</insert>
+   <!-- 게시글 저장 -->
+   <insert id="saveHBoard" useGeneratedKeys="true"
+      keyProperty="boardNo">
+      insert into hboard(title, content, writer)
+      values(#{title}, #{content}, #{writer})
+   </insert>
 
-	<update id="updateRefByBoardNo">
-		UPDATE hboard SET `ref` = #{boardNo} WHERE (`boardNo`
-		= #{boardNo});
-	</update>
+   <!-- 게시글 파일 업로드 쿼리문 -->
+   <insert id="saveUpFile">
+      insert into boardupfiles(originalFileName,
+      newFileName, thumbFileName, fileType, ext, size, base64Image, boardNo)
+      values(#{originalFileName}, #{newFileName}, #{thumbFileName},
+      #{fileType},#{ext},#{size}, #{base64Image}, #{boardNo})
+   </insert>
 
-	<insert id="saveUpFile">
-		INSERT INTO boardupfiles (`originalFileName`,
-		`newFileName`, `thumbFileName`, `fileType`, `ext`, `size`,
-		`base64Image`, `boardNo`)
-		VALUES (#{originalFileName}, #{newFileName},
-		#{thumbFileName}, #{fileType}, #{ext}, #{size}, #{base64Image},
-		#{boardNo})
-	</insert>
-	<!-- resultType="com.miniproject.model.BoardDetailInfo" -->
-	<select id="getBoardDetailInfoByBoardNo"
-		resultMap="boardDetailInfoMap">
-		SELECT
-		h.*, f.*,
-		m.userId, m.userName, m.email, m.userImg
-		FROM
-		hboard h left outer join
-		boardupfiles f
-		on h.boardNo = f.boardNo inner
-		join member m on h.writer = m.userId
-		where (h.boardNo = #{boardNo});
-	</select>
-	<!-- id*,result*,association*,collection* -->
-	<resultMap type="com.miniproject.model.BoardDetailInfo"
-		id="boardDetailInfoMap">
+   <!-- 게시글 상세 조회 쿼리문 (조인문) -->
+   <select id="getBoardDetailInfoByBoardNo"
+      resultMap="boardDetailInfoMap">
+      select h.*, f.*, m.userId, m.userName, m.email, m.userImg
+      from hboard h left outer join boardupfiles f
+      on h.boardNo = f.boardNo
+      inner join member m
+      on h.writer = m.userId
+      where h.boardNo = #{boardNo}
+   </select>
 
-		<result column="boardNo" property="boardNo" javaType="int" />
-		<result column="title" property="title" javaType="String" />
-		<result column="content" property="content" javaType="String" />
-		<result column="writer" property="writer" javaType="String" />
-		<result column="postDate" property="postDate"
-			javaType="java.sql.Timestamp" />
-		<result column="readCount" property="readCount" javaType="int" />
-		<result column="ref" property="ref" javaType="int" />
-		<result column="step" property="step" javaType="int" />
-		<result column="refOrder" property="refOrder" javaType="int" />
+   <!-- 게시글 상세 조회 쿼리문의 결과를 매핑하는 resultMap -->
+   <resultMap type="com.miniproject.model.BoardDetailInfo"
+      id="boardDetailInfoMap">
+      <result column="boardNo" property="boardNo" javaType="int" />
+      <result column="title" property="title" javaType="String" />
+      <result column="content" property="content" javaType="String" />
+      <result column="writer" property="writer" javaType="String" />
+      <result column="postDate" property="postDate"
+         javaType="java.sql.Timestamp" />
+      <result column="readCount" property="readCount" javaType="int" />
+      <result column="ref" property="ref" javaType="int" />
+      <result column="step" property="step" javaType="int" />
+      <result column="refOrder" property="refOrder" javaType="int" />
 
-		<result column="userId" property="userId" javaType="String" />
-		<result column="userName" property="userName" javaType="String" />
-		<result column="email" property="email" javaType="String" />
-		<result column="userImg" property="userImg" javaType="String" />
+      <result column="userId" property="userId" javaType="String" />
+      <result column="userName" property="userName" javaType="String" />
+      <result column="email" property="email" javaType="String" />
+      <result column="userImg" property="userImg" javaType="String" />
 
-		<collection property="fileList"
-			ofType="com.miniproject.model.BoardUpFilesVODTO"
-			javaType="java.util.ArrayList">
-			<result column="boardUpFileNo" property="boardUpFileNo"
-				javaType="int" />
-			<result column="originalFileName" property="originalFileName"
-				javaType="String" />
-			<result column="newFileName" property="newFileName"
-				javaType="String" />
-			<result column="thumbFileName" property="thumbFileName"
-				javaType="String" />
-			<result column="fileType" property="fileType"
-				javaType="String" />
-			<result column="ext" property="ext" javaType="String" />
-			<result column="size" property="size" javaType="long" />
-			<result column="base64Image" property="base64Image"
-				javaType="String" />
-			<result column="boardNo" property="boardNo" javaType="int" />
-		</collection>
-	</resultMap>
+      <collection property="fileList"
+         ofType="com.miniproject.model.BoardUpFilesVODTO"
+         javaType="java.util.ArrayList">
+         <result column="boardUpFileNo" property="boardUpFileNo"
+            javaType="int" />
+         <result column="originalFileName" property="originalFileName"
+            javaType="String" />
+         <result column="newFileName" property="newFileName"
+            javaType="String" />
+         <result column="thumbFileName" property="thumbFileName"
+            javaType="String" />
+         <result column="fileType" property="fileType"
+            javaType="String" />
+         <result column="ext" property="ext" javaType="String" />
+         <result column="size" property="size" javaType="long" />
+         <result column="base64Image" property="base64Image"
+            javaType="String" />
+         <result column="boardNo" property="boardNo" javaType="int" />
+      </collection>
+   </resultMap>
 
-	<select id="checkHourReadLogByBoardNo" resultType="int">
-		select
-		ifnull(timestampdiff(hour, (select
-		max(readWhen)
-		from boardreadlog
-		where
-		readWho = #{readWho} and readBoardNo = #{boardNo}), now()),-1) as
-		timediff;
-	</select>
+   <!-- ? ip주소를 가진 유저가 ?번글을 24시간 이내에 조회한 기록이 있는지 없는지 체크 하는 쿼리문 -->
+   <select id="checkHourReadLogByBoardNo" resultType="int">
+      select
+      ifnull(timestampdiff(hour,
+      (select max(readWhen) from boardreadlog
+      where
+      readWho = #{readWho} and readBoardNo
+      = #{boardNo}), now()), -1) as
+      timediff
+   </select>
 
-	<update id="updateReadCount">
-		update hboard
-		set readCount = readCount + 1
-		where
-		boardNo = #{boardNo};
-	</update>
+   <!-- 조회수 증가 쿼리문 -->
+   <update id="updateReadCount">
+      update hboard
+      set readCount = readCount + 1
+      where
+      boardNo = #{boardNo}
+   </update>
 
-	<insert id="insertBoardReadLog">
-		INSERT INTO boardreadlog (`readWho`, `readboardNo`)
-		VALUES (#{readWho}, #{boardNo})
-	</insert>
+   <!-- 게시글 조회 기록 insert -->
+   <insert id="insertBoardReadLog">
+      insert into boardreadlog(readWho, readBoardNo)
+      values(#{readWho}, #{boardNo})
+   </insert>
 
-	<!-- 답글을 저장하는 -->
-	<insert id="insertReply">
-		insert into hboard(title, content, writer, ref, step,
-		refOrder)
-		values (#{title}, #{content}, #{writer}, #{ref}, #{step},
-		#{refOrder})
-	</insert>
+   <!-- 게시글이 insert된후 useGeneratedKeys속성에 의해 얻어진 boardNo를 ref 컬럼에 update -->
+   <update id="updateRefByBoardNo">
+      update hboard
+      set ref = #{boardNo}
+      where boardNo =
+      #{boardNo}
+   </update>
 
-	<update id="updateRefThatWrittenReply">
-		UPDATE hboard
-		SET refOrder = refOrder + 1
-		WHERE ref =
-		#{ref} AND refOrder > #{refOrder};
-	</update>
+   <!-- updateRef -->
+   <update id="updateRefThatWrittenReply">
+      update hboard
+      set refOrder = refOrder + 1
+      where ref =
+      #{ref} and refOrder > #{refOrder}
+   </update>
 
-	<select id="getWriterByBoardNo" resultType="string">
-		select writer from hboard where boardNo = ${boardNo}
-	</select>
+   <!-- 답글을 저장하는 -->
+   <insert id="insertReply">
+      insert into hboard(title, content, writer, ref, step,
+      refOrder)
+      values (#{title}, #{content}, #{writer}, #{ref}, #{step},
+      #{refOrder})
+   </insert>
+
+   <select id="getWriterByBoardNo" resultType="string">
+      select writer from
+      hboard where boardNo = #{boardNo}
+   </select>
+
+   <update id="modifyBoard">
+      update hboard
+      set title = #{title} ,content = #{content}
+      where boardNo = #{boardNo}
+   </update>
+   
+   <delete id="removeBoardUpFile">
+      delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
+   </delete>
 </mapper>
