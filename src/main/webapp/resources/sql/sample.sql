@@ -233,7 +233,17 @@ select * from boardupfiles where boardNo = 16;
 
 select writer from hboard where boardNo = ?;
 
-DELETE FROM boardupfiles WHERE (boardUpfileNo = ?);
+DELETE FROM boardupfiles WHERE (boardNo = ?);
+
+------------------
+ -- 게시글 삭제 기능 구현
+ 
+ --  게시글 삭제 시  ref, step, refOrder 값은 그대로 남겨 두는 것으로 처리 한다.
+ --  게시글 삭제시 첨부파일이 있다면 첨부 파일은 먼저 삭제 되어야 한다.
+ 
+ --- 게시글 삭제 기능 구현을 위해 테이블 수정
+ ALTER TABLE hboard
+ADD COLUMN `isDelete` VARCHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
 
 
 

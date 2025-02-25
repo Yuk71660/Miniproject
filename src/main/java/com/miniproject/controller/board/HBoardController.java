@@ -323,6 +323,11 @@ public class HBoardController {
       return returnPage;
       
    }
+   
+   @GetMapping("/removeBoard")
+   public void removeBoard(@RequestParam("boardNo") int boardNo) {
+       logger.info(boardNo + "번 글 삭제!");
+   }
 
    private void postFileProcess() {
       for (BoardUpFilesVODTO f : this.modifyFileList) {

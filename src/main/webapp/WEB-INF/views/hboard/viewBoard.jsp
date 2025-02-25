@@ -114,7 +114,9 @@
 			<button type="button" class="btn btn-secondary"
 				onclick="location.href='/hboard/modifyBoard?boardNo=${boardDetailInfo.boardNo}';">글
 				수정</button>
-			<button type="button" class="btn btn-success">글 삭제</button>
+			<button type="button" class="btn btn-success"
+				onclick="location.href='/hboard/removeBoard?boardNo=${boardDetailInfo.boardNo}'">글
+				삭제</button>
 
 			<!--  아래의 방법으로도 로그인했고, 본인글일때만 수정 삭제가 되도록 처리 할 수도 있다
          <c:choose>
