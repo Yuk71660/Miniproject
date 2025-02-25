@@ -53,10 +53,19 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
          logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 했는지 안했는지 검사하자 ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
          HttpSession session = request.getSession(); // 세션객체 얻어오기
          Member loginMember = (Member) session.getAttribute("loginMember");
-         if (loginMember == null) {
-            System.out.println("로그인 안했지롱~~~~~~~");
+         if (loginMember == null) {  // 로그인 하지 않았다면...
+            System.out.println("로그인 안해서 끌려옴   질 질~~~~~~~");
 
-            response.sendRedirect("/member/showLoginForm"); // 로그인 페이지로 강제 이동
+            // 이전에 요청했던 페이지를 세션에 기록
+            String requestUri = request.getRequestURI();
+            String queryString = request.getQueryString();
+            System.out.println("이전에 요청했던 페이지 : " +  requestUri);
+            System.out.println("이전에 요청했던 페이지의 쿼리 스트링 : " + queryString);
+            System.out.println("세션에 저장될 목적지 페이지 : " + requestUri + "?" + queryString);
+            
+            session.setAttribute("destUrl ", requestUri + "?" + queryString);
+            
+            response.sendRedirect("/member/login"); // 로그인 페이지로 강제 이동
 
          } else {  // 로그인 되었다면
             System.out.println("로그인 되어 있지롱~~~~ : " + loginMember);
@@ -64,6 +73,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             if (request.getRequestURI().contains("admin")) { // 요청 주소가 관리자페이지이면..
                if (loginMember.getIsAdmin().equals("Y")) {
                   System.out.println("관리자 양반");
+                  goOriginPath = true;
                   return true;
                } else {
                   response.sendRedirect("/member/showLoginForm");

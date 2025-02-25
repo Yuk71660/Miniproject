@@ -32,7 +32,7 @@
                   </ul></li>
                <c:choose>
                   <c:when test="${sessionScope.loginMember == null}">
-                     <li class="nav-item"><a class="nav-link" href="/member/showLoginForm">로그인</a></li>
+                     <li class="nav-item"><a class="nav-link" href="/member/login">로그인</a></li>
                   </c:when>
                   <c:when test="${sessionScope.loginMember != null }">
                      <li class="nav-item">

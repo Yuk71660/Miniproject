@@ -42,6 +42,10 @@
 	<beans:bean id="authInterceptor"
 		class="com.miniproject.interceptor.AuthenticationInterceptor">
 	</beans:bean>
+	
+	<beans:bean id="loginInterceptor"
+		class="com.miniproject.interceptor.LoginInterceptor">
+	</beans:bean>
 
 	<interceptors>
 		<interceptor>
@@ -57,6 +61,12 @@
 			
 			<beans:ref bean="authInterceptor" />
 		</interceptor>
+		
+		<interceptor>
+			<mapping path="/member/login" />
+			<beans:ref bean="loginInterceptor" />
+		</interceptor>
+			
 	</interceptors>
 
 </beans:beans>
