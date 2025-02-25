@@ -204,11 +204,14 @@ public class HBoardController {
       return result;
    }
 
-   @GetMapping(value = { "/viewBoard", "/modifyBoard" }) // 아래의 메서드는 "/viewBoard", "/modifyBoard" 에 매핑
+   @GetMapping(value = { "/viewBoard", "/modifyBoard", "/removeBoard" }) // 아래의 메서드는 "/viewBoard", "/modifyBoard" 에 매핑
    public String viewBoard(@RequestParam("boardNo") int boardNo, Model model, HttpServletRequest req) {
       logger.info(boardNo + "번 글을 조회하자!");
       logger.info("유저의 ip주소 : " + GetClientIPAddr.getClientIp(req));
 
+      // URI에 따라 response되는 페이지가 다르기 때문에
+      String returnPage = "";
+      
       try {
          BoardDetailInfo bi = service.getBoardDetailInfo(boardNo, GetClientIPAddr.getClientIp(req));
          System.out.println("조회시 파일 리스트 상태 ---------------------------");
@@ -221,10 +224,10 @@ public class HBoardController {
       } catch (Exception e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
+         returnPage = "redirect:./listAll?status=readFail";
       }
 
-      // URI에 따라 response되는 페이지가 다르기 때문에
-      String returnPage = "";
+      
       if (req.getRequestURI().contains("view")) {
          System.out.println("조회하러 왓다");
          returnPage = "hboard/viewBoard";
@@ -232,6 +235,21 @@ public class HBoardController {
          System.out.println("수정하러 왓다");
 
          returnPage = "hboard/modifyBoardForm";
+      } else if (req.getRequestURI().contains("remove")) {  // 삭제
+         // 첨부 파일을 웹 서버의 하드디스크에서 삭제
+         for (BoardUpFilesVODTO f : this.modifyFileList) {
+            fp.removeFile(f);
+         }
+         // DB에서의 삭제 처리
+         try {
+            if (service.removeBoardProcess(boardNo)) {
+               returnPage = "redirect:./listAll?status=removeSuccess";
+            }
+         } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            returnPage = "redirect:./viewBoard?boardNo=" + boardNo;
+         }
       }
 
       return returnPage;
@@ -324,10 +342,11 @@ public class HBoardController {
       
    }
    
-   @GetMapping("/removeBoard")
-   public void removeBoard(@RequestParam("boardNo") int boardNo) {
-       logger.info(boardNo + "번 글 삭제!");
-   }
+//   @GetMapping("/removeBoard")
+//   public void removeBoard(@RequestParam("boardNo") int boardNo) {
+//      logger.info(boardNo + "번 글 삭제!");
+//      
+//   }
 
    private void postFileProcess() {
       for (BoardUpFilesVODTO f : this.modifyFileList) {
@@ -347,4 +366,6 @@ public class HBoardController {
          System.out.println(f.toString());
       }
    }
+   
+   
 }

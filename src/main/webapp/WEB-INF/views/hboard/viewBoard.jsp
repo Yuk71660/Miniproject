@@ -24,6 +24,10 @@
 </head>
 <body>
 
+	<c:if test="${boardDetailInfo.isDelete == 'Y' }">
+		<c:redirect url="./listAll" />
+	</c:if>
+
 	<jsp:include page="./../header.jsp"></jsp:include>
 
 	<div class="container">

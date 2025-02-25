@@ -140,7 +140,16 @@ public class HBoardDAOImpl implements HBoardDAO {
    }
    
    
-   
+   @Override
+   public void removeBoardUpFileByBoardNo(int boardNo) throws Exception {
+      ses.delete(NS + ".removeBoardUpFileByBoardNo", boardNo);
+   }
+
+
+   @Override
+   public int removeBoardProcess(int boardNo) {
+      return ses.update(NS + ".removeBoardProcess" , boardNo);
+   }
    
 
 }

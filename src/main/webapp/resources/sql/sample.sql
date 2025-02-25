@@ -245,11 +245,34 @@ DELETE FROM boardupfiles WHERE (boardNo = ?);
  ALTER TABLE hboard
 ADD COLUMN `isDelete` VARCHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
 
+UPDATE hboard SET `title` = '삭제된글입니다', `content` = '', `writer` = null , `isDelete` = 'Y' WHERE (`boardNo` = '6');
 
 
+select h.*, f.*, m.userId, m.userName, m.email, m.userImg
+      from hboard h left outer join boardupfiles f
+      on h.boardNo = f.boardNo
+      inner join member m
+      on h.writer = m.userId
+      where h.boardNo = 6;
+      
+SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
+	FROM hboard h LEFT OUTER JOIN boardupfiles f
+    ON h.boardNo = f.boardNo
+	LEFT OUTER JOIN member m
+    ON h.writer = m.userId
+	WHERE h.boardNo = 6;
 
+ -- 게시글 삭제 기능 구현 쿼리문
+ update hboard
+ set title = '삭제된 글입니다', content = null, writer = null, isDelete = 'Y'
+ where boardNo = ?;
+ 
 
-
+ use webshjin;
+ 
+  -- 게시글 첨부 파일 삭제 쿼리문
+ delete from boardupfiles
+ where boardNo = ?;
 
 
 

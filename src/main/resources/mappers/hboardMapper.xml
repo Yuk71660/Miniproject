@@ -30,7 +30,7 @@
       select h.*, f.*, m.userId, m.userName, m.email, m.userImg
       from hboard h left outer join boardupfiles f
       on h.boardNo = f.boardNo
-      inner join member m
+      LEFT OUTER JOIN member m
       on h.writer = m.userId
       where h.boardNo = #{boardNo}
    </select>
@@ -53,6 +53,7 @@
       <result column="userName" property="userName" javaType="String" />
       <result column="email" property="email" javaType="String" />
       <result column="userImg" property="userImg" javaType="String" />
+      <result column="isDelete" property="isDelete" javaType="String" />
 
       <collection property="fileList"
          ofType="com.miniproject.model.BoardUpFilesVODTO"
@@ -138,4 +139,14 @@
    <delete id="removeBoardUpFile">
       delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
    </delete>
+   
+   <delete id="removeBoardUpFileByBoardNo">
+        delete from boardupfiles
+        where boardNo = #{boardNo}
+    </delete>
+    <update id="removeBoardProcess">
+        update hboard
+        set title = '삭제된 글입니다', content = null, writer = null, isDelete = 'Y'
+        where boardNo = #{boardNo}
+    </update>
 </mapper>

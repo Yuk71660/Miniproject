@@ -113,17 +113,20 @@ public class HBoardServiceImpl implements HBoardService {
       
       // 업로드 파일이 없는 게시글일 경우 join문에 의해 만들어진 가짜 BoardUpFilesVODTO 객체를 리스트에서 삭제
       int index = -1;
-      List<BoardUpFilesVODTO> lst = bi.getFileList();
-      for (int i = 0; i < bi.getFileList().size(); i++) {
-         if (lst.get(i).getBoardUpFileNo() == 0) {
-            index = i;
+      if (bi != null) {
+         List<BoardUpFilesVODTO> lst = bi.getFileList();
+         for (int i = 0; i < bi.getFileList().size(); i++) {
+            if (lst.get(i).getBoardUpFileNo() == 0) {
+               index = i;
+            }
+         }
+      
+         if (index > -1) {
+            lst.remove(index);
+            bi.setFileList(lst);
          }
       }
-   
-      if (index > -1) {
-         lst.remove(index);
-         bi.setFileList(lst);
-      }
+      
       
       
       return bi;
@@ -161,6 +164,22 @@ public class HBoardServiceImpl implements HBoardService {
       }
       
       return true;
+   }
+
+   @Override
+   @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
+   public boolean removeBoardProcess(int boardNo) throws Exception {
+      boolean result = false;
+      
+      // 첨부 파일 삭제 처리
+      hdao.removeBoardUpFileByBoardNo(boardNo);
+      
+      // 게시글 삭제 처리
+      if (hdao.removeBoardProcess(boardNo) == 1) {
+         result = true;
+      }
+      
+      return result;
    }
 
 }

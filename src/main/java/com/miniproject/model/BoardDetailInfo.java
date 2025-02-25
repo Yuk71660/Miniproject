@@ -23,6 +23,7 @@ public class BoardDetailInfo {
 	private String title;
 	private String content;
 	private String writer;
+	private String isDelete;
 	private Timestamp postDate;
 	private int readCount;
 	private int ref;
