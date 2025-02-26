@@ -5,6 +5,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script>
+   function isRemember() {
+      if (document.getElementsByName("remember")[0].checked) {
+         alert("자동 로그인은 PC방을 비롯한 공공장소에서 사용하지 않아야 합니다!");
+      }
+   }
+</script>
 </head>
 <body>
    <jsp:include page="../header.jsp"></jsp:include>
@@ -24,16 +31,16 @@
          </div>
          <div class="form-check mb-3">
             <label class="form-check-label"> <input
-               class="form-check-input" type="checkbox" name="remember">
+               class="form-check-input" type="checkbox" name="remember"  onchange="isRemember();">
                Remember me
             </label>
          </div>
          <button type="reset" class="btn btn-danger" onclick="location.href='../';">취소</button>
          <button type="submit" class="btn btn-primary">로그인</button>
       </form>
+      
       <a href="/member/register">아직 회원이 아니신게롱~ 회원가입함세</a>
    </div>
-   
    
 
 </body>
