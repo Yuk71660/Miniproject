@@ -63,7 +63,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             System.out.println("이전에 요청했던 페이지의 쿼리 스트링 : " + queryString);
             System.out.println("세션에 저장될 목적지 페이지 : " + requestUri + "?" + queryString);
             
-            session.setAttribute("destUrl ", requestUri + "?" + queryString);
+            session.setAttribute("destUrl", requestUri + "?" + queryString);
             
             response.sendRedirect("/member/login"); // 로그인 페이지로 강제 이동
 

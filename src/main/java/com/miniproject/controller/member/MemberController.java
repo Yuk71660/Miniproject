@@ -164,37 +164,36 @@ public class MemberController {
    }
 
    @PostMapping("/login")
-   public String login(@ModelAttribute LoginDTO loginDTO, HttpSession ses) {
-      logger.info(loginDTO + "를 로그인 시키자!");
-
-      // -----------------------------------------------------------------------------------------
-      
-      // 내일 LoginInterceptor의 postHandle()로 이전해서 구현 해야 한다.
-      
-      String returnPage = "";
-      try {
-         Member loginMember = service.loginMember(loginDTO);
-
-         if (loginMember != null) {
-            // 로그인 성공
-            // 세션에 로그인한 유저의 정보 바인딩
-            ses.setAttribute("loginMember", loginMember);
-            
-//            logger.warn("로그인 아이디 : " + loginMember.getUserId() +  ", 세션아이디 : " + ses.getId());
-            
-            returnPage = "redirect:../";
-         } else { // 예외는 발생하지 않았으나 로그인에 실패한경우...
-            returnPage = "redirect:./showLoginForm?status=fail";
-         }
-
-      } catch (Exception e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-         returnPage = "redirect:./showLoginForm?status=fail";
-      }
-      // ----------------------------------------------------------------------------------------------
-
-      return returnPage;
+   public void login(@ModelAttribute LoginDTO loginDTO, HttpSession ses) {
+//      logger.info(loginDTO + "를 로그인 시키자!");
+//
+//      // -----------------------------------------------------------------------------------------
+//      
+//      // 내일 LoginInterceptor의 postHandle()로 이전해서 구현 해야 한다.
+//      
+//      String returnPage = "";
+//      try {
+//         Member loginMember = service.loginMember(loginDTO);
+//
+//         if (loginMember != null) {
+//            // 로그인 성공
+//            // 세션에 로그인한 유저의 정보 바인딩
+//            ses.setAttribute("loginMember", loginMember);
+//            
+////            logger.warn("로그인 아이디 : " + loginMember.getUserId() +  ", 세션아이디 : " + ses.getId());
+//            
+//            returnPage = "redirect:../";
+//         } else { // 예외는 발생하지 않았으나 로그인에 실패한경우...
+//            returnPage = "redirect:./showLoginForm?status=fail";
+//         }
+//
+//      } catch (Exception e) {
+//         // TODO Auto-generated catch block
+//         e.printStackTrace();
+//         returnPage = "redirect:./showLoginForm?status=fail";
+//      }
+//      // ----------------------------------------------------------------------------------------------
+//      return returnPage;
    }
    
    @GetMapping("/logout")
