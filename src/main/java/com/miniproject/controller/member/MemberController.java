@@ -172,7 +172,7 @@ public class MemberController {
       
       // 내일 LoginInterceptor의 postHandle()로 이전해서 구현 해야 한다.
       
-      String returnPage = "";
+//      String returnPage = "";
       try {
          Member loginMember = service.loginMember(loginDTO);
 

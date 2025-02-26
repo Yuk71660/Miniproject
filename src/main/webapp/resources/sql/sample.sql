@@ -275,6 +275,28 @@ SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
  where boardNo = ?;
 
 
+-- 자동 로그인 구현
+-- 1) 유저가 로그인 할 때, Remember me에 체크되어 있다면
+--    로그인 성공했을 때(/member/login (postHandle)의 세션 아이디를 얻어와 유저의 컴퓨터에 저장(쿠키를 이용해), db에도 저장
+
+-- 2) 유저가 로그인 하려 할때(/member/login  (preHandle), 쿠키에 세션아이디가 저장되어 있다면, 그 값이 db에 저장된 세션 아이디와 같은지 비교
+--     같다면, 바로 로그인 시킴
+
+
+-- 3)  유저가 로그인 하려 할 때 쿠키에 세션 아이디가 없다면(자동로그인 x, 쿠키가 만료되어 사라진) ... 그냥 일반 로그인
+
+-- 자동로그인 구현을 위해 테이블 수정
+ALTER TABLE member
+ADD COLUMN `sessionID` VARCHAR(50) NULL AFTER `isAdmin`;
+
+
+
+
+
+
+
+
+
 
 
 

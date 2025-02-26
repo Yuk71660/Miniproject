@@ -20,22 +20,34 @@
    <insert id="insertNewMember">
       <choose>
          <when test="userImg == null">
-            insert into member(userId, userPwd, userName, mobile, email, gender,
+            insert into member(userId, userPwd, userName, mobile,
+            email, gender,
             job, hobbies, postZip, addr)
-            value(#{userId}, sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
+            value(#{userId},
+            sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
             #{job}, #{hobbies}, #{postZip}, #{addr})
          </when>
          <when test="userImg != null">
-            insert into member(userId, userPwd, userName, mobile, email, gender,
+            insert into member(userId, userPwd, userName, mobile,
+            email, gender,
             job, hobbies, postZip, addr, userImg)
-            value(#{userId}, sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
+            value(#{userId},
+            sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
             #{job}, #{hobbies}, #{postZip}, #{addr}, #{userImg})
          </when>
       </choose>
    </insert>
-   
-   <select id="loginMember" resultType="com.miniproject.model.Member">
-      select * from member where userId=#{userId} and userPwd=sha1(md5(#{userPwd}))
-   
+
+   <select id="loginMember"
+      resultType="com.miniproject.model.Member">
+      select * from member where userId=#{userId} and
+      userPwd=sha1(md5(#{userPwd}))
+
    </select>
+
+   <update id="saveSessionID">
+      update member
+      set sessionID=#{sesId}
+      where userId=#{userId}
+   </update>
 </mapper>

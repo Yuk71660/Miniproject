@@ -1,5 +1,6 @@
 package com.miniproject.dao.member;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +59,15 @@ public class MemberDAOImpl implements MemberDAO {
    public Member selectMemberByLoginDTO(LoginDTO loginDTO) throws Exception {
       
       return ses.selectOne(NS + ".loginMember", loginDTO);
+   }
+
+   @Override
+   public int saveSessionId(String userId, String sesId) throws SQLException {
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("userId", userId);
+      params.put("sesId", sesId);
+      
+      return ses.update(NS + ".saveSessionID" , params);
    }
 
 }
