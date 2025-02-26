@@ -42,7 +42,7 @@
                      <li class="nav-item"><a class="nav-link" href="/member/logout">로그아웃</a></li>
                   </c:when>
                </c:choose>
-               
+               <li class="nav-item"><a class="nav-link" href="/blog">블로그검색</a></li>
                <li class="nav-item"><a class="nav-link" href="/member/register">회원가입</a></li>
                <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
                

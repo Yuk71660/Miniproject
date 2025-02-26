@@ -1,8 +1,11 @@
 package com.miniproject.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Handles requests for the application home page.
@@ -23,4 +26,14 @@ public class HomeController {
 		
 	}
 	
+	@GetMapping("/blog")
+	public void showBlog() {
+		
+	}
+	
+	@PostMapping("/blog")
+	public void searchBlog(@RequestParam("keyWord") String keyWord) {
+		System.out.println(keyWord + "를 검색");
+		
+	}
 }
