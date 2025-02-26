@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.miniproject.dao.member.MemberDAO;
 import com.miniproject.model.Member;
+import com.mysql.cj.util.StringUtils;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
    private static Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
@@ -31,13 +33,25 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
       boolean isShowLoginPage = false;
 
       logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 이전 preHandle() ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
-
-      isShowLoginPage = true;
-
+      
+      
+      HttpSession ses = request.getSession();
+   
+      String cookieVal = readCookie(request);
+      System.out.println("읽어낸 쿠키 값 : " +  cookieVal);
+      if (!StringUtils.isNullOrEmpty(cookieVal)) {
+         // cookieVal와 DB에 저장된 세션값과 비교
+         Member autoLoginMember = dao.selectSessionID(cookieVal);
+         ses.setAttribute("loginMember", autoLoginMember); // 자동로그인
+         response.sendRedirect((ses.getAttribute("destUrl") != null)?  (String)ses.getAttribute("destUrl") : "../");
+      } else {
+         // 자동로그인 하지 않음
+         isShowLoginPage = true;
+      }
+      
       return isShowLoginPage;
    }
 
-   
    
    @Override
    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
@@ -92,6 +106,28 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
       }
 
    }
+   
+   
+   /**
+    * @author Administrator
+    * @data 2025. 2. 26.
+    * @enclosing_method readCookie
+    * @todo 자동로그인에서 저장한 쿠키의 값을 읽어온다
+    * @param 
+    * @returnType void
+    */
+   private String readCookie(HttpServletRequest request) {
+      String cookieVal = null;
+      for (Cookie c : request.getCookies()) {
+         if (c.getName().equals("autoLogin")) {
+            cookieVal = c.getValue();
+            break;
+         }
+      }
+      
+      return cookieVal;
+   }
+   
 
    /**
     * @author Administrator

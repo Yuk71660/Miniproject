@@ -18,4 +18,7 @@ public interface MemberDAO {
 	Member selectMemberByLoginDTO(LoginDTO loginDTO) throws Exception;
 
 	int saveSessionId(String userId, String sesId) throws SQLException;
+	
+	// 자동로그인에서 세션ID 를 찾는
+    Member selectSessionID(String cookieVal) throws Exception;
 }

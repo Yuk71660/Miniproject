@@ -3,51 +3,57 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miniproject.mapper.membermapper">
-   <!-- 포인트 로그 테이블에 포인트 내역 기입 후 실제 유저에게 포인트 증감 -->
-   <update id="updateUserPoint">
-      update member
-      set userpoint = userpoint + (select
-      pointscore from pointinfo where pointcontent=#{pointwhy})
-      where userId
-      = #{userId}
-   </update>
+	<!-- 포인트 로그 테이블에 포인트 내역 기입 후 실제 유저에게 포인트 증감 -->
+	<update id="updateUserPoint">
+		update member
+		set userpoint = userpoint + (select
+		pointscore from pointinfo where pointcontent=#{pointwhy})
+		where userId
+		= #{userId}
+	</update>
 
-   <select id="isUserIdDuplicate" resultType="string">
-      select userId from
-      member where userId = #{userId}
-   </select>
+	<select id="isUserIdDuplicate" resultType="string">
+		select userId from
+		member where userId = #{userId}
+	</select>
 
-   <insert id="insertNewMember">
-      <choose>
-         <when test="userImg == null">
-            insert into member(userId, userPwd, userName, mobile,
-            email, gender,
-            job, hobbies, postZip, addr)
-            value(#{userId},
-            sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
-            #{job}, #{hobbies}, #{postZip}, #{addr})
-         </when>
-         <when test="userImg != null">
-            insert into member(userId, userPwd, userName, mobile,
-            email, gender,
-            job, hobbies, postZip, addr, userImg)
-            value(#{userId},
-            sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
-            #{job}, #{hobbies}, #{postZip}, #{addr}, #{userImg})
-         </when>
-      </choose>
-   </insert>
+	<insert id="insertNewMember">
+		<choose>
+			<when test="userImg == null">
+				insert into member(userId, userPwd, userName, mobile,
+				email, gender,
+				job, hobbies, postZip, addr)
+				value(#{userId},
+				sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
+				#{job}, #{hobbies}, #{postZip}, #{addr})
+			</when>
+			<when test="userImg != null">
+				insert into member(userId, userPwd, userName, mobile,
+				email, gender,
+				job, hobbies, postZip, addr, userImg)
+				value(#{userId},
+				sha1(md5(#{userPwd})), #{userName}, #{mobile}, #{email}, #{gender},
+				#{job}, #{hobbies}, #{postZip}, #{addr}, #{userImg})
+			</when>
+		</choose>
+	</insert>
 
-   <select id="loginMember"
-      resultType="com.miniproject.model.Member">
-      select * from member where userId=#{userId} and
-      userPwd=sha1(md5(#{userPwd}))
+	<select id="loginMember"
+		resultType="com.miniproject.model.Member">
+		select * from member where userId=#{userId} and
+		userPwd=sha1(md5(#{userPwd}))
 
-   </select>
+	</select>
 
-   <update id="saveSessionID">
-      update member
-      set sessionID=#{sesId}
-      where userId=#{userId}
-   </update>
+	<update id="saveSessionID">
+		update member
+		set sessionID=#{sesId}
+		where userId=#{userId}
+	</update>
+
+	<select id="getMemberBySessionID"
+		resultType="com.miniproject.model.Member">
+		select * from member
+		where sessionID = #{sesId}
+	</select>
 </mapper>
