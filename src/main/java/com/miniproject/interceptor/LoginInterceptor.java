@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -67,7 +68,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 //               response.sendRedirect("../");
 //            }
 //            
-            response.sendRedirect((session.getAttribute("destUrl") != null)?  (String)session.getAttribute("destUrl") : "../");
             
             System.out.println("자동 로그인 체크? " +  request.getParameter("remember")); // 체크 : on, 체크 x : null
             if (request.getParameter("remember") != null) {
@@ -79,6 +79,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             } else {
                // 자동로그인에 체크 하지 않음               
             }
+            
+            response.sendRedirect((session.getAttribute("destUrl") != null)?  (String)session.getAttribute("destUrl") : "../");
 
          } else {
             // 로그인 실패 했다면
@@ -103,6 +105,12 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
    private void saveCookie(HttpServletResponse response, String sesId, String userId) throws IOException {
       try {
          if (dao.saveSessionId(userId, sesId) == 1) {
+            System.out.println("쿠키 저장!!!!!!!!!!!!!");
+            Cookie autoLoginCookie = new Cookie("autoLogin", sesId);
+            autoLoginCookie.setPath("/");
+            autoLoginCookie.setMaxAge(60 * 60 * 24 * 7);   // 7일동안 쿠키가 살아 있도록
+            
+            response.addCookie(autoLoginCookie); // 쿠키 저장
             
          }
       } catch (SQLException e) {
