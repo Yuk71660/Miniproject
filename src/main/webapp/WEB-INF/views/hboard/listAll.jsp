@@ -60,6 +60,15 @@
 
    <div class="container">
       <h1>계층형 게시판 전체 리스트 페이지</h1>
+      
+      <div class="pagingControl">
+         <select id="rowCntPerPage">
+            <option>10</option>
+            <option>20</option>
+            <option>40</option>
+            <option>80</option>
+         </select>
+      </div>
 
       <table class="table table-hover boardList">
          <thead>

@@ -198,14 +198,20 @@
 			<version>4.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/javax.mail/mail 메일 송신 라이브러리-->
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail 메일 송신 라이브러리 -->
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4.7</version>
 		</dependency>
 
-		
+		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
 
 
 	</dependencies>

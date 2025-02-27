@@ -14,6 +14,7 @@ import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.PageResponseDTO;
 
 // DAO단에서 해야 할일
 // mapper의 SQL을 호출하여 SQL문을 실행하고 결과를 서비스단으로 반환한다.
@@ -31,9 +32,9 @@ public class HBoardDAOImpl implements HBoardDAO {
    private static final String NS = "com.miniproject.mapper.hboardmapper";
    
    @Override
-   public List<HBoard> selectAllHBoard() throws Exception {
+   public List<HBoard> selectAllHBoard(PageResponseDTO pageResponseDTO) throws Exception {
       logger.info("전체 게시글 얻어오자");
-      return ses.selectList(NS + ".getEntireHBoard");
+      return ses.selectList(NS + ".getEntireHBoard", pageResponseDTO);
    }
 
    
@@ -138,8 +139,8 @@ public class HBoardDAOImpl implements HBoardDAO {
    public void deleteBoardUpFile(int boardUpFileNo) throws Exception {
       ses.delete(NS + ".removeBoardUpFile", boardUpFileNo);
    }
-   
-   
+
+
    @Override
    public void removeBoardUpFileByBoardNo(int boardNo) throws Exception {
       ses.delete(NS + ".removeBoardUpFileByBoardNo", boardNo);
@@ -147,9 +148,16 @@ public class HBoardDAOImpl implements HBoardDAO {
 
 
    @Override
-   public int removeBoardProcess(int boardNo) {
+   public int removeBoardProcess(int boardNo) throws Exception {
       return ses.update(NS + ".removeBoardProcess" , boardNo);
    }
-   
+
+
+   @Override
+   public int getTotalCountRow() throws Exception {
+      
+      return ses.selectOne(NS + ".getTotalCountRow");
+   }
+
 
 }

@@ -19,6 +19,8 @@ import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.FileStatus;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.PageRequestDTO;
+import com.miniproject.model.PageResponseDTO;
 import com.miniproject.model.PointLogDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -43,14 +45,29 @@ public class HBoardServiceImpl implements HBoardService {
    
    
    @Override
-   public List<HBoard> getEntireHBoard() throws Exception {
+   public PageResponseDTO getEntireHBoard(PageRequestDTO pageRequestDTO) throws Exception {
       logger.info("게시글 전체 리스트 얻어오자");
       
-      List<HBoard> list = hdao.selectAllHBoard();
-
+      // 넘겨 받은 pageRequestDTO를 이용해 페이징을 할 수 있도록 처리
+      PageResponseDTO pageResponseDTO = pagingProcess(pageRequestDTO);
       
-      return list;
+      List<HBoard> list = hdao.selectAllHBoard(pageResponseDTO);
+      pageResponseDTO.setBoardList(list);
+      
+      return pageResponseDTO;
    }
+
+   private PageResponseDTO pagingProcess(PageRequestDTO pageRequestDTO) throws Exception {
+      PageResponseDTO pageResponseDTO = new PageResponseDTO(pageRequestDTO.getPageNo(), pageRequestDTO.getRowCntPerPage());
+      
+      pageResponseDTO.setTotalRowCnt(hdao.getTotalCountRow()); // 전체  데이터 수
+      pageResponseDTO.setTotalPageCnt(); // 전체 페이지 수
+      pageResponseDTO.setStartRowIndex(); // 출력 시작할 rowIndex번호
+      
+      return pageResponseDTO;
+   }
+   
+   
 
    @Override
    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)

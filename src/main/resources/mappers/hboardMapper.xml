@@ -6,7 +6,7 @@
    <!-- 게시글 전체 리스트 -->
    <select id="getEntireHBoard"
       resultType="com.miniproject.model.HBoard">
-      select * from hboard order by ref desc, refOrder asc
+      select * from hboard order by ref desc, refOrder asc limit #{startRowIndex}, #{rowCntPerPage}
    </select>
 
    <!-- 게시글 저장 -->
@@ -30,7 +30,7 @@
       select h.*, f.*, m.userId, m.userName, m.email, m.userImg
       from hboard h left outer join boardupfiles f
       on h.boardNo = f.boardNo
-      LEFT OUTER JOIN member m
+      left outer join member m
       on h.writer = m.userId
       where h.boardNo = #{boardNo}
    </select>
@@ -48,12 +48,12 @@
       <result column="ref" property="ref" javaType="int" />
       <result column="step" property="step" javaType="int" />
       <result column="refOrder" property="refOrder" javaType="int" />
+      <result column="isDelete" property="isDelete" javaType="String" />
 
       <result column="userId" property="userId" javaType="String" />
       <result column="userName" property="userName" javaType="String" />
       <result column="email" property="email" javaType="String" />
       <result column="userImg" property="userImg" javaType="String" />
-      <result column="isDelete" property="isDelete" javaType="String" />
 
       <collection property="fileList"
          ofType="com.miniproject.model.BoardUpFilesVODTO"
@@ -132,21 +132,28 @@
 
    <update id="modifyBoard">
       update hboard
-      set title = #{title} ,content = #{content}
+      set title = #{title} ,content =
+      #{content}
+      where boardNo = #{boardNo}
+   </update>
+
+   <delete id="removeBoardUpFile">
+      delete from boardupfiles where boardUpFileNo =
+      #{boardUpFileNo}
+   </delete>
+
+   <delete id="removeBoardUpFileByBoardNo">
+      delete from boardupfiles
+      where boardNo = #{boardNo}
+   </delete>
+
+   <update id="removeBoardProcess">
+      update hboard
+      set title = '삭제된 글입니다', content = null, writer = null, isDelete = 'Y'
       where boardNo = #{boardNo}
    </update>
    
-   <delete id="removeBoardUpFile">
-      delete from boardupfiles where boardUpFileNo = #{boardUpFileNo}
-   </delete>
-   
-   <delete id="removeBoardUpFileByBoardNo">
-        delete from boardupfiles
-        where boardNo = #{boardNo}
-    </delete>
-    <update id="removeBoardProcess">
-        update hboard
-        set title = '삭제된 글입니다', content = null, writer = null, isDelete = 'Y'
-        where boardNo = #{boardNo}
-    </update>
+   <select id="getTotalCountRow" resultType="int">
+      select count(*) from hboard
+   </select>
 </mapper>

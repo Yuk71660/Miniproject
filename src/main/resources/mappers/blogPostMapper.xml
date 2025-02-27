@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.miniproject.mapper.blogPostMapper">
+	<insert id="insertPosts">
+		INSERT INTO blog_posts (link, postdate, description, title,
+		bloggerlink, bloggername)
+		VALUES
+		<foreach collection="list" item="post" separator=",">
+			(#{post.link}, #{post.postdate}, #{post.description}, #{post.title},
+			#{post.bloggerlink}, #{post.bloggername})
+		</foreach>
+	</insert>
+</mapper>

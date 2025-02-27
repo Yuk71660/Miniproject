@@ -289,6 +289,44 @@ SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
 ALTER TABLE member
 ADD COLUMN `sessionID` VARCHAR(50) NULL AFTER `isAdmin`;
 
+select * from member where sessionID = "60DA3B3F25D14E142146A1D2D463B6AF";
+
+-- 세션아이디를 저장하는 쿼리문
+update member
+set sessionID=? 
+where userId=?;
+
+-- 쿠키와 저장된 세션ID를 검사하는 쿼리문
+select * from member
+where sessionID = ?;
+
+---------------------------------------------------------------------------------------------------------------------
+-- 마이 페이지 기능
+-- 기본 유저의 정보(비밀번호는 보여주지않음) + 수정(비밀번호 확인) , 회원탈퇴, 활동 내역(내가 쓴글, 내가 좋아요(찜)한 글, 포인트 적립내역)
+
+---------------------------------------------------------------------------------------------------------------------
+-- 좋아요  기능
+
+------------------------------------------------------------------------------------------------------------
+-- 홈 (인기글 10개 출력, 최신글 5개 출력)
+--------------------------------------------------------------------------------------------------
+
+
+SELECT * 
+FROM hboard 
+WHERE postDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH) 
+ORDER BY readCount DESC, postDate DESC 
+LIMIT 10;
+
+SELECT * 
+FROM hboard 
+ORDER BY postDate DESC 
+LIMIT 5;
+
+select count(*) from hboard; -- 121
+-- Math.ceil (121/n) = totalPage
+-- select * from hboard order by ref desc, refOrder asc limit (n*(i-1)),n;
+-- i = 1 ~ totalPage, 0 < n <=?
 
 
 
@@ -302,6 +340,18 @@ ADD COLUMN `sessionID` VARCHAR(50) NULL AFTER `isAdmin`;
 
 
 
+
+
+
+CREATE TABLE blog_posts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    link VARCHAR(500),
+    postdate VARCHAR(20),
+    description TEXT,
+    title VARCHAR(255),
+    bloggerlink VARCHAR(500),
+    bloggername VARCHAR(255)
+);
 
 -- 스키마 사용
 use webmoonya;
