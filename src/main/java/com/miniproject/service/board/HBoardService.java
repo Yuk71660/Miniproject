@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
-import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;

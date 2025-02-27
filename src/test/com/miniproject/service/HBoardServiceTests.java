@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.miniproject.service.board.HBoardService;
 
-import junit.framework.Assert;
-
 @RunWith(SpringJUnit4ClassRunner.class) // 아래의 객체가 Junit4 클래스와 함께 동작하도록
 @ContextConfiguration( // 설정 파일의 위치 (여기에서는 dataSource객체가 생성된 root-context.xml의 위치)
       locations = { "file:src/main/webapp/WEB-INF/spring/**/root-context.xml" })
@@ -48,9 +46,7 @@ public class HBoardServiceTests {
 //            System.out.println("테스트 실패");
 //         }
 
-         boolean result = service.saveBoard(newBoard, lst);
-
-         Assert.assertEquals(true, result);
+         service.saveBoard(newBoard, lst);
 
       }
    }

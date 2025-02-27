@@ -10,7 +10,7 @@
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
       $(function () {
-        if ("${empty hboardList}" == "true") {
+        if ("${empty pageResponseDTO}" == "true") {
           // 게시물 데이터를 가져올 때 예외(비어있거나)
           $("#myModal").show(500);
         } else {
@@ -48,19 +48,22 @@
         });
       }
     </script>
-    <style>
-       .deleteBoard td{
-          color : #eee;
-          opacity: 0.3;
-       }
-    </style>
+<style>
+.deleteBoard td {
+   color: #eee;
+   opacity: 0.3;
+}
+</style>
 </head>
 <body>
+   <c:if test="${pageResponseDTO.pageNo < 1 or pageResponseDTO.pageNo > pageResponseDTO.totalPageCnt  }">
+      <c:redirect url="./listAll?pageNo=1"></c:redirect>
+   </c:if>
    <jsp:include page="./../header.jsp"></jsp:include>
 
    <div class="container">
       <h1>계층형 게시판 전체 리스트 페이지</h1>
-      
+
       <div class="pagingControl">
          <select id="rowCntPerPage">
             <option>10</option>
@@ -81,7 +84,7 @@
             </tr>
          </thead>
          <tbody>
-            <c:forEach var="board" items="${hboardList }">
+            <c:forEach var="board" items="${pageResponseDTO.boardList }">
                <c:choose>
                   <c:when test="${board.isDelete == 'N'}">
                      <tr
@@ -110,6 +113,32 @@
             </c:forEach>
          </tbody>
       </table>
+
+      <div clas="pagination">
+         <ul class="pagination justify-content-center" style="margin: 20px 0">
+            <c:if test="${pageResponseDTO.pageNo > 1}">
+               <li class="page-item"><a class="page-link" href="./listAll?pageNo=${pageResponseDTO.pageNo - 1 }"">Previous</a></li>
+            </c:if>
+            
+            
+            <c:forEach var="i" begin="${pageResponseDTO.startPageNumPerBlock }" end="${pageResponseDTO.endPageNumPerBlock }">
+               <c:choose>
+                  <c:when test="${pageResponseDTO.pageNo == i }">
+                     <li class="page-item active"><a class="page-link" href="./listAll?pageNo=${i }">${i }</a></li>
+                  </c:when>
+                  <c:otherwise>
+                     <li class="page-item"><a class="page-link" href="./listAll?pageNo=${i }">${i }</a></li>
+                  </c:otherwise>
+               </c:choose>
+               
+            </c:forEach>
+            
+            <c:if test="${pageResponseDTO.pageNo < pageResponseDTO.totalPageCnt}">
+               <li class="page-item"><a class="page-link" href="./listAll?pageNo=${pageResponseDTO.pageNo + 1 }"">Next</a></li>
+            </c:if>
+            
+         </ul>
+      </div>
 
       <div style="float: right; margin-right: 10px">
          <button type="button" class="btn btn-primary"

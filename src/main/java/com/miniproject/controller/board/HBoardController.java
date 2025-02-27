@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.FileStatus;
-import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.MyResponseWithoutData;
+import com.miniproject.model.PageRequestDTO;
+import com.miniproject.model.PageResponseDTO;
 import com.miniproject.service.board.HBoardService;
 import com.miniproject.util.FileProcess;
 import com.miniproject.util.GetClientIPAddr;
@@ -56,15 +56,19 @@ public class HBoardController {
    private List<BoardUpFilesVODTO> modifyFileList;
 
    @GetMapping("/listAll")
-   public String listAll(Model model) {
+   public String listAll(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+         @RequestParam(value = "rowCntPerPage", defaultValue = "10") int rowCntPerPage) {
       logger.info("게시글 전체 목록을 가져오자....");
+      PageRequestDTO pageRequestDTO = PageRequestDTO.builder().pageNo(pageNo).rowCntPerPage(rowCntPerPage).build();
+
+      logger.info("pageRequestDTO : " + pageRequestDTO);
 
       String resultPage = "hboard/listAll";
 
-      List<HBoard> list;
+      PageResponseDTO pageResponseDTO;
       try {
-         list = service.getEntireHBoard();
-         model.addAttribute("hboardList", list);
+         pageResponseDTO = service.getEntireHBoard(pageRequestDTO);
+         model.addAttribute("pageResponseDTO", pageResponseDTO);
       } catch (Exception e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
@@ -138,14 +142,12 @@ public class HBoardController {
                HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
-      
-
       return result;
 
    }
 
    @PostMapping(value = "/remFile", produces = "application/json; charset=UTF-8")
-   public ResponseEntity<MyResponseWithoutData> removeUpFile(@RequestParam("removeFileName") String removeFileName, 
+   public ResponseEntity<MyResponseWithoutData> removeUpFile(@RequestParam("removeFileName") String removeFileName,
          @RequestParam("status") String status) {
       logger.info(removeFileName + "를 삭제하자!");
       logger.info(status);
@@ -156,7 +158,7 @@ public class HBoardController {
       // 해당 수정이 허용되지 않는 경우)
       // 위 예외를 발생 시키지 않기 위해서 반복문 후에 삭제 처리
       int removedIndex = -1;
-      
+
       if (status.equals("write")) {
          for (int i = 0; i < this.fileList.size(); i++) {
             if (this.fileList.get(i).getOriginalFileName().equals(removeFileName)) {
@@ -168,7 +170,7 @@ public class HBoardController {
          this.fileList.remove(removedIndex);
 //         outputFileList(this.fileList);
       } else if (status.equals("modify")) {
-         
+
          for (int i = 0; i < this.modifyFileList.size(); i++) {
             if (this.modifyFileList.get(i).getOriginalFileName().equals(removeFileName)) {
                fp.removeFile(this.modifyFileList.get(i));
@@ -179,11 +181,8 @@ public class HBoardController {
          this.modifyFileList.remove(removedIndex);
 //         outputFileList(this.modifyFileList);
       }
-      
-      
-      result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
 
-      
+      result = new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
 
       return result;
    }
@@ -211,7 +210,7 @@ public class HBoardController {
 
       // URI에 따라 response되는 페이지가 다르기 때문에
       String returnPage = "";
-      
+
       try {
          BoardDetailInfo bi = service.getBoardDetailInfo(boardNo, GetClientIPAddr.getClientIp(req));
          System.out.println("조회시 파일 리스트 상태 ---------------------------");
@@ -227,7 +226,6 @@ public class HBoardController {
          returnPage = "redirect:./listAll?status=readFail";
       }
 
-      
       if (req.getRequestURI().contains("view")) {
          System.out.println("조회하러 왓다");
          returnPage = "hboard/viewBoard";
@@ -235,7 +233,7 @@ public class HBoardController {
          System.out.println("수정하러 왓다");
 
          returnPage = "hboard/modifyBoardForm";
-      } else if (req.getRequestURI().contains("remove")) {  // 삭제
+      } else if (req.getRequestURI().contains("remove")) { // 삭제
          // 첨부 파일을 웹 서버의 하드디스크에서 삭제
          for (BoardUpFilesVODTO f : this.modifyFileList) {
             fp.removeFile(f);
@@ -295,8 +293,8 @@ public class HBoardController {
 
       return new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
    }
-   
-   @PostMapping("/modifyCancel") 
+
+   @PostMapping("/modifyCancel")
    public ResponseEntity<MyResponseWithoutData> modifyCancel() {
       for (BoardUpFilesVODTO f : this.modifyFileList) {
          if (f.getStatus() == FileStatus.DELETE) {
@@ -306,12 +304,12 @@ public class HBoardController {
             fp.removeFile(f);
          }
       }
-      
+
       this.modifyFileList.clear();
-      
+
       return new ResponseEntity<MyResponseWithoutData>(MyResponseWithoutData.successResponse(), HttpStatus.OK);
    }
-   
+
    @PostMapping("/modifyBoard")
    public String modifyBoardPost(HBoardDTO modifyBoard) {
       logger.info(modifyBoard + "를 수정하자");
@@ -321,27 +319,27 @@ public class HBoardController {
       for (BoardUpFilesVODTO f : this.modifyFileList) {
          System.out.println(f.toString());
       }
-      
+
       String returnPage = "redirect:./viewBoard?boardNo=" + modifyBoard.getBoardNo();
-      
+
       try {
          if (service.modifyBoard(modifyBoard, this.modifyFileList)) {
             returnPage += "&status=modifySuccess";
          }
-         
+
       } catch (Exception e) {
          // TODO Auto-generated catch block
          e.printStackTrace();
-         
+
          returnPage += "&status=modifyFail";
       }
-      
+
       postFileProcess();
-      
+
       return returnPage;
-      
+
    }
-   
+
 //   @GetMapping("/removeBoard")
 //   public void removeBoard(@RequestParam("boardNo") int boardNo) {
 //      logger.info(boardNo + "번 글 삭제!");
@@ -354,7 +352,7 @@ public class HBoardController {
             fp.removeFile(f);
          }
       }
-      
+
       this.modifyFileList.clear();
    }
 
@@ -366,6 +364,5 @@ public class HBoardController {
          System.out.println(f.toString());
       }
    }
-   
-   
+
 }
