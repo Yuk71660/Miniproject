@@ -99,8 +99,8 @@
       ifnull(timestampdiff(hour,
       (select max(readWhen) from boardreadlog
       where
-      readWho = #{readWho} and readBoardNo
-      = #{boardNo}), now()), -1) as
+       readWho = #{readWho} and readBoardNo
+      = #{boardNo} and boardType = #{boardType}), now()), -1) as
       timediff
    </select>
 
@@ -114,8 +114,8 @@
 
    <!-- 게시글 조회 기록 insert -->
    <insert id="insertBoardReadLog">
-      insert into boardreadlog(readWho, readBoardNo)
-      values(#{readWho}, #{boardNo})
+      insert into boardreadlog(readWho, readBoardNo, boardType)
+      values(#{readWho}, #{boardNo}, #{boardType})
    </insert>
 
    <!-- 게시글이 insert된후 useGeneratedKeys속성에 의해 얻어진 boardNo를 ref 컬럼에 update -->

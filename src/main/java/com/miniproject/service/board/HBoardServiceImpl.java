@@ -129,13 +129,13 @@ public class HBoardServiceImpl implements HBoardService {
    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, rollbackFor = Exception.class)
    public BoardDetailInfo getBoardDetailInfo(int boardNo, String ipAddr) throws Exception {
       
-      int timediff = hdao.checkHourReadLogByBoardNo(ipAddr, boardNo);
+      int timediff = hdao.checkHourReadLogByBoardNo(ipAddr, boardNo, "hboard");
       logger.info("조회 시간 차 : " + timediff);
       if (timediff == -1 || timediff >= 24) {  // 이전 조회기록이 없거나, 24시간 이상 지났을 경우
          // 조회수 증가
          if (hdao.updateReadCount(boardNo) == 1) {
             // 조회 기록 insert
-            hdao.insertBoardReadLog(ipAddr, boardNo);
+            hdao.insertBoardReadLog(ipAddr, boardNo, "Hboard");
          }
          
       } 

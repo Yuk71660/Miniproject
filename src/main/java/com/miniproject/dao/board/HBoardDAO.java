@@ -23,13 +23,13 @@ public interface HBoardDAO {
    BoardDetailInfo selectBoardDetailInfo(int boardNo) throws Exception;
    
    // "?" ip주소를 가진 유저가 ?번글을 24시간 이내에 조회한 기록이 있는지 없는지 체크 
-   int checkHourReadLogByBoardNo(String readWho, int boardNo) throws Exception;
+   int checkHourReadLogByBoardNo(String readWho, int boardNo, String boardType) throws Exception;
    
    // 게시물 조회수 증가
    int updateReadCount(int boardNo) throws Exception;
    
    // 게시물 조회 기록 저장
-   int insertBoardReadLog(String readWho, int boardNo) throws Exception;
+   int insertBoardReadLog(String readWho, int boardNo, String boardType) throws Exception;
    
    // 게시글이 insert된후 useGeneratedKeys속성에 의해 얻어진 boardNo를 ref 컬럼에 update
    int updateRefByBoardNo(int boardNo) throws Exception;

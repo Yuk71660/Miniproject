@@ -76,10 +76,11 @@ public class HBoardDAOImpl implements HBoardDAO {
 
 
    @Override
-   public int checkHourReadLogByBoardNo(String readWho, int boardNo) throws Exception {
+   public int checkHourReadLogByBoardNo(String readWho, int boardNo, String boardType) throws Exception {
       Map<String, Object> paramMap = new HashMap<String, Object>();
       paramMap.put("readWho", readWho);
       paramMap.put("boardNo", boardNo);
+      paramMap.put("boardType", boardType);
       
       return ses.selectOne(NS + ".checkHourReadLogByBoardNo", paramMap);
    }
@@ -93,10 +94,11 @@ public class HBoardDAOImpl implements HBoardDAO {
 
 
    @Override
-   public int insertBoardReadLog(String readWho, int boardNo) throws Exception {
+   public int insertBoardReadLog(String readWho, int boardNo, String boardType) throws Exception {
       Map<String, Object> paramMap = new HashMap<String, Object>();
       paramMap.put("readWho", readWho);
       paramMap.put("boardNo", boardNo);
+      paramMap.put("boardType", boardType);
       
       
       return ses.insert(NS + ".insertBoardReadLog", paramMap);
