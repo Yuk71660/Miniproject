@@ -12,17 +12,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.FileStatus;
+import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.MyResponseWithoutData;
 import com.miniproject.model.PageRequestDTO;
@@ -56,11 +59,9 @@ public class HBoardController {
    private List<BoardUpFilesVODTO> modifyFileList;
 
    @GetMapping("/listAll")
-   public String listAll(Model model, @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
-         @RequestParam(value = "rowCntPerPage", defaultValue = "10") int rowCntPerPage) {
+   public String listAll(Model model, PageRequestDTO pageRequestDTO) {
       logger.info("게시글 전체 목록을 가져오자....");
-      PageRequestDTO pageRequestDTO = PageRequestDTO.builder().pageNo(pageNo).rowCntPerPage(rowCntPerPage).build();
-
+      
       logger.info("pageRequestDTO : " + pageRequestDTO);
 
       String resultPage = "hboard/listAll";

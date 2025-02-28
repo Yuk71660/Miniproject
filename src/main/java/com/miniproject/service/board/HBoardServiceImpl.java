@@ -2,8 +2,10 @@ package com.miniproject.service.board;
 
 import java.util.List;
 
+import org.ietf.jgss.ChannelBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +22,7 @@ import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
 import com.miniproject.model.PointLogDTO;
+import com.mysql.cj.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -58,19 +61,26 @@ public class HBoardServiceImpl implements HBoardService {
    private PageResponseDTO pagingProcess(PageRequestDTO pageRequestDTO) throws Exception {
       PageResponseDTO pageResponseDTO = new PageResponseDTO(pageRequestDTO.getPageNo(), pageRequestDTO.getRowCntPerPage());
       
-      pageResponseDTO.setAll(hdao.getTotalCountRow());
+      // 기본 페이징
+      if (StringUtils.isNullOrEmpty(pageRequestDTO.getSearchType())) {
+         // 검색 안함
+         pageResponseDTO.setTotalRowCnt(hdao.getTotalCountRow()); // 전체  데이터 수
+      } else if (!StringUtils.isNullOrEmpty(pageRequestDTO.getSearchType())) {
+         // 검색 함
+         pageResponseDTO.setSearchType(pageRequestDTO.getSearchType());
+         pageResponseDTO.setSearchWord(pageRequestDTO.getSearchWord());
+         
+         pageResponseDTO.setTotalRowCnt(hdao.getSearchResultRowCount(pageRequestDTO));
+      }
       
-      // 한번에 돌리는 메서드 만들어봄
-//      // 기본 페이징
-//      pageResponseDTO.setTotalRowCnt(hdao.getTotalCountRow()); // 전체  데이터 수
-//      pageResponseDTO.setTotalPageCnt(); // 전체 페이지 수
-//      pageResponseDTO.setStartRowIndex(); // 출력 시작할 rowIndex번호
-//      
-//      // 페이징 블럭을 표시하기 위해
-//      pageResponseDTO.setBlockOfCurrentPage(); // 현재 페이지가 몇번째 블럭에 있는가?
-//      pageResponseDTO.setStartPageNumPerBlock(); // 블럭에서의 시작페이지 번호
-//      pageResponseDTO.setEndPageNumPerBlock();  // 블럭에서의 끝페이지 번호
-//      
+      pageResponseDTO.setTotalPageCnt(); // 전체 페이지 수
+      pageResponseDTO.setStartRowIndex(); // 출력 시작할 rowIndex번호
+      
+      // 페이징 블럭을 표시하기 위해
+      pageResponseDTO.setBlockOfCurrentPage(); // 현재 페이지가 몇번째 블럭에 있는가?
+      pageResponseDTO.setStartPageNumPerBlock(); // 블럭에서의 시작페이지 번호
+      pageResponseDTO.setEndPageNumPerBlock();  // 블럭에서의 끝페이지 번호
+      
       return pageResponseDTO;
    }
    

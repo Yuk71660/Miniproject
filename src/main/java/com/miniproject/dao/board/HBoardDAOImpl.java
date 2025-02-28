@@ -14,7 +14,9 @@ import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
+import com.mysql.cj.util.StringUtils;
 
 // DAO단에서 해야 할일
 // mapper의 SQL을 호출하여 SQL문을 실행하고 결과를 서비스단으로 반환한다.
@@ -34,6 +36,10 @@ public class HBoardDAOImpl implements HBoardDAO {
    @Override
    public List<HBoard> selectAllHBoard(PageResponseDTO pageResponseDTO) throws Exception {
       logger.info("전체 게시글 얻어오자");
+      
+      if (!StringUtils.isNullOrEmpty(pageResponseDTO.getSearchType())) {
+         pageResponseDTO.setSearchWord("%" + pageResponseDTO.getSearchWord() + "%");
+      }
       return ses.selectList(NS + ".getEntireHBoard", pageResponseDTO);
    }
 
@@ -157,6 +163,13 @@ public class HBoardDAOImpl implements HBoardDAO {
    public int getTotalCountRow() throws Exception {
       
       return ses.selectOne(NS + ".getTotalCountRow");
+   }
+
+
+   @Override
+   public int getSearchResultRowCount(PageRequestDTO pageRequestDTO) throws Exception {
+      pageRequestDTO.setSearchWord("%" + pageRequestDTO.getSearchWord() + "%");  // like 검색을 위해
+      return ses.selectOne(NS + ".getSearchResultCountRow", pageRequestDTO);
    }
 
 

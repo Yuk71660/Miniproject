@@ -6,6 +6,7 @@ import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
 import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
+import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
 
 public interface HBoardDAO {
@@ -57,4 +58,7 @@ public interface HBoardDAO {
  
    // 전체 row의 수 얻기
    int getTotalCountRow() throws Exception;
+
+   // 검색 결과의 row 수 얻기
+   int getSearchResultRowCount(PageRequestDTO pageRequestDTO) throws Exception;
 }

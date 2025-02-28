@@ -10,6 +10,14 @@
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
       $(function () {
+       
+       let searchType = '${param.searchType}';
+       let rowCntPerPage = '${param.rowCntPerPage}';
+       
+       $(`select[name=searchType] option[value=\${searchType}]`).prop("selected", true)
+       
+       $(`select[id=rowCntPerPage] option[value=\${rowCntPerPage}]`).prop("selected", true)
+        
         if ("${empty pageResponseDTO}" == "true") {
           // 게시물 데이터를 가져올 때 예외(비어있거나)
           $("#myModal").show(500);
@@ -30,6 +38,20 @@
           $("#myModal").hide();
         });
       });
+      
+      function isValid() {
+         let result = false;
+         let searchType = $('#searchType').val();
+         if (searchType == '-1') {
+            $(".modal-body").html("검색 조건은 반드시 입력해 주세요");
+           $("#myModal").show(500);
+           
+         } else {
+            result = true;
+         }
+         
+         return result;
+      }
 
       // 게시글의 작성시간과 현재시간의 차이를 구하여 2시간 이내 글이라면 "new.png"이미지를 제목뒤에 붙여 출력하도록..
       function timeDiffPostDate() {
@@ -53,10 +75,20 @@
    color: #eee;
    opacity: 0.3;
 }
+
+.pagingControl {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   padding: 5px;
+}
 </style>
 </head>
 <body>
-   <c:if test="${pageResponseDTO.pageNo < 1 or pageResponseDTO.pageNo > pageResponseDTO.totalPageCnt  }">
+   <c:if
+      test="${param.pageNo < 1 or param.pageNo > pageResponseDTO.totalPageCnt  }">
       <c:redirect url="./listAll?pageNo=1"></c:redirect>
    </c:if>
    <jsp:include page="./../header.jsp"></jsp:include>
@@ -64,14 +96,47 @@
    <div class="container">
       <h1>계층형 게시판 전체 리스트 페이지</h1>
 
-      <div class="pagingControl">
-         <select id="rowCntPerPage">
-            <option>10</option>
-            <option>20</option>
-            <option>40</option>
-            <option>80</option>
-         </select>
-      </div>
+      <form class="pagingControl" action="./listAll" method="get">
+         <div>
+            <select name="searchType" id="searchType">
+               <option value="-1">--검색조건--</option>
+               <option value="title">제목</option>
+               <option value="writer">작성자</option>
+               <option value="content">내용</option>
+            </select>
+            <c:choose>
+               <c:when test="${empty param.searchWord}">
+                  <input type="text" name="searchWord" placeholder="검색어를 입력하세요" />
+               </c:when>
+               <c:otherwise>
+                  <input type="text" name="searchWord" value="${param.searchWord }" />
+               </c:otherwise>
+            </c:choose>
+            <input type="submit" value="검색" onclick="return isValid();">
+
+
+         </div>
+         <c:choose>
+            <c:when test="empty ${param.pageNo }">
+               <input type="hidden" name="pageNo" value="${param.pageNo }" />
+            </c:when>
+            <c:otherwise>
+               <input type="hidden" name="pageNo" value="1" />
+            </c:otherwise>
+         </c:choose>
+
+
+         <div>
+
+            <select id="rowCntPerPage" name="rowCntPerPage">
+               <option value="10">10</option>
+               <option value="20">20</option>
+               <option value="40">40</option>
+               <option value="80">80</option>
+            </select>개씩 보기
+
+         </div>
+      </form>
 
       <table class="table table-hover boardList">
          <thead>
@@ -116,27 +181,32 @@
 
       <div clas="pagination">
          <ul class="pagination justify-content-center" style="margin: 20px 0">
-            <c:if test="${pageResponseDTO.pageNo > 1}">
-               <li class="page-item"><a class="page-link" href="./listAll?pageNo=${pageResponseDTO.pageNo - 1 }"">Previous</a></li>
+            <c:if test="${param.pageNo > 1}">
+               <li class="page-item"><a class="page-link"
+                  href="./listAll?pageNo=${param.pageNo - 1}&searchType=${pageResponseDTO.searchType}&searchWord=${param.searchWord}&rowCntPerPage=${pageResponseDTO.rowCntPerPage}">Previous</a></li>
             </c:if>
-            
-            
-            <c:forEach var="i" begin="${pageResponseDTO.startPageNumPerBlock }" end="${pageResponseDTO.endPageNumPerBlock }">
+
+
+            <c:forEach var="i" begin="${pageResponseDTO.startPageNumPerBlock }"
+               end="${pageResponseDTO.endPageNumPerBlock }">
                <c:choose>
-                  <c:when test="${pageResponseDTO.pageNo == i }">
-                     <li class="page-item active"><a class="page-link" href="./listAll?pageNo=${i }">${i }</a></li>
+                  <c:when test="${param.pageNo == i }">
+                     <li class="page-item active"><a class="page-link"
+                        href="./listAll?pageNo=${i }&searchType=${pageResponseDTO.searchType}&searchWord=${param.searchWord}&rowCntPerPage=${pageResponseDTO.rowCntPerPage}">${i }</a></li>
                   </c:when>
                   <c:otherwise>
-                     <li class="page-item"><a class="page-link" href="./listAll?pageNo=${i }">${i }</a></li>
+                     <li class="page-item"><a class="page-link"
+                        href="./listAll?pageNo=${i }&searchType=${pageResponseDTO.searchType}&searchWord=${param.searchWord}&rowCntPerPage=${pageResponseDTO.rowCntPerPage}">${i }</a></li>
                   </c:otherwise>
                </c:choose>
-               
+
             </c:forEach>
-            
-            <c:if test="${pageResponseDTO.pageNo < pageResponseDTO.totalPageCnt}">
-               <li class="page-item"><a class="page-link" href="./listAll?pageNo=${pageResponseDTO.pageNo + 1 }"">Next</a></li>
+
+            <c:if test="${param.pageNo < pageResponseDTO.totalPageCnt}">
+               <li class="page-item"><a class="page-link"
+                  href="./listAll?pageNo=${param.pageNo + 1}&searchType=${pageResponseDTO.searchType}&searchWord=${param.searchWord}&rowCntPerPage=${pageResponseDTO.rowCntPerPage}">Next</a></li>
             </c:if>
-            
+
          </ul>
       </div>
 

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import com.miniproject.service.board.HBoardService;
 
+import junit.framework.Assert;
+
 @RunWith(SpringJUnit4ClassRunner.class) // 아래의 객체가 Junit4 클래스와 함께 동작하도록
 @ContextConfiguration( // 설정 파일의 위치 (여기에서는 dataSource객체가 생성된 root-context.xml의 위치)
       locations = { "file:src/main/webapp/WEB-INF/spring/**/root-context.xml" })
@@ -24,8 +26,10 @@ public class HBoardServiceTests {
 
    @Test
    public void testGetEntireHBoard() throws Exception {
-      System.out.println(service.getEntireHBoard(PageRequestDTO.builder().pageNo(2)
-            .rowCntPerPage(40).build()));
+      System.out.println(service.getEntireHBoard(PageRequestDTO.builder().pageNo(1)
+            .searchType("writer")
+            .searchWord("ad")
+            .rowCntPerPage(20).build()));
       
    }
 
@@ -46,7 +50,9 @@ public class HBoardServiceTests {
 //            System.out.println("테스트 실패");
 //         }
 
-         service.saveBoard(newBoard, lst);
+         boolean result = service.saveBoard(newBoard, lst);
+
+         Assert.assertEquals(true, result);
 
       }
    }

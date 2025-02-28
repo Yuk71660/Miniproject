@@ -13,6 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.miniproject.dao.board.HBoardDAO;
 import com.miniproject.model.Member;
 import com.miniproject.service.board.HBoardService;
+import com.mysql.cj.util.StringUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,8 +63,11 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             System.out.println("이전에 요청했던 페이지 : " +  requestUri);
             System.out.println("이전에 요청했던 페이지의 쿼리 스트링 : " + queryString);
             System.out.println("세션에 저장될 목적지 페이지 : " + requestUri + "?" + queryString);
-            
-            session.setAttribute("destUrl", requestUri + "?" + queryString);
+            if(!StringUtils.isNullOrEmpty(queryString)) {
+            	session.setAttribute("destUrl", requestUri + "?" + queryString);
+            } else {
+            	session.setAttribute("destUrl", requestUri);
+            }
             
             response.sendRedirect("/member/login"); // 로그인 페이지로 강제 이동
 
