@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.miniproject.dao.board.HBoardDAO;
+import com.miniproject.dao.board.RBoardDAO;
 import com.miniproject.model.Member;
 import com.miniproject.service.board.HBoardService;
 import com.mysql.cj.util.StringUtils;
@@ -34,6 +35,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
    
    @Autowired
    private HBoardDAO dao;
+   
+   @Autowired
+   private RBoardDAO rdao;
    
    /**
     * @author Administrator
@@ -63,11 +67,13 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             System.out.println("이전에 요청했던 페이지 : " +  requestUri);
             System.out.println("이전에 요청했던 페이지의 쿼리 스트링 : " + queryString);
             System.out.println("세션에 저장될 목적지 페이지 : " + requestUri + "?" + queryString);
-            if(!StringUtils.isNullOrEmpty(queryString)) {
-            	session.setAttribute("destUrl", requestUri + "?" + queryString);
+            
+            if (!StringUtils.isNullOrEmpty(queryString)) {
+               session.setAttribute("destUrl", requestUri + "?" + queryString);
             } else {
-            	session.setAttribute("destUrl", requestUri);
+               session.setAttribute("destUrl", requestUri);
             }
+            
             
             response.sendRedirect("/member/login"); // 로그인 페이지로 강제 이동
 
@@ -87,13 +93,23 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                // 로그인 되어 있고,  글 수정/글삭제 페이지를 요청 했다면... 로그인한유저가 작성한 글인지 확인해봐야 한다..
 //               System.out.println("요청된 쿼리스트링 : " + request.getQueryString());
                int boardNo = Integer.parseInt(request.getParameter("boardNo"));
-//               System.out.println(dao.toString() + "," + boardNo);
+//               System.out.println(dao.toString() + "," + boardNo);\
+               String writer = null;
+               if (request.getRequestURI().contains("hboard")) {
+                  writer = dao.selectWriterByBoardNo(boardNo);
+               } else if (request.getRequestURI().contains("rboard")){
+                  writer = rdao.selectWriterByBoardNo(boardNo);
+               }
                
-               String writer = dao.selectWriterByBoardNo(boardNo);
                if (loginMember.getUserId().equals(writer)) {
                   goOriginPath = true;
                } else {
-                  response.sendRedirect("/hboard/viewBoard?boardNo=" + boardNo + "&status=notallowed");
+                  if (request.getRequestURI().contains("hboard")) {
+                     response.sendRedirect("/hboard/viewBoard?boardNo=" + boardNo + "&status=notallowed");
+                  } else if (request.getRequestURI().contains("rboard")) {
+                     response.sendRedirect("/rboard/viewBoard?boardNo=" + boardNo + "&status=notallowed");
+                  }
+                  
                   goOriginPath = false;
                }
                

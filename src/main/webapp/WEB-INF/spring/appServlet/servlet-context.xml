@@ -54,8 +54,11 @@
 		</interceptor>
 		
 		<interceptor>
+			<mapping path="/rboard/write" />
 			<mapping path="/hboard/write" />
+			<mapping path="/rboard/modifyBoard" />
 			<mapping path="/hboard/modifyBoard" />
+			<mapping path="/rboard/removeBoard" />
 			<mapping path="/hboard/removeBoard" />
 			<mapping path="/admin/**" />
 			

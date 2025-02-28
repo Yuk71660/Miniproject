@@ -28,8 +28,10 @@
                   data-bs-toggle="dropdown">게시판</a>
                   <ul class="dropdown-menu">
                      <li><a class="dropdown-item" href="/hboard/listAll">계층형게시판</a></li>
-                     <li><a class="dropdown-item" href="#">댓글형게시판</a></li>
+                     <li><a class="dropdown-item" href="/rboard/listAll">댓글형게시판</a></li>
                   </ul></li>
+                  
+               <li class="nav-item"><a class="nav-link" href="/blog">블로그검색</a></li>   
                <c:choose>
                   <c:when test="${sessionScope.loginMember == null}">
                      <li class="nav-item"><a class="nav-link" href="/member/login">로그인</a></li>
@@ -42,7 +44,7 @@
                      <li class="nav-item"><a class="nav-link" href="/member/logout">로그아웃</a></li>
                   </c:when>
                </c:choose>
-               <li class="nav-item"><a class="nav-link" href="/blog">블로그검색</a></li>
+               
                <li class="nav-item"><a class="nav-link" href="/member/register">회원가입</a></li>
                <li class="nav-item"><a class="nav-link" href="#">Link</a></li>
                

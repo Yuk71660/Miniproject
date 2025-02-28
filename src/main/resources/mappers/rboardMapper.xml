@@ -45,4 +45,79 @@
       </choose>
    </select>
    
+   <!-- 게시글 저장 -->
+   <insert id="saveHBoard">
+      insert into rboard(title, content, writer)
+      values(#{title}, #{content}, #{writer})
+   </insert>
+   
+   <!-- ? ip주소를 가진 유저가 ?번글을 24시간 이내에 조회한 기록이 있는지 없는지 체크 하는 쿼리문 -->
+   <select id="checkHourReadLogByBoardNo" resultType="int">
+      select
+      ifnull(timestampdiff(hour,
+      (select max(readWhen) from boardreadlog
+      where
+      readWho = #{readWho} and readBoardNo
+      = #{boardNo} and boardType = #{boardType}), now()), -1) as
+      timediff
+   </select>
+   
+   <!-- 조회수 증가 쿼리문 -->
+   <update id="updateReadCount">
+      update rboard
+      set readCount = readCount + 1
+      where
+      boardNo = #{boardNo}
+   </update>
+   
+   <!-- 게시글 조회 기록 insert -->
+   <insert id="insertBoardReadLog">
+      insert into boardreadlog(readWho, readBoardNo, boardType)
+      values(#{readWho}, #{boardNo}, #{boardType})
+   </insert>
+   
+   <!-- 게시글 상세 조회 쿼리문 (조인문) -->
+   <select id="getBoardDetailInfoByBoardNo"
+      resultMap="boardDetailInfoMap">
+      select r.*, m.userId, m.userName, m.email, m.userImg
+      from rboard r 
+      left outer join member m
+      on r.writer = m.userId
+      where r.boardNo =
+      #{boardNo}
+   </select>
+
+   <!-- 게시글 상세 조회 쿼리문의 결과를 매핑하는 resultMap -->
+   <resultMap type="com.miniproject.model.BoardDetailInfo"
+      id="boardDetailInfoMap">
+      <result column="boardNo" property="boardNo" javaType="int" />
+      <result column="title" property="title" javaType="String" />
+      <result column="content" property="content" javaType="String" />
+      <result column="writer" property="writer" javaType="String" />
+      <result column="postDate" property="postDate"
+         javaType="java.sql.Timestamp" />
+      <result column="readCount" property="readCount" javaType="int" />
+      
+      <result column="userId" property="userId" javaType="String" />
+      <result column="userName" property="userName" javaType="String" />
+      <result column="email" property="email" javaType="String" />
+      <result column="userImg" property="userImg" javaType="String" />
+      
+   </resultMap>
+   
+   <select id="getWriterByBoardNo" resultType="string">
+      select writer from
+      rboard where boardNo = #{boardNo}
+   </select>
+   
+   <update id="modifyBoard">
+      update rboard
+      set title = #{title} ,content =
+      #{content}
+      where boardNo = #{boardNo}
+   </update>
+   
+   <delete id="removeBoard">
+      delete from rboard where boardNo = #{boardNo}
+   </delete>
 </mapper>
