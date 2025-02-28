@@ -15,7 +15,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-public class PageResponseDTO {
+public class PageResponseDTO<T> {
    private int pageNo;  // 현재 페이지 번호
    private int rowCntPerPage; // 1페이지당 보여줄 row갯수
    private String searchType;
@@ -30,7 +30,7 @@ public class PageResponseDTO {
    private int startPageNumPerBlock; // 그 블럭의 시작 페이지 번호
    private int endPageNumPerBlock; // 그 블럭의 끝 페이지 번호
    
-   private List<HBoard> boardList;
+   private List<T> boardList;
    
    public PageResponseDTO(int pageNo, int rowCntPerPage) {
       this.pageNo = pageNo;
@@ -92,7 +92,7 @@ public class PageResponseDTO {
    }
    
    
-   public void setBoardList(List<HBoard> boardList) {
+   public void setBoardList(List<T> boardList) {
       this.boardList = boardList;
    }
    

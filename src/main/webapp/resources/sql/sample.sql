@@ -1,5 +1,6 @@
 -- 스키마 사용
-use webmoonya; 
+use webshjin;
+
 -- 회원 테이블 생성
 CREATE TABLE `member` (
   `userId` varchar(8) NOT NULL,
@@ -8,16 +9,12 @@ CREATE TABLE `member` (
   `mobile` varchar(13) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   `registerDate` datetime DEFAULT CURRENT_TIMESTAMP,
-  `userImg` varchar(50) DEFAULT 'memberimg/avatar100.png',
+  `userImg` varchar(50) DEFAULT 'memberImg/avatar100.png',
   PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='회원 테이블';
 
-ALTER TABLE `webmoonya`.`member` 
-ADD COLUMN `userpoint` INT NULL DEFAULT 0 AFTER `userImg`;
-
-
--- 게시글 테이블 생성
-CREATE TABLE `webmoonya`.`hboard` (
+-- 계층형 게시판 테이블 생성
+CREATE TABLE `webshjin`.`hboard` (
   `boardNo` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(50) NOT NULL,
   `content` VARCHAR(4000) NULL,
@@ -28,36 +25,38 @@ CREATE TABLE `webmoonya`.`hboard` (
   `step` INT NULL DEFAULT 0,
   `refOrder` INT NULL DEFAULT 0,
   PRIMARY KEY (`boardNo`));
-  
-  -- 회원-계층형게시판 테이블 관계 설정_fk
-  ALTER TABLE `webmoonya`.`hboard` 
+
+-- 회원테이블과 계층형 게시판 테이블 관계 설정
+ALTER TABLE `webshjin`.`hboard` 
 ADD INDEX `hboard_member_fk_idx` (`writer` ASC) VISIBLE;
 ;
-ALTER TABLE `webmoonya`.`hboard` 
+ALTER TABLE `webshjin`.`hboard` 
 ADD CONSTRAINT `hboard_member_fk`
   FOREIGN KEY (`writer`)
-  REFERENCES `webmoonya`.`member` (`userId`)
+  REFERENCES `webshjin`.`member` (`userId`)
   ON DELETE SET NULL
   ON UPDATE NO ACTION;
   
-INSERT INTO `webmoonya`.`hboard` (`title`, `content`, `writer`) VALUES ('날씨', '춥다', 'admin');
+-- 게시물 작성
+INSERT INTO `webshjin`.`hboard` (`boardNo`, `title`, `content`, `writer`, `postDate`, `readCount`, `ref`, `step`, `refOrder`) 
+VALUES ('1', '게시판이 생성되었습니다', '많은 이용 바랍니다', 'admin', '2025-02-06 10:44:00', '0', '0', '0', '0');
+  
+-- 전체 게시글 조회 기능
+select * from hboard order by boardNo desc;
 
-SELECT * FROM hboard order by boardNo desc;
 
--- 포인트 정보 테이블 생성
-CREATE TABLE `webmoonya`.`pointinfo` (
+-- 게시글 작성 쿼리문
+insert into hboard(title, content, writer) 
+values(?, ?, ?);
+
+-- 포인트정보 테이블 생성
+CREATE TABLE `webshjin`.`pointinfo` (
   `pointcontent` VARCHAR(20) NOT NULL,
   `pointscore` INT NOT NULL,
   PRIMARY KEY (`pointcontent`));
-
-INSERT INTO `webmoonya`.`pointinfo` (`pointcontent`, `pointscore`) VALUES ('회원가입', '100');
-INSERT INTO `webmoonya`.`pointinfo` (`pointcontent`, `pointscore`) VALUES ('게시글작성', '5');
-INSERT INTO `webmoonya`.`pointinfo` (`pointcontent`, `pointscore`) VALUES ('로그인', '1');
-INSERT INTO `webmoonya`.`pointinfo` (`pointcontent`, `pointscore`) VALUES ('답글/댓글작성', '2');
-INSERT INTO `webmoonya`.`pointinfo` (`pointcontent`, `pointscore`) VALUES ('게시글신고', '-10');
-
+  
 -- 포인트 지급 내역 테이블 생성
-CREATE TABLE `webmoonya`.`pointlog` (
+CREATE TABLE `webshjin`.`pointlog` (
   `pointLogNo` INT NOT NULL AUTO_INCREMENT,
   `pointwhen` DATETIME NOT NULL DEFAULT now(),
   `pointwho` VARCHAR(8) NOT NULL,
@@ -66,99 +65,125 @@ CREATE TABLE `webmoonya`.`pointlog` (
   PRIMARY KEY (`pointLogNo`))
 COMMENT = '포인트 지급 내역';
 
-ALTER TABLE `webmoonya`.`pointlog` 
-ADD INDEX `pointlog_pointwho_fk_idx` (`pointwho` ASC) VISIBLE,
-ADD INDEX `pointlog_pointwhy_fk_idx` (`pointwhy` ASC) VISIBLE;
-;
-ALTER TABLE `webmoonya`.`pointlog` 
+-- 포인트 지급 내역 테이블 fk 설정
+ALTER TABLE `webshjin`.`pointlog` 
 ADD CONSTRAINT `pointlog_pointwho_fk`
   FOREIGN KEY (`pointwho`)
-  REFERENCES `webmoonya`.`member` (`userId`)
+  REFERENCES `webshjin`.`member` (`userId`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION,
 ADD CONSTRAINT `pointlog_pointwhy_fk`
   FOREIGN KEY (`pointwhy`)
-  REFERENCES `webmoonya`.`pointinfo` (`pointcontent`)
+  REFERENCES `webshjin`.`pointinfo` (`pointcontent`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
   
-INSERT INTO pointlog (`pointwho`, `pointwhy`, `pointscore`) VALUES ('subAdmin', '회원가입', (
-select `pointscore` from pointinfo where pointcontent = '회원가입'
-));
+-- 회원 테이블에 포인트 컬럼 추가
+ALTER TABLE `webshjin`.`member` 
+ADD COLUMN `userpoint` INT NULL DEFAULT 0 AFTER `userImg`;
 
-UPDATE member SET `userpoint` = `userpoint` + ? WHERE (`userId` = 'admin');
 
--- 게시판 파일 업로드용 테이블
-CREATE TABLE `webmoonya`.`boardupfiles` (
-  `boardUpfileNo` INT NOT NULL AUTO_INCREMENT,
+-- pointlog테이블에 포인트 지급 내역 insert 쿼리문
+insert into pointlog(pointwho, pointwhy, pointscore)
+values(?, ?, (select pointscore from pointinfo where pointcontent=?));
+
+-- member의 userpoint update 쿼리문
+update member
+set userpoint = userpoint + (select pointscore from pointinfo where pointcontent=?)
+where userId = ?;
+
+-- 게시판 파일 업로드를 위한boardupfiles 테이블 생성
+CREATE TABLE `webshjin`.`boardupfiles` (
+  `boardUpFileNo` INT NOT NULL AUTO_INCREMENT,
   `originalFileName` VARCHAR(50) NOT NULL,
   `newFileName` VARCHAR(100) NOT NULL,
   `ext` VARCHAR(4) NULL,
   `size` INT NULL,
-  `base64Image` LONGTEXT NULL,
+  `base64Image` TEXT NULL,
   `boardNo` INT NOT NULL,
-  PRIMARY KEY (`boardUpfileNo`))
+  PRIMARY KEY (`boardUpFileNo`))
 COMMENT = '게시글에 업로드되는 파일';
--- hboard 참조
-ALTER TABLE `webmoonya`.`boardupfiles` 
+
+-- 파일업로드 테이블과 게시판 테이블 fk 관계 설정
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD INDEX `boardupFiles_boardNo_fk_idx` (`boardNo` ASC) VISIBLE;
 ;
-ALTER TABLE `webmoonya`.`boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD CONSTRAINT `boardupFiles_boardNo_fk`
   FOREIGN KEY (`boardNo`)
-  REFERENCES `webmoonya`.`hboard` (`boardNo`)
+  REFERENCES `webshjin`.`hboard` (`boardNo`)
   ON DELETE CASCADE
   ON UPDATE NO ACTION;
-ALTER TABLE `webmoonya`.`boardupfiles` 
+
+-- 파일 업로드 테이블 썸네일파일이름 컬럼 추가
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD COLUMN `thumbFileName` VARCHAR(100) NULL AFTER `newFileName`,
-CHANGE COLUMN `ext` `ext` VARCHAR(50) NULL DEFAULT NULL ;
+CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
 
-INSERT INTO boardupfiles (`originalFileName`, `newFileName`, `thumbFileName`, `fileType`, `ext`, `size`, `base64Image`, `boardNo`)
-VALUES ('2', '3', '4', '5', '6', '7', '8', '9');
+-- 파일 업로드 테이블 구조 변경
+ALTER TABLE `webshjin`.`boardupfiles` 
+ADD COLUMN `fileType` VARCHAR(20) NULL AFTER `thumbFileName`,
+CHANGE COLUMN `ext` `ext` VARCHAR(5) NULL DEFAULT NULL ;
 
-SELECT * FROM hboard where (`boardNo` = 11);
+-- boardupfiles 테이블에 업로드된 파일을 저장하는 쿼리문
+insert into boardupfiles(originalFileName, newFileName, thumbFileName, fileType, ext, size, base64Image, boardNo)
+values(?, ?, ?, ?,?,?, ?, ?);
 
+-- 게시글 상세 조회 하는 쿼리문 1 : 2번의 select
+select * from hboard where boardNo = 15;
+select * from boardupfiles where boardNo = 15;
 select * from member where userid = (select writer from hboard where boardNo = 15);
 
-SELECT
-		 h.*, f.*,
-		 m.userId, m.userName, m.email, m.userImg
-		FROM hboard h left outer join boardupfiles f 
-		on h.boardNo = f.boardNo inner join member m on h.writer = m.userId 
-		where (h.boardNo = 13);
-        
--- 조회수 증가용 읽은 기록 테이블 작성
-CREATE TABLE `webmoonya`.`boardreadlog` (
+-- 게시글 상세 조회 하는 쿼리문 2 : 조인 이용(여기에서는 첨부파일이 없는 게시글도 나와야 하기 때문에 outer join을 사용)
+select h.*, f.*, m.userId, m.userName, m.email, m.userImg 
+from hboard h left outer join boardupfiles f
+on h.boardNo = f.boardNo
+inner join member m 
+on h.writer = m.userId
+where h.boardNo = 15;  
+
+-- boardupfiles테이블의 fileType 컬럼 길이 수정
+ALTER TABLE `webshjin`.`boardupfiles` 
+CHANGE COLUMN `fileType` `fileType` VARCHAR(50) NULL DEFAULT NULL ;
+
+-- 조회수 증가 처리를 위한 게시글 조회 기록 테이블 생성
+CREATE TABLE `webshjin`.`boardreadlog` (
   `boardReadNo` INT NOT NULL AUTO_INCREMENT,
-  `readWho` VARCHAR(50) NULL,
-  `readWhen` DATETIME NULL DEFAULT now(),
-  `readboardNo` INT NULL,
+  `readWho` VARCHAR(50) NOT NULL,
+  `readWhen` DATETIME NOT NULL DEFAULT now(),
+  `readBoardNo` INT NOT NULL,
   PRIMARY KEY (`boardReadNo`),
-  INDEX `readlog_boardNo_fk_idx` (`readboardNo` ASC) VISIBLE,
+  INDEX `readlog_boardNo_fk_idx` (`readBoardNo` ASC) VISIBLE,
   CONSTRAINT `readlog_boardNo_fk`
-    FOREIGN KEY (`readboardNo`)
-    REFERENCES `webmoonya`.`hboard` (`boardNo`)
+    FOREIGN KEY (`readBoardNo`)
+    REFERENCES `webshjin`.`hboard` (`boardNo`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION);
-    
-select ifnull( (SELECT`readboardNo` 
-FROM `webmoonya`.`boardreadlog`
-WHERE `readWho` = '127'
-  AND `readboardNo` = 1 
-  AND `readWhen` >= NOW() - INTERVAL 1 DAY), -1) as timediff;
-  
+
+use webshjin;
+------------------------------------------------------------------------------------------------------
+-- "?" ip주소를 가진 유저가 ?번글을 1일 이내에 조회한 기록이 있는지 없는지 체크 하는 쿼리문
+select datediff(now(), (select readWhen
+from boardreadlog
+where readWho = '127.0.0.1' and readBoardNo = 15));
+
+-- "?" ip주소를 가진 유저가 ?번글을 24시간 이내에 조회한 기록이 있는지 없는지 체크 하는 쿼리문
+-- 이 값이 24보다 크거나 같으면 조회수 증가 -> insert(24시간 이내에 조회한 기록이 없다?)
+-- 이 값이 -1이면 조회한 기록이 없는 것이므로 조회수 증가 -> insert
+-- 같은 유저가 같은 글을 조회한 기록이 1개 이상일 수도 있기 때문에 다중행 서브쿼리가 실행되지 않도록 하기 위해
+--  가장 최근의 조회기록만 가져오도록 max(readWhen)로 수정
 select ifnull(timestampdiff(hour,  (select max(readWhen)
 from boardreadlog
-where readWho = '127' and readBoardNo = 1), now()),-1) as timediff;
+where readWho = '0:0:0:0:0:0:0:1' and readBoardNo = 20), now()), -1) as timediff; 
 
-select ifnull(timestampdiff(hour, 
-(select readWhen from boardreadlog where readWho = 'readWho' and readBoardNo = 'boardNo'), now()), -1) as timediff;
-
+-- 조회수 증가 쿼리문
 update hboard
 set readCount = readCount + 1
 where boardNo = ?;
 
-INSERT INTO boardreadlog (`readWho`, `readboardNo`) VALUES ('127', '2');
+-- 조회기록 insert
+insert into boardreadlog(readWho, readBoardNo)
+values(?, ?);
 
 ------------------------------------------------------------------------------------------------------
 -- 답글 기능 구현 + 계층형 게시판 구현
@@ -172,42 +197,54 @@ update hboard
 set ref = ?
 where boardNo = ?;
 
--- 2) 답글을 저장할 때,  ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의 refOrder + 1로 저장
+-- 2) 부모글에 대한 다른 답글이 있는 상태에서, 부모글의 새로운 답글이 추가된경우 
+-- 새로운 답글이 출력될 공간을 확보한다는 의미에서 기존의 답글에 대해 refOrder값을 1씩 증가시킴
+update hboard
+set refOrder = refOrder + 1
+where ref = ? and refOrder > ?;
+
+-- 3) 답글을 저장할 때,  ref : 부모글의 ref, step : 부모글의 step +1, refOrder : 부모글의 refOrder + 1로 저장
 insert into hboard(title, writer, content, ref, step, refOrder)
-values (?, ?, ?, ?, ? + 1, ? + 1);
+values (?, ?, ?, ?, ? + 1, ? + 1); 
 
-select refOrder from hboard where ref = 3 and refOrder >= 2 ;
+----------------------------------------------------------------------------------------------------------------
+use webshjin;
 
-UPDATE hboard 
-SET refOrder = refOrder + 1 
-WHERE ref = 3 AND refOrder > 2;
-	
-    
-    
-DELETE FROM hboard WHERE (`boardNo` = '8');
+-- 회원 가입을 위한 member 테이블 수정
+ALTER TABLE `webshjin`.`member` 
+ADD COLUMN `gender` VARCHAR(1) NULL AFTER `email`,
+ADD COLUMN `job` VARCHAR(45) NULL AFTER `gender`,
+ADD COLUMN `hobbies` VARCHAR(50) NULL AFTER `job`;
 
-select boardNo from hboard where boardNo = boardNo and writer = userId;
+ALTER TABLE `webshjin`.`member` 
+CHANGE COLUMN `email` `email` VARCHAR(50) NOT NULL ;
 
-select userId from member where userId = userId;
+ALTER TABLE `webshjin`.`member` 
+ADD COLUMN `postZip` VARCHAR(7) NULL AFTER `hobbies`;
 
-INSERT INTO `webmoonya`.`member` (`userId`, `userPwd`, `userName`, `mobile`, `email`, `gender`, `job`, `hobbys`, `postZip`, `addr`)
-VALUES ('dooly',  sha1(md5(?)), '둘리', '010-1234-5678', 'dooly@dooly.com', 'F', 'a', 'a', '14325', 'asdf');
+ALTER TABLE `webshjin`.`member` 
+ADD COLUMN `addr` VARCHAR(150) NULL AFTER `postZip`;
 
-select * from member where userId = 'aba4114' and userPwd = sha1(md5('1234'));
+-- 유저아이디가 중복되는지 안되는지 검사
+select userId from member where userId = ?;
 
-SELECT * FROM webmoonya.pointlog;
+-- 회원가입 시키는 쿼리문
+-- 유저 이미지가 있는 경우
+insert into member(userId, userPwd, userName, mobile, email, gender, job, hobbies, postZip, addr, userImg) 
+value(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
--- 24시간 포인트지급_24시간 이내 기록있으면 지난시간 0~24 int반환 없으면 -1반환
-select ifnull(timestampdiff(hour,  (select max(pointwhen)
-from pointlog
-where pointwho = 'aba4114' and pointwhy = '로그인'), now()),-1) as timediff;
+-- 유저 이미지가 없는 경우
+insert into member(userId, userPwd, userName, mobile, email, gender, job, hobbies, postZip, addr) 
+value(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-UPDATE hboard SET `boardNo` = '22'
--- if title != null
-, `title` = '?'
--- if content != null
-, `content` = '?'
-WHERE (`boardNo` = '22');
+
+-- 로그인 성공/실패 쿼리문
+use webshjin;
+select * from member where userId=? and userPwd=sha1(md5(?));
+
+-- 관리자 페이지 구현을 위해 테이블 수정
+ALTER TABLE `webshjin`.`member` 
+ADD COLUMN `isAdmin` VARCHAR(1) NULL DEFAULT 'N' AFTER `userpoint`;
 
 -- 게시글 수정 쿼리문 (제목, 내용 수정 가능)
 -- 게시글 제목을 수정한다면..
@@ -222,46 +259,34 @@ where boardNo = ?;
 
 -- 게시글 내용과 제목을 모두 수정할 때
 update hboard
-set title = ?, content = ?
+set title = ? , content = ?
 where boardNo = ?;
 
-select * from boardupfiles where boardNo = 16;
 -- 위의 3가지 쿼리문이 필요 할 수 있다...
 -- 동적 쿼리문으로 만들 수 있긴 하지만, 먼저, 수정할 게시글을 출력해 놓는다면... 
 -- 유저가 변경한 부분 + 변경 하지 않은 부분의 값이 그대로 모두 update 될 수 있기 때문에 
 -- "게시글 내용과 제목을 모두 수정할 때"의 쿼리문만 필요하게된다..
 
-select writer from hboard where boardNo = ?;
-
-DELETE FROM boardupfiles WHERE (boardNo = ?);
-
-------------------
+ -- 게시글의 작성자를 확인 하는 쿼리문
+ select writer from hboard where boardNo = ?;
+ 
+-- 게시글의 파일을 수정하는 경우
+-- 1) 기존의 파일을 삭제 할 수 있다
+-- 2) 기존의 게시글에 파일을 추가 할 수 있다
+ 
+ -- 게시글 수정시 기존 파일을 삭제하는 쿼리문
+ delete from boardupfiles where boardUpFileNo = ?;
+ 
+ ----------------------------------------------------------------------------
  -- 게시글 삭제 기능 구현
  
  --  게시글 삭제 시  ref, step, refOrder 값은 그대로 남겨 두는 것으로 처리 한다.
  --  게시글 삭제시 첨부파일이 있다면 첨부 파일은 먼저 삭제 되어야 한다.
  
  --- 게시글 삭제 기능 구현을 위해 테이블 수정
- ALTER TABLE hboard
+ ALTER TABLE `webshjin`.`hboard` 
 ADD COLUMN `isDelete` VARCHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
-
-UPDATE hboard SET `title` = '삭제된글입니다', `content` = '', `writer` = null , `isDelete` = 'Y' WHERE (`boardNo` = '6');
-
-
-select h.*, f.*, m.userId, m.userName, m.email, m.userImg
-      from hboard h left outer join boardupfiles f
-      on h.boardNo = f.boardNo
-      inner join member m
-      on h.writer = m.userId
-      where h.boardNo = 6;
-      
-SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
-	FROM hboard h LEFT OUTER JOIN boardupfiles f
-    ON h.boardNo = f.boardNo
-	LEFT OUTER JOIN member m
-    ON h.writer = m.userId
-	WHERE h.boardNo = 6;
-
+ 
  -- 게시글 삭제 기능 구현 쿼리문
  update hboard
  set title = '삭제된 글입니다', content = null, writer = null, isDelete = 'Y'
@@ -274,7 +299,7 @@ SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
  delete from boardupfiles
  where boardNo = ?;
 
-
+--------------------------------------------------------------------------------------------
 -- 자동 로그인 구현
 -- 1) 유저가 로그인 할 때, Remember me에 체크되어 있다면
 --    로그인 성공했을 때(/member/login (postHandle)의 세션 아이디를 얻어와 유저의 컴퓨터에 저장(쿠키를 이용해), db에도 저장
@@ -286,10 +311,8 @@ SELECT h.*, f.*, m.userId, m.userName, m.email, m.userImg
 -- 3)  유저가 로그인 하려 할 때 쿠키에 세션 아이디가 없다면(자동로그인 x, 쿠키가 만료되어 사라진) ... 그냥 일반 로그인
 
 -- 자동로그인 구현을 위해 테이블 수정
-ALTER TABLE member
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `sessionID` VARCHAR(50) NULL AFTER `isAdmin`;
-
-select * from member where sessionID = "60DA3B3F25D14E142146A1D2D463B6AF";
 
 -- 세션아이디를 저장하는 쿼리문
 update member
@@ -309,49 +332,108 @@ where sessionID = ?;
 
 ------------------------------------------------------------------------------------------------------------
 -- 홈 (인기글 10개 출력, 최신글 5개 출력)
+-- 최신글 5개 가져오기
+select * from hboard order by postDate desc limit 5;
+
+-- limit 출력하기 시작하는 row index번호(default 0), 출력할 갯수
 --------------------------------------------------------------------------------------------------
+-- 페이징 (paging) 구현
+-- 페이징 : 많은 데이터를 일정 양 단위로 나누어 조회되도록 하는 방법
+-- 페이징은 단순히 유저에게 편의성을 주는 것이 아니라, 많은 데이터를 한꺼번에 출력하지 않고, 데이터를 끊어서 출력하여 부하를 분산한다는 의미가 강하다
+
+-- mysql에서는 페이징을 limit 키워드를 사용하여 작성 할 수 있다
+
+-- select * from hboard order by ref desc, refOrder asc limit 페이지에서출력하기시작할row의 index번호, 한페이지당 출력할 row의 수;
+
+-- 1) 전체 데이터 갯수
+-- select count(*) from hboard;   -- 228
+-- 2) pageNo : 유저가 pagination에서 클릭한 페이지의 번호
+-- 3) 한페이지당 출력할 row의 수 : 10, 유저에게 선택된 값
+
+-- 4) 전체 페이지 수 
+-- 한페이지당 출력할 row의 수 : 10개라고 가정한다면...
+-- 1)번에서 나온 갯수(전체 데이터 갯수) / 10 하여, 나누어 떨어지면 그 값이 전체 페이지수가 되고, 나누어 떨어지지않으면 +1 한값이 전체 페이지수가 된다.
+-- 228 / 10 = 22.8 => 23
+
+-- 5) 페이지에서출력하기시작할row의 index번호
+ -- select * from hboard order by ref desc, refOrder asc limit 0, 10;  -- 1페이지
+-- select * from hboard order by ref desc, refOrder asc limit 10, 10;  -- 2페이지
+-- select * from hboard order by ref desc, refOrder asc limit 20, 10;  -- 3페이지
+-- select * from hboard order by ref desc, refOrder asc limit 30, 10;  -- 4페이지
+-- select * from hboard order by ref desc, refOrder asc limit 40, 10;  -- 5페이지
+
+-- 만약 한페이지당 출력할 row의 수 : 5
+-- select * from hboard order by ref desc, refOrder asc limit 0, 5  -- 1페이지
+-- select * from hboard order by ref desc, refOrder asc limit 5, 5;  -- 2페이지
+-- select * from hboard order by ref desc, refOrder asc limit 10, 5;  -- 3페이지
+
+-- 만약 한페이지당 출력할 row의 수 : 3
+-- select * from hboard order by ref desc, refOrder asc limit 0, 3  -- 1페이지
+-- select * from hboard order by ref desc, refOrder asc limit 3, 3;  -- 2페이지
+
+-- 페이지에서출력하기시작할row의 index번호 = (현재페이지번호 - 1) * 한페이지당 출력할 row의 수
+
+------------------ 페이징 블럭 구현
+-- 한 블럭당 몇개 페이지를 보여줄 것인가 ? 10개 (default)
+-- 1) 현재 페이지가 몇번 블럭에 있는지?
+--  현재페이지번호 / 한 블럭당 보여줄 페이지 해봐서 나누어 떨어지지 않으면 +1
+
+--  4 / 10 =>  1번블럭
+-- 7 / 10 => 1번블럭a
+-- 17 / 10 => 2번블럭
+-- 30 / 10 => 3번블럭
+
+-- 2) 그 블럭의 시작 페이지번호?
+-- 1번블럭 -> 1
+-- 2번블럭 -> 11
+-- 5번블럭 -> 41
+
+-- 그 블럭의 시작 페이지 = ((현재 페이징 블럭 번호 - 1) *  한 블럭당 보여줄 페이지) + 1
+
+-- 3) 그 블럭의 끝 페이지번호
+-- 1번블럭 -> 10
+-- 2번블럭 -> 20
+-- 5번블럭 -> 50
+ 
+-- 그 블럭의 끝 페이지번호 = 현재 페이지member 블럭번호 * 한 블럭당 보여줄 페이지
 
 
-SELECT * 
-FROM hboard 
-WHERE postDate >= DATE_SUB(NOW(), INTERVAL 1 MONTH) 
-ORDER BY readCount DESC, postDate DESC 
-LIMIT 10;
-
-SELECT * 
-FROM hboard 
-ORDER BY postDate DESC 
-LIMIT 5;
-
-select count(*) from hboard; -- 121
--- Math.ceil (121/n) = totalPage
--- select * from hboard order by ref desc, refOrder asc limit (n*(i-1)),n;
--- i = 1 ~ totalPage, 0 < n <=?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CREATE TABLE blog_posts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    link VARCHAR(500),
-    postdate VARCHAR(20),
-    description TEXT,
-    title VARCHAR(255),
-    bloggerlink VARCHAR(500),
-    bloggername VARCHAR(255)
-);
-
--- 스키마 사용
-use webmoonya;
+-- csv to table 해보기 위해 테이블 생성
+CREATE TABLE `webshjin`.`seoultemp` (
+  `areaId` INT NOT NULL,
+  `areaName` VARCHAR(45) NULL,
+  `observerDate` DATETIME NULL,
+  `avgTemp` FLOAT NULL,
+  `avgMaxTemp` FLOAT NULL,
+  `maxTemp` FLOAT NULL,
+  `maxTempDate` DATETIME NULL,
+  `avgMinTemp` FLOAT NULL,
+  `minTemp` FLOAT NULL,
+  `minTempDate` DATETIME NULL);
+  
+  
+ 
+  
+  ----------------------------------------------------------- 게시판 검색 기능
+  
+  -- 제목, 작성자, 내용으로 like 검색
+  select * from hboard 
+  where title like '%%'
+  order by ref desc, refOrder asc limit 0, 10;  -- 제목
+  
+  select * from hboard 
+  where writer like '%ti%'
+  order by ref desc, refOrder asc limit 0, 10;  -- 작성자
+  
+   select * from hboard 
+  where content like '%%'
+  order by ref desc, refOrder asc limit 0, 10;  -- 내용
+  
+  -- 검색을 했을 때도 결과가 페이징 되어야 한다.
+  -- 검색 했을 때 검색된 row의 갯수를 다시 얻어와야 한다(결과의 갯수가 다르기 때문)
+   select count(*) from hboard 
+  order by ref desc, refOrder asc limit 0, 10;  -- 228
+  
+   select count(*) from hboard 
+   where title like '%준봉%'
+  order by ref desc, refOrder asc limit 0, 10;  -- 1
