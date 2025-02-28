@@ -2,10 +2,8 @@ package com.miniproject.service.board;
 
 import java.util.List;
 
-import org.ietf.jgss.ChannelBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,11 +44,11 @@ public class HBoardServiceImpl implements HBoardService {
    
    
    @Override
-   public PageResponseDTO getEntireHBoard(PageRequestDTO pageRequestDTO) throws Exception {
+   public PageResponseDTO<HBoard> getEntireHBoard(PageRequestDTO pageRequestDTO) throws Exception {
       logger.info("게시글 전체 리스트 얻어오자");
       
       // 넘겨 받은 pageRequestDTO를 이용해 페이징을 할 수 있도록 처리
-      PageResponseDTO pageResponseDTO = pagingProcess(pageRequestDTO);
+      PageResponseDTO<HBoard> pageResponseDTO = pagingProcess(pageRequestDTO);
       
       List<HBoard> list = hdao.selectAllHBoard(pageResponseDTO);
       pageResponseDTO.setBoardList(list);
@@ -58,8 +56,8 @@ public class HBoardServiceImpl implements HBoardService {
       return pageResponseDTO;
    }
 
-   private PageResponseDTO pagingProcess(PageRequestDTO pageRequestDTO) throws Exception {
-      PageResponseDTO pageResponseDTO = new PageResponseDTO(pageRequestDTO.getPageNo(), pageRequestDTO.getRowCntPerPage());
+   private PageResponseDTO<HBoard> pagingProcess(PageRequestDTO pageRequestDTO) throws Exception {
+      PageResponseDTO<HBoard> pageResponseDTO = new PageResponseDTO<HBoard>(pageRequestDTO.getPageNo(), pageRequestDTO.getRowCntPerPage());
       
       // 기본 페이징
       if (StringUtils.isNullOrEmpty(pageRequestDTO.getSearchType())) {

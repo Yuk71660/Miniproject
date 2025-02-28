@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.miniproject.model.BoardDetailInfo;
 import com.miniproject.model.BoardUpFilesVODTO;
+import com.miniproject.model.HBoard;
 import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
 
 public interface HBoardService {
    // 전체 게시글 리스트 얻어오는
-   PageResponseDTO getEntireHBoard(PageRequestDTO pageRequestDTO) throws Exception;
+   PageResponseDTO<HBoard> getEntireHBoard(PageRequestDTO pageRequestDTO) throws Exception;
 
    // 게시글 저장 
    boolean saveBoard(HBoardDTO newBoard, List<BoardUpFilesVODTO> fileList) throws Exception;
