@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.miniproject.model.BoardDetailInfo;
-import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
 import com.miniproject.model.RBoard;

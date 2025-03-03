@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.miniproject.model.BoardDetailInfo;
-import com.miniproject.model.BoardUpFilesVODTO;
-import com.miniproject.model.HBoardDTO;
 import com.miniproject.model.PageRequestDTO;
 import com.miniproject.model.PageResponseDTO;
 import com.miniproject.model.RBoard;

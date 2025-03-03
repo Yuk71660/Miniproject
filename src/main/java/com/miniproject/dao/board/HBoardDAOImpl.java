@@ -34,7 +34,7 @@ public class HBoardDAOImpl implements HBoardDAO {
    private static final String NS = "com.miniproject.mapper.hboardmapper";
    
    @Override
-   public List<HBoard> selectAllHBoard(PageResponseDTO pageResponseDTO) throws Exception {
+   public List<HBoard> selectAllHBoard(PageResponseDTO<HBoard> pageResponseDTO) throws Exception {
       logger.info("전체 게시글 얻어오자");
       
       if (!StringUtils.isNullOrEmpty(pageResponseDTO.getSearchType())) {

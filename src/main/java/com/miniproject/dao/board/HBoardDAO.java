@@ -11,7 +11,7 @@ import com.miniproject.model.PageResponseDTO;
 
 public interface HBoardDAO {
    // 전체 게시글 리스트 얻어오는 (페이징)
-   List<HBoard> selectAllHBoard(PageResponseDTO pageResponseDTO) throws Exception;
+   List<HBoard> selectAllHBoard(PageResponseDTO<HBoard> pageResponseDTO) throws Exception;
    
    // 게시글 저장
    int insertHBoard(HBoardDTO newBoard) throws Exception;
