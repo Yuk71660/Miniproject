@@ -7,4 +7,8 @@
        insert into replies(replyContent, replyer, boardNo)
        values(#{replyContent}, #{replyer}, #{boardNo})
    </insert>
+   
+   <select id="selectReplyByReplyNo" resultType="Reply">
+      select * from replies where replyNo = #{replyNo}
+   </select>
 </mapper>
