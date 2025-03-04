@@ -450,6 +450,31 @@ CREATE TABLE seoultemp (
 
 ALTER TABLE rboard 
 CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
-  
+
+ -- 댓글을 저장하는 테이블
+CREATE TABLE `webmoonya`.`reples` (
+  `replyNo` INT NOT NULL AUTO_INCREMENT,
+  `replyContent` VARCHAR(200) NOT NULL,
+  `replyer` VARCHAR(8) NULL,
+  `postDate` DATETIME NULL DEFAULT now(),
+  `boardNo` INT NOT NULL,
+  PRIMARY KEY (`replyNo`),
+  INDEX `reply_replyer_fk_idx` (`replyer` ASC) VISIBLE,
+  INDEX `reply_boardNo_fk_idx` (`boardNo` ASC) VISIBLE,
+  CONSTRAINT `reply_replyer_fk`
+    FOREIGN KEY (`replyer`)
+    REFERENCES `webmoonya`.`member` (`userId`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `reply_boardNo_fk`
+    FOREIGN KEY (`boardNo`)
+    REFERENCES `webmoonya`.`rboard` (`boardNo`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+    
+    -- 댓글 저장 쿼리문
+    INSERT INTO `reples` (`replyContent`, `replyer`, `boardNo`) VALUES ('a', 'admin', '1');
+
+
   -- 스키마 사용
 use webmoonya;
