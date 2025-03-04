@@ -1,5 +1,7 @@
 package com.miniproject.service.reply;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -9,6 +11,7 @@ import com.miniproject.dao.member.MemberDAO;
 import com.miniproject.dao.pointlog.PointLogDAO;
 import com.miniproject.dao.reply.ReplyDAO;
 import com.miniproject.model.PointLogDTO;
+import com.miniproject.model.Reply;
 import com.miniproject.model.ReplyDTO;
 import com.miniproject.service.board.HBoardServiceImpl;
 
@@ -50,6 +53,15 @@ public class ReplyServiceImpl implements ReplyService{
          mdao.updateUserPoint(pointWho, why);
       }
    }
+
+   @Override
+   @Transactional(isolation = Isolation.DEFAULT, readOnly = true)
+   public Reply readReply(int replyNo) throws Exception {
+      Reply reply = dao.selectReplyByReplyNo(replyNo);
+      if (reply == null) {
+         throw new NoSuchElementException(replyNo + "번 데이터는 존재하지 않습니다");
+      }
+      return reply;
+   }
    
 }
-
