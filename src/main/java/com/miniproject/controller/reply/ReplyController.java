@@ -70,22 +70,23 @@ public class ReplyController {
             mw.setMessage("success");
             result = ResponseEntity.ok(mw);
          }
-      } catch (Exception e) {
-         e.printStackTrace();
-         
-         if (e instanceof NoSuchElementException) {
-            mw.setCode(404);
-            mw.setMessage(e.getMessage());
-            mw.setData(null);
-         } else {
-            mw.setCode(500);
-            mw.setMessage("fail : " + e.getMessage());
-            mw.setData(null);
-            
-         }
-         
-         result = ResponseEntity.badRequest().body(mw);
-      }
+      } catch (NoSuchElementException e) {
+          e.printStackTrace();
+          
+             mw.setCode(404);
+             mw.setMessage(e.getMessage());
+             mw.setData(null);
+             
+          result = ResponseEntity.badRequest().body(mw);
+       } catch (Exception e) {
+           e.printStackTrace();
+           
+              mw.setCode(500);
+              mw.setMessage("fail : " + e.getMessage());
+              mw.setData(null);
+              
+           result = ResponseEntity.badRequest().body(mw);
+        }
       
       return result;
    }
