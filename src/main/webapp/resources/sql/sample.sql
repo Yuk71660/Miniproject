@@ -1,4 +1,5 @@
-
+-- 스키마 사용
+use webshjin;
 
 -- 회원 테이블 생성
 CREATE TABLE `member` (
@@ -13,7 +14,7 @@ CREATE TABLE `member` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='회원 테이블';
 
 -- 계층형 게시판 테이블 생성
-CREATE TABLE `hboard` (
+CREATE TABLE `webshjin`.`hboard` (
   `boardNo` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(50) NOT NULL,
   `content` VARCHAR(4000) NULL,
@@ -26,10 +27,10 @@ CREATE TABLE `hboard` (
   PRIMARY KEY (`boardNo`));
 
 -- 회원테이블과 계층형 게시판 테이블 관계 설정
-ALTER TABLE `hboard` 
+ALTER TABLE `webshjin`.`hboard` 
 ADD INDEX `hboard_member_fk_idx` (`writer` ASC) VISIBLE;
 ;
-ALTER TABLE `hboard` 
+ALTER TABLE `webshjin`.`hboard` 
 ADD CONSTRAINT `hboard_member_fk`
   FOREIGN KEY (`writer`)
   REFERENCES `webshjin`.`member` (`userId`)
@@ -37,7 +38,7 @@ ADD CONSTRAINT `hboard_member_fk`
   ON UPDATE NO ACTION;
   
 -- 게시물 작성
-INSERT INTO `hboard` (`boardNo`, `title`, `content`, `writer`, `postDate`, `readCount`, `ref`, `step`, `refOrder`) 
+INSERT INTO `webshjin`.`hboard` (`boardNo`, `title`, `content`, `writer`, `postDate`, `readCount`, `ref`, `step`, `refOrder`) 
 VALUES ('1', '게시판이 생성되었습니다', '많은 이용 바랍니다', 'admin', '2025-02-06 10:44:00', '0', '0', '0', '0');
   
 -- 전체 게시글 조회 기능
@@ -49,13 +50,13 @@ insert into hboard(title, content, writer)
 values(?, ?, ?);
 
 -- 포인트정보 테이블 생성
-CREATE TABLE `pointinfo` (
+CREATE TABLE `webshjin`.`pointinfo` (
   `pointcontent` VARCHAR(20) NOT NULL,
   `pointscore` INT NOT NULL,
   PRIMARY KEY (`pointcontent`));
   
 -- 포인트 지급 내역 테이블 생성
-CREATE TABLE `pointlog` (
+CREATE TABLE `webshjin`.`pointlog` (
   `pointLogNo` INT NOT NULL AUTO_INCREMENT,
   `pointwhen` DATETIME NOT NULL DEFAULT now(),
   `pointwho` VARCHAR(8) NOT NULL,
@@ -65,20 +66,20 @@ CREATE TABLE `pointlog` (
 COMMENT = '포인트 지급 내역';
 
 -- 포인트 지급 내역 테이블 fk 설정
-ALTER TABLE `pointlog` 
+ALTER TABLE `webshjin`.`pointlog` 
 ADD CONSTRAINT `pointlog_pointwho_fk`
   FOREIGN KEY (`pointwho`)
-  REFERENCES `member` (`userId`)
+  REFERENCES `webshjin`.`member` (`userId`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION,
 ADD CONSTRAINT `pointlog_pointwhy_fk`
   FOREIGN KEY (`pointwhy`)
-  REFERENCES `pointinfo` (`pointcontent`)
+  REFERENCES `webshjin`.`pointinfo` (`pointcontent`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
   
 -- 회원 테이블에 포인트 컬럼 추가
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `userpoint` INT NULL DEFAULT 0 AFTER `userImg`;
 
 
@@ -92,7 +93,7 @@ set userpoint = userpoint + (select pointscore from pointinfo where pointcontent
 where userId = ?;
 
 -- 게시판 파일 업로드를 위한boardupfiles 테이블 생성
-CREATE TABLE `boardupfiles` (
+CREATE TABLE `webshjin`.`boardupfiles` (
   `boardUpFileNo` INT NOT NULL AUTO_INCREMENT,
   `originalFileName` VARCHAR(50) NOT NULL,
   `newFileName` VARCHAR(100) NOT NULL,
@@ -104,10 +105,10 @@ CREATE TABLE `boardupfiles` (
 COMMENT = '게시글에 업로드되는 파일';
 
 -- 파일업로드 테이블과 게시판 테이블 fk 관계 설정
-ALTER TABLE `boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD INDEX `boardupFiles_boardNo_fk_idx` (`boardNo` ASC) VISIBLE;
 ;
-ALTER TABLE `boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD CONSTRAINT `boardupFiles_boardNo_fk`
   FOREIGN KEY (`boardNo`)
   REFERENCES `webshjin`.`hboard` (`boardNo`)
@@ -115,12 +116,12 @@ ADD CONSTRAINT `boardupFiles_boardNo_fk`
   ON UPDATE NO ACTION;
 
 -- 파일 업로드 테이블 썸네일파일이름 컬럼 추가
-ALTER TABLE `boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD COLUMN `thumbFileName` VARCHAR(100) NULL AFTER `newFileName`,
 CHANGE COLUMN `ext` `ext` VARCHAR(20) NULL DEFAULT NULL ;
 
 -- 파일 업로드 테이블 구조 변경
-ALTER TABLE `boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 ADD COLUMN `fileType` VARCHAR(20) NULL AFTER `thumbFileName`,
 CHANGE COLUMN `ext` `ext` VARCHAR(5) NULL DEFAULT NULL ;
 
@@ -142,11 +143,11 @@ on h.writer = m.userId
 where h.boardNo = 15;  
 
 -- boardupfiles테이블의 fileType 컬럼 길이 수정
-ALTER TABLE `boardupfiles` 
+ALTER TABLE `webshjin`.`boardupfiles` 
 CHANGE COLUMN `fileType` `fileType` VARCHAR(50) NULL DEFAULT NULL ;
 
 -- 조회수 증가 처리를 위한 게시글 조회 기록 테이블 생성
-CREATE TABLE `boardreadlog` (
+CREATE TABLE `webshjin`.`boardreadlog` (
   `boardReadNo` INT NOT NULL AUTO_INCREMENT,
   `readWho` VARCHAR(50) NOT NULL,
   `readWhen` DATETIME NOT NULL DEFAULT now(),
@@ -210,18 +211,18 @@ values (?, ?, ?, ?, ? + 1, ? + 1);
 use webshjin;
 
 -- 회원 가입을 위한 member 테이블 수정
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `gender` VARCHAR(1) NULL AFTER `email`,
 ADD COLUMN `job` VARCHAR(45) NULL AFTER `gender`,
 ADD COLUMN `hobbies` VARCHAR(50) NULL AFTER `job`;
 
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 CHANGE COLUMN `email` `email` VARCHAR(50) NOT NULL ;
 
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `postZip` VARCHAR(7) NULL AFTER `hobbies`;
 
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `addr` VARCHAR(150) NULL AFTER `postZip`;
 
 -- 유저아이디가 중복되는지 안되는지 검사
@@ -242,7 +243,7 @@ use webshjin;
 select * from member where userId=? and userPwd=sha1(md5(?));
 
 -- 관리자 페이지 구현을 위해 테이블 수정
-ALTER TABLE `member` 
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `isAdmin` VARCHAR(1) NULL DEFAULT 'N' AFTER `userpoint`;
 
 -- 게시글 수정 쿼리문 (제목, 내용 수정 가능)
@@ -283,7 +284,7 @@ where boardNo = ?;
  --  게시글 삭제시 첨부파일이 있다면 첨부 파일은 먼저 삭제 되어야 한다.
  
  --- 게시글 삭제 기능 구현을 위해 테이블 수정
- ALTER TABLE `hboard` 
+ ALTER TABLE `webshjin`.`hboard` 
 ADD COLUMN `isDelete` VARCHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
  
  -- 게시글 삭제 기능 구현 쿼리문
@@ -310,7 +311,7 @@ ADD COLUMN `isDelete` VARCHAR(1) NULL DEFAULT 'N' AFTER `refOrder`;
 -- 3)  유저가 로그인 하려 할 때 쿠키에 세션 아이디가 없다면(자동로그인 x, 쿠키가 만료되어 사라진) ... 그냥 일반 로그인
 
 -- 자동로그인 구현을 위해 테이블 수정
-ALTER TABLE member
+ALTER TABLE `webshjin`.`member` 
 ADD COLUMN `sessionID` VARCHAR(50) NULL AFTER `isAdmin`;
 
 -- 세션아이디를 저장하는 쿼리문
@@ -398,7 +399,7 @@ select * from hboard order by postDate desc limit 5;
 
 
 -- csv to table 해보기 위해 테이블 생성
-CREATE TABLE seoultemp (
+CREATE TABLE `webshjin`.`seoultemp` (
   `areaId` INT NOT NULL,
   `areaName` VARCHAR(45) NULL,
   `observerDate` DATETIME NULL,
@@ -421,7 +422,7 @@ CREATE TABLE seoultemp (
   order by ref desc, refOrder asc limit 0, 10;  -- 제목
   
   select * from hboard 
-  where writer like '%ti%'
+  where writer like '%ad%'
   order by ref desc, refOrder asc limit 0, 10;  -- 작성자
   
    select * from hboard 
@@ -436,23 +437,35 @@ CREATE TABLE seoultemp (
    select count(*) from hboard 
    where title like '%준봉%'
   order by ref desc, refOrder asc limit 0, 10;  -- 1
+  
+  select count(*) from hboard 
+   where title like '%' || '준봉' || '%';
+   
 
-
- CREATE TABLE rboard (
-   `boardNo` INT NOT NULL AUTO_INCREMENT,
-   `title` VARCHAR(50) NOT NULL,
-   `content` VARCHAR(4000) NULL,
-   `writer` VARCHAR(8) NULL,
-   `postDate` DATETIME NULL DEFAULT now(),
-   `readCount` INT NULL DEFAULT 0,  -- 여기에 쉼표 추가
-   PRIMARY KEY (`boardNo`)
-);
-
-ALTER TABLE rboard 
+--------------------------------------------------- 댓글형 게시판 ------------------------------------------
+-- 댓글 게시판 테이블 생성
+cREATE TABLE `webshjin`.`rboard` (
+  `boardNo` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(50) NOT NULL,
+  `content` VARCHAR(4000) NULL,
+  `writer` VARCHAR(8) NULL,
+  `postDate` DATETIME NULL DEFAULT now(),
+  `readCount` INT NULL DEFAULT 0,
+  PRIMARY KEY (`boardNo`));
+  
+ALTER TABLE `webshjin`.`rboard` 
 CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
 
- -- 댓글을 저장하는 테이블
-CREATE TABLE `webmoonya`.`replies` (
+INSERT INTO `webshjin`.`rboard` (`boardNo`, `title`, `content`, `writer`, `postDate`, `readCount`) 
+VALUES ('1', '댓글 게시판이 오픈되었습니다', '많은 이용 바랍니다.', 'admin', '2025-02-28 14:00:00', '0');
+
+-- 조회 기록 테이블을 rboard, hboard 함께 쓰도록
+ALTER TABLE `webshjin`.`boardreadlog` 
+ADD COLUMN `boardType` VARCHAR(6) NULL AFTER `readBoardNo`;
+
+
+-- 댓글을 저장하는 테이블 생성
+CREATE TABLE `webshjin`.`replies` (
   `replyNo` INT NOT NULL AUTO_INCREMENT,
   `replyContent` VARCHAR(200) NOT NULL,
   `replyer` VARCHAR(8) NULL,
@@ -463,18 +476,26 @@ CREATE TABLE `webmoonya`.`replies` (
   INDEX `reply_boardNo_fk_idx` (`boardNo` ASC) VISIBLE,
   CONSTRAINT `reply_replyer_fk`
     FOREIGN KEY (`replyer`)
-    REFERENCES `webmoonya`.`member` (`userId`)
+    REFERENCES `webshjin`.`member` (`userId`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `reply_boardNo_fk`
     FOREIGN KEY (`boardNo`)
-    REFERENCES `webmoonya`.`rboard` (`boardNo`)
+    REFERENCES `webshjin`.`rboard` (`boardNo`)
     ON DELETE CASCADE
     ON UPDATE NO ACTION);
     
-    -- 댓글 저장 쿼리문
-    INSERT INTO `reples` (`replyContent`, `replyer`, `boardNo`) VALUES ('a', 'admin', '1');
+    -- 댓글을 저장하는 쿼리문
+    insert into replies(replyContent, replyer, boardNo)
+    values(?, ?, ?);
+
+-- 댓글을 조회하는 쿼리문
+select * from replies where replyNo = 1;
+
+-- 부모글이 ?인 글의 모든 댓글을 조회하는 쿼리문  (댓글도 페이징 되어야 한다)
+select * from replies where boardNo = 1 order by postDate desc limit 0, 3;
+
+-- 부모글이 ?인 글의 댓글 수 조회
+select count(*) from replies where boardNo = 1;
 
 
-  -- 스키마 사용
-use webmoonya;

@@ -1,8 +1,13 @@
 package com.miniproject.dao.reply;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.miniproject.model.PageResponseDTO;
 import com.miniproject.model.Reply;
 import com.miniproject.model.ReplyDTO;
 
@@ -25,6 +30,21 @@ public class ReplyDAOImpl implements ReplyDAO {
    public Reply selectReplyByReplyNo(int replyNo) throws Exception {
       
       return ses.selectOne(NS + ".selectReplyByReplyNo",  replyNo);
+   }
+
+   @Override
+   public int getTotalCountRow(int boardNo) throws Exception {
+      return ses.selectOne(NS + ".getReplyCountByBoardNo", boardNo);
+   }
+
+   @Override
+   public List<Reply> selectRepliesByBoardNo(int boardNo, PageResponseDTO<Reply> pageResponseDTO) throws Exception {
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("boardNo", boardNo);
+      params.put("startRowIndex", pageResponseDTO.getStartRowIndex());
+      params.put("rowCntPerPage", pageResponseDTO.getRowCntPerPage());
+   
+      return ses.selectList(NS + ".getAllRepliesByBoardNo", params);
    }
 
 }

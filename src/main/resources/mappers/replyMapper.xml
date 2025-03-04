@@ -11,4 +11,12 @@
    <select id="selectReplyByReplyNo" resultType="Reply">
       select * from replies where replyNo = #{replyNo}
    </select>
+   
+   <select id="getReplyCountByBoardNo" resultType="int">
+      select count(*) from replies where boardNo = #{boardNo}
+   </select>
+   
+   <select id="getAllRepliesByBoardNo" resultType="Reply">
+      select * from replies where boardNo = #{boardNo} order by postDate desc limit #{startRowIndex}, #{rowCntPerPage}
+   </select>
 </mapper>
