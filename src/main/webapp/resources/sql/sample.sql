@@ -452,7 +452,7 @@ ALTER TABLE rboard
 CHANGE COLUMN `content` `content` LONGTEXT NULL DEFAULT NULL ;
 
  -- 댓글을 저장하는 테이블
-CREATE TABLE `webmoonya`.`reples` (
+CREATE TABLE `webmoonya`.`replies` (
   `replyNo` INT NOT NULL AUTO_INCREMENT,
   `replyContent` VARCHAR(200) NOT NULL,
   `replyer` VARCHAR(8) NULL,
