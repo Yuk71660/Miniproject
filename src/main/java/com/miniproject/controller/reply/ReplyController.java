@@ -99,7 +99,7 @@ public class ReplyController {
    @GetMapping(value = "/{boardNo}", produces = "application/json; charset=utf-8")
    public ResponseEntity<MyResponseWithData<PageResponseDTO<Reply>>> readAllReplies(
          @PathVariable("boardNo") int boardNo, PageRequestDTO pageRequestDTO) {
-      pageRequestDTO.setPageNo(2);
+      pageRequestDTO.setPageNo(1);
       pageRequestDTO.setRowCntPerPage(3);
       logger.info(boardNo + "번에 대한 모든 댓글을 가져오자");
 
