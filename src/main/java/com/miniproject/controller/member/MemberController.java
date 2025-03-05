@@ -172,7 +172,7 @@ public class MemberController {
       
       // 내일 LoginInterceptor의 postHandle()로 이전해서 구현 해야 한다.
       
-//      String returnPage = "";
+      String returnPage = "";
       try {
          Member loginMember = service.loginMember(loginDTO);
 
@@ -199,5 +199,18 @@ public class MemberController {
       
       return "redirect:../";
       
+   }
+   
+   @GetMapping(value="/isAuth", produces = "text/plain; charset=utf-8;") 
+   public ResponseEntity<String> isAuthenticate(HttpSession session){
+      ResponseEntity<String> result = null;
+      
+      String isAuth = "false";
+      if (session.getAttribute("loginMember") != null) {
+         isAuth = "true";
+      }
+      result = new ResponseEntity<String>(isAuth, HttpStatus.OK);
+      
+      return result;
    }
 }
