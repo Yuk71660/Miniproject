@@ -11,4 +11,8 @@ public interface ReplyService {
    Reply readReply(int replyNo) throws Exception;
 
    PageResponseDTO<Reply> getAllReplies(int boardNo, PageRequestDTO pageRequestDTO) throws Exception;
+
+   boolean modifyReply(ReplyDTO replyDTO) throws Exception;
+
+   boolean removeReply(int replyNo) throws Exception;
 }

@@ -90,4 +90,28 @@ public class ReplyServiceImpl implements ReplyService {
       return pageResponseDTO;
    }
 
+   @Override
+   public boolean modifyReply(ReplyDTO replyDTO) throws Exception {
+      boolean result = false;
+      // api사용자는 DB상황을 모를 수 있으므로 아래와 같이 없는 댓글을 수정할 때의 예외가 필요할 수 있다
+      if (dao.selectReplyByReplyNo(replyDTO.getReplyNo()) == null) {
+         throw new NoSuchElementException(replyDTO.getReplyNo() + "번 댓글이 존재하지 않습니다");
+      } else    if (dao.updateReply(replyDTO) == 1) {
+         result = true;
+      }
+      return result;
+   }
+
+   @Override
+   public boolean removeReply(int replyNo) throws Exception {
+      boolean result = false;
+      // api사용자는 DB상황을 모를 수 있으므로 아래와 같이 없는 댓글을 삭제할 때의 예외가 필요할 수 있다
+      if (dao.selectReplyByReplyNo(replyNo) == null) {
+         throw new NoSuchElementException(replyNo + "번 댓글이 존재하지 않습니다");
+      } else    if (dao.deleteReply(replyNo) == 1) {
+         result = true;
+      }
+      return result;
+   }
+
 }

@@ -498,4 +498,5 @@ select * from replies where boardNo = 1 order by postDate desc limit 0, 3;
 -- 부모글이 ?인 글의 댓글 수 조회
 select count(*) from replies where boardNo = 1;
 
+UPDATE replies SET replyContent = '수정 테스트' WHERE (replyNo = '4');
 

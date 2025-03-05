@@ -47,4 +47,16 @@ public class ReplyDAOImpl implements ReplyDAO {
       return ses.selectList(NS + ".getAllRepliesByBoardNo", params);
    }
 
+   @Override
+   public int updateReply(ReplyDTO replyDTO) throws Exception {
+      
+      return ses.update(NS + ".updateReply", replyDTO);
+   }
+
+   @Override
+   public int deleteReply(int replyNo) throws Exception {
+      
+      return ses.delete(NS + ".deleteReply", replyNo);
+   }
+
 }

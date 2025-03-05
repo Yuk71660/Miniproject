@@ -14,4 +14,8 @@ public interface ReplyDAO {
    int getTotalCountRow(int boardNo) throws Exception;
 
    List<Reply> selectRepliesByBoardNo(int boardNo, PageResponseDTO<Reply> pageResponseDTO) throws Exception;
+
+   int updateReply(ReplyDTO replyDTO) throws Exception;
+
+   int deleteReply(int replyNo) throws Exception;
 }
