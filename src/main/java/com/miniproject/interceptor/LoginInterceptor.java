@@ -31,21 +31,34 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
          throws Exception {
 
       boolean isShowLoginPage = false;
+      if (request.getMethod().toLowerCase().equals("get")) {
+         HttpSession ses = request.getSession();
+         logger.info(
+               "★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 이전 preHandle() ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
+         logger.info("요청 페이지 : " + request.getRequestURI());
+         //logger.info("요청 쿼리스트링 : " + request.getQueryString());
+         // 댓글 저장/수정/삭제 시 로그인 하러 왔다면....
+         if (request.getQueryString() != null) {
+            if (request.getQueryString().contains("redirectUrl")) {
+               String returnUrl = "/rboard/viewBoard?boardNo=" + request.getParameter("boardNo");
+               ses.setAttribute("destUrl", returnUrl);
+            }
+         }
+         
+         String cookieVal = readCookie(request);
+         System.out.println("읽어낸 쿠키 값 : " + cookieVal);
+         if (!StringUtils.isNullOrEmpty(cookieVal)) {
+            // cookieVal와 DB에 저장된 세션값과 비교
+            Member autoLoginMember = dao.selectSessionID(cookieVal);
+            ses.setAttribute("loginMember", autoLoginMember); // 자동로그인
+            response.sendRedirect(
+                  (ses.getAttribute("destUrl") != null) ? (String) ses.getAttribute("destUrl") : "../");
 
-      logger.info("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ 로그인 이전 preHandle() ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★ ");
-      
-      
-      HttpSession ses = request.getSession();
-   
-      String cookieVal = readCookie(request);
-      System.out.println("읽어낸 쿠키 값 : " +  cookieVal);
-      if (!StringUtils.isNullOrEmpty(cookieVal)) {
-         // cookieVal와 DB에 저장된 세션값과 비교
-         Member autoLoginMember = dao.selectSessionID(cookieVal);
-         ses.setAttribute("loginMember", autoLoginMember); // 자동로그인
-         response.sendRedirect((ses.getAttribute("destUrl") != null)?  (String)ses.getAttribute("destUrl") : "../");
+         } else {
+            // 자동로그인 하지 않음
+            isShowLoginPage = true;
+         } 
       } else {
-         // 자동로그인 하지 않음
          isShowLoginPage = true;
       }
       
