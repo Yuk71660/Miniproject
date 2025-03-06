@@ -59,12 +59,103 @@
             output += `</div>`;
             output += `<div>\${elt.replyContent}</div>`;
             let postDate = new Date(elt.postDate).toLocaleString();
+            
+            
+            let loginMember = '${sessionScope.loginMember.userId}';
+            if (isAuthentication() && loginMember === elt.replyer) {
+               // 로그인 되어 있고, 댓글 작성자가 본인인 경우에만 수정,삭제 버튼이 보이도록...
+               output += `<div class='reply_bottom'>`;
+               output += `<div class='replyControl'><img src='/resources/images/modify50.png' data-rno='\${elt.replyNo}' onclick='showModfiyReply(this);'  />`;
+               output += `<img src='/resources/images/remove.png' data-rno='\${elt.replyNo}' onclick='showRemoveReply(this);' /></div>`;
+                output += `<div style='margin-right : 3px;'>\${postDate}</div>`;
+                output += `</div>`;   
+               
+           } else {
             output += `<div style='float : right; margin-right : 3px;'>\${postDate}</div>`;
+           }   
+
             output += `</li>`;
          });
          output += `</ul>`;
 
          $('.replyList').html(output);
+      }
+      
+      function showModfiyReply(obj) {
+         let rno = obj.dataset.rno;
+         obj = $(obj).parent().parent().prev();  
+         let beforeReply = $(obj).html();
+         let output = `<textarea rows="5" class="form-control" id="modifyReplyContent">\${beforeReply}</textarea>`;
+         output += `<button type="button" class="btn btn-info" onclick='modifyReply("\${rno}");'>댓글수정</button>`;
+         output += `<button type="button" class="btn btn-warning" onclick='getAllReplies();'>수정취소</button>`;
+         
+         $(obj).html(output);
+      }
+      
+      function modifyReply(rno) {
+         const replyDTO = {
+            "replyContent" : $('#modifyReplyContent').val()
+         };
+         
+         $.ajax({
+              url: '/replies/' + rno ,
+              type: 'put', // 이진 데이터를 보낼 때는 post
+              dataType: 'json', // 수신받을 데이터 타입
+              async : false,
+              data : JSON.stringify(replyDTO),
+              headers : {
+                 // put, delete, patch 같은 새로운 HttpMethod를 지원하지 않는 웹 브라우저에 대해 post 방식으로 동작하도록
+                 'x-override-method' : 'post', 
+                 'content-type' : 'application/json'
+                 
+              },
+              success: function (data) {
+                console.log(data);
+            
+              },
+              error: function (err) {
+                // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+                console.log(err.responseJSON);
+              }, complete: function() {
+                     getAllReplies();
+              }
+            });
+               
+      }
+      
+      
+      
+      // 삭제 확인 모달창
+      function showRemoveReply(obj) {
+         let replyNo = obj.dataset.rno;
+         let output = `<div>댓글을 정말 삭제 할까요?</div>`;
+         output += `<button type="button" class="btn btn-warning" onclick='removeReply("\${replyNo}");'>삭제</button>`
+         $('.modal-body').html(output);
+         $('#myModal').show(500);
+      }
+      
+      // 댓글을 삭제하는 함수
+      function removeReply(rno) {
+         $('#myModal').hide();
+         $.ajax({
+              url: '/replies/' + rno ,
+              type: 'delete', // 이진 데이터를 보낼 때는 post
+              dataType: 'json', // 수신받을 데이터 타입
+              async : false,
+              headers : {
+                 // put, delete, patch 같은 새로운 HttpMethod를 지원하지 않는 웹 브라우저에 대해 post 방식으로 동작하도록
+                 'x-override-method' : 'post'
+              },
+              success: function (data) {
+                console.log(data);
+              },
+              error: function (err) {
+                // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
+                console.log(err.responseJSON);
+              }, complete: function () {
+                 getAllReplies();
+              }
+            });
       }
       
       function showSaveReply() {  
@@ -178,6 +269,15 @@
 
 .reply div {
    margin-bottom: 5px;
+}
+
+.reply_bottom {
+   display: flex;
+   justify-content: space-between;
+}
+
+.replyControl img {
+   width: 18px;
 }
 </style>
 </head>
