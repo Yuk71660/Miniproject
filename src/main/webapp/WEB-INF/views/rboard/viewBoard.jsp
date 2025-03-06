@@ -9,7 +9,10 @@
 <script
    src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
+     let pageNo = 1;   
       $(function() {
+         
+       
        
          let status = '${param.status}';
          if (status == 'notallowed') {
@@ -29,7 +32,7 @@
       // 현재 게시글의 모든 댓글을 가져옴
       function getAllReplies() {
          $.ajax({
-                url: '/replies/' + ${param.boardNo},
+                url: '/replies/' + ${param.boardNo} + '/' + pageNo,
                 type: 'get', // 이진 데이터를 보낼 때는 post
                 dataType: 'json', // 수신받을 데이터 타입
                 async: false,
@@ -42,7 +45,9 @@
                 },
                 error: function (err) {
                   // ResponseEntity객체의 HttpStatus(통신상태)를 받아 에러가 발생하면 아래의 함수가 호출됨
-                  console.log(err.responseJSON);
+                  if (err.responseJSON.code == "500") {
+                     console.log(err.responseJSON);  
+                  }                
                 },
               });
       }
@@ -79,6 +84,52 @@
          output += `</ul>`;
 
          $('.replyList').html(output);
+         
+         if (data.data.totalPageCnt > 1) {
+            outputPagination(data);   
+         }
+         
+      }
+      
+      function prev() {
+         --pageNo;
+         getAllReplies();
+      }
+      
+      function go(i) {
+         pageNo = parseInt(i);
+         getAllReplies();
+      }
+      
+      function next() {
+         ++pageNo;
+         getAllReplies();
+      }
+      
+      function outputPagination(data) {
+         let output = `<ul class="pagination justify-content-center" style="margin:20px 0">`;
+         
+         if (data.data.pageNo > 1) {
+            output += `<li class="page-item"><a class="page-link" href="javascript:prev();">Previous</a></li>`;  
+         }
+         
+         
+         for(let i = data.data.startPageNumPerBlock; i <= data.data.endPageNumPerBlock; i++) {
+            if (pageNo == i) {
+               output += `<li class="page-item active">`;
+            } else {
+               output += `<li class="page-item">`;
+            }
+            output += `<a class="page-link" href="javascript:go('\${i}');">\${i}</a></li>`;
+         }
+         
+         if (data.data.pageNo == 1 || data.data.pageNo < data.data.totalPageCnt) {
+            output += `<li class="page-item"><a class="page-link" href="javascript:next();">Next</a></li>`;
+         }
+         
+         output += `</ul>`;
+         
+         $('.replyPagination').html(output);
       }
       
       function showModfiyReply(obj) {
@@ -341,7 +392,8 @@
       </div>
       <div class="saveReplyArea"></div>
       <div class="replyList"></div>
-      <div class="replyPagination"></div>
+      <div class="replyPagination">
+      </div>
    </div>
 
    <!-- The Modal -->

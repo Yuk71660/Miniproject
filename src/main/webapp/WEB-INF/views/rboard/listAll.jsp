@@ -179,7 +179,7 @@
          </tbody>
       </table>
 
-      <div clas="pagination">
+      <div>
          <ul class="pagination justify-content-center" style="margin: 20px 0">
             <c:if test="${param.pageNo > 1}">
                <li class="page-item"><a class="page-link"

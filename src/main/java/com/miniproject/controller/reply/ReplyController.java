@@ -96,10 +96,10 @@ public class ReplyController {
       return result;
    }
 
-   @GetMapping(value = "/{boardNo}", produces = "application/json; charset=utf-8")
+   @GetMapping(value = "/{boardNo}/{pageNo}", produces = "application/json; charset=utf-8")
    public ResponseEntity<MyResponseWithData<PageResponseDTO<Reply>>> readAllReplies(
-         @PathVariable("boardNo") int boardNo, PageRequestDTO pageRequestDTO) {
-      pageRequestDTO.setPageNo(1);
+         @PathVariable("boardNo") int boardNo, @PathVariable("pageNo") int pageNo,  PageRequestDTO pageRequestDTO) {
+      pageRequestDTO.setPageNo(pageNo);
       pageRequestDTO.setRowCntPerPage(3);
       logger.info(boardNo + "번에 대한 모든 댓글을 가져오자");
 
@@ -129,7 +129,7 @@ public class ReplyController {
 
          }
 
-         result = ResponseEntity.badRequest().body(mw);
+         result = new ResponseEntity<MyResponseWithData<PageResponseDTO<Reply>>>(mw, HttpStatus.OK);
 
       }
 
