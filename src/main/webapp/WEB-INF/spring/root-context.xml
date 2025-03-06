@@ -17,7 +17,8 @@
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
-	
+	<!-- AspectJ 라이브러리를 이용해 Proxy객체를 자동 생성 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
 	
 	<!-- transaction 처리를 annotation으로 진행 -->
 	<tx:annotation-driven/>
@@ -69,6 +70,7 @@
 	<context:component-scan base-package="com.miniproject.service"></context:component-scan>
 	<context:component-scan base-package="com.miniproject.dao"></context:component-scan>
 	<context:component-scan base-package="com.miniproject.util"></context:component-scan>
+	<context:component-scan base-package="com.miniproject.aop"></context:component-scan>
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
